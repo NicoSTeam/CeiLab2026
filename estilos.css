@@ -1,12 +1,24 @@
 body {
-    font-family: Arial;
-    background-color: lightblue;
+    background-color: #121212;
+    margin: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 30px;
+    font-family: Arial, sans-serif;
 }
 
-h1 {
-    color: darkblue;
-}
+.formulario {
+    background-color: #1f1f1f;
+    color: white;
 
-p {
-    font-size: 18px;
+    width: 100%;
+    max-width: 650px;
+    padding: 50px;
+    margin: 40px;
+    border-radius: 15px;
+
+    box-shadow: 0 0 20px rgba(0, 255, 102, 0.275);
 }
