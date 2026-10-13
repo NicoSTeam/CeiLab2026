@@ -101,7 +101,24 @@
                                         <input type="text" class="form-control" placeholder="Observaciones" aria-label="Observaciones" aria-describedby="addon-obs" name="fobservaciones">
                                     </div>
                                 </div>
-
+                                <!-- Rol de Usuario -->
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <span class="bg-light input-group-text" id="addon-rol">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em">
+                                                <path fill="none" d="M0 0h24v24H0z"/>
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                                            </svg>
+                                        </span>
+                                        <select class="form-select" aria-label="Rol de Usuario" aria-describedby="addon-rol" name="frol" required>
+                                            <option value="" selected disabled>Seleccione un rol...</option>
+                                            <option value="1">1 - Administrador</option>
+                                            <option value="2">2 - Responsable-CeiLab</option>
+                                            <option value="3">3 - Docente</option>
+                                            <option value="4">4 - Estudiante</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <!-- Contraseña -->
                                 <div class="mb-4">
                                     <div class="input-group">
