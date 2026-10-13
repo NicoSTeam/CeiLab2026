@@ -1,0 +1,12 @@
+.hero-section {
+    /* 1. Capa azul semitransparente (RGBA: Rojo, Verde, Azul, Opacidad) */
+    /* Ajusta el 0.6 final para dar más o menos transparencia (entre 0.0 y 1.0) */
+    background-image:
+    linear-gradient(rgba(13, 110, 253, 0.6), rgba(13, 110, 253, 0.6)),
+    url('assets/img/ceilab.png');
+
+    /* 2. Ajustes para que la imagen cubra toda la sección y no se repita */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
