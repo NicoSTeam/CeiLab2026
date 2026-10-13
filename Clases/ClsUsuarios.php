@@ -2,6 +2,7 @@
     include ("../Persistencia/connect.php");
 
    class ClsUsuarios {
+    
     public function registrarUsuario() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Capturamos los datos enviados desde el formulario con sus prefijos 'f'
@@ -56,6 +57,33 @@
                 echo "<div class='alert alert-danger m-3 text-center'>Error al registrar el usuario: " . mysqli_error($link) . "</div>";
             }
         }
+    }
+    public function listarUsuarios($filtroNombre = '', $filtroCedula = '', $filtroEmail = '') {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+
+        // Consulta uniendo usuario y rol
+        $sql = "SELECT u.IDUsuario, u.nombre, u.cedula, u.email, u.direccion, u.observaciones, r.ROL 
+                FROM usuario u 
+                INNER JOIN rol r ON u.IDUsuario = r.IDUsuario WHERE 1=1";
+
+        // Aplicamos los filtros 
+        if (!empty($filtroNombre)) {
+            $nombreEscaped = mysqli_real_escape_string($link, $filtroNombre);
+            $sql .= " AND u.nombre LIKE '%$nombreEscaped%'";
+        }
+        if (!empty($filtroCedula)) {
+            $cedulaEscaped = mysqli_real_escape_string($link, $filtroCedula);
+            $sql .= " AND u.cedula = '$cedulaEscaped'";
+        }
+        if (!empty($filtroEmail)) {
+            $emailEscaped = mysqli_real_escape_string($link, $filtroEmail);
+            $sql .= " AND u.email LIKE '%$emailEscaped%'";
+        }
+
+        $sql .= " ORDER BY u.IDUsuario DESC";
+        
+        return mysqli_query($link, $sql);
     }
 }
 

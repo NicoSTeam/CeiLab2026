@@ -16,8 +16,8 @@
                     <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Usuarios</a> 
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"> 
                         <a class="dropdown-item" href="/CeiLab2026/Formularios/registroUsuario.php">Registrar</a> 
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/modUsuario.html">Modificar</a>
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/listadoUsuario.html">Listar</a> 
+                        <a class="dropdown-item" href="/CeiLab2026/Formularios/modUsuario.php">Modificar</a>
+                        <a class="dropdown-item" href="/CeiLab2026/Formularios/listadoUsuario.php">Listar</a> 
                         <a class="dropdown-item" href="/CeiLab2026/Formularios/borrarUsuario.html">Eliminar</a> 
                     </div>                         
                 </li>

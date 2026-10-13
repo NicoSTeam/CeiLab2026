@@ -18,7 +18,6 @@
         <!-- Barra de navegación -->
         <?php include '../navbar.php'; ?> 
 
-        <!-- Recuperamos la clase hero-section para la imagen de fondo y usamos flex-fill para empujar el footer -->
         <section class="hero-section flex-fill pb-5 pt-5">
             <div class="container pb-4 pt-4">
                 <div class="row justify-content-center mb-4"> 
