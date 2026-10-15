@@ -13,6 +13,7 @@
             $observaciones = $_POST['fobservaciones'] ?? '';
             $rol = $_POST['frol'] ?? '';
             $contrasenia = password_hash($_POST['fcontrasenia'] ?? '', PASSWORD_DEFAULT);
+            $telefonos = $_POST['ftelefonos'] ?? []; 
 
             // Instanciamos la clase Conexion para obtener el link
             $objConexion = new Conexion();
@@ -45,6 +46,17 @@
                     $sqlRol = "INSERT INTO rol (IDUsuario, ROL) VALUES ('$idUsuario', '$rol')";
                     $resultadoRol = mysqli_query($link, $sqlRol);
 
+                    //PASO 4
+                    if (!empty($telefonos) && is_array($telefonos)) {
+                        foreach ($telefonos as $tel) {
+                            $telLimpio = trim($tel);
+                            if (!empty($telLimpio)) {
+                                $telEscape = mysqli_real_escape_string($link, $telLimpio);
+                                $sqlTelefono = "INSERT INTO Telefonos (IDUsuario, Telefono) VALUES ('$idUsuario', '$telEscape')";
+                                mysqli_query($link, $sqlTelefono);
+                            }
+                        }
+                    }
                     if ($resultadoRol) {
                         echo "<div class='alert alert-success m-3 text-center'>¡Usuario registrado y rol asignado con éxito! <a href='../Formularios/acceso.html' class='alert-link'>Iniciar sesión</a></div>";
                     } else {
