@@ -1,9 +1,10 @@
 <nav class="navbar navbar-expand-lg navbar-light py-lg-1 text-uppercase shadow-sm" style="background-color: #adbfdc;"> 
-    <div class="container"> 
-        <a class="background-center-top fw-bold navbar-brand text-primary" href="/CeiLab2026/index.php" style="background-image:url('/CeiLab2026/assets/img/syncDyn.png');"> </a>
+    <div class="container">    
         <picture>
             <source type="image/webp">
-            <img src="/CeiLab2026/assets/img/Ceilab-logo.jpg" class="image-fit-left-top img-thumbnail mw-100 w-50" alt="Logo CeiLab">
+            <a href="/CeiLab2026/index.php" class="d-inline-block text-decoration-none p-0 m-0">
+                <img src="/CeiLab2026/assets/img/Ceilab-logo.jpg" class="img-thumbnail" style="max-width: 180px; height: auto;" alt="Logo CeiLab">
+            </a>
         </picture>                
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown-3" aria-controls="navbarNavDropdown-3" aria-expanded="false" aria-label="Toggle navigation"> 
