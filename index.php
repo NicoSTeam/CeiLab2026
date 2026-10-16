@@ -12,6 +12,7 @@
         <!-- Custom styles for this template -->
         <link rel="stylesheet" href="Estilos/blocks.css">
         <link href="Estilos/style.css" rel="stylesheet">
+        <link rel="icon" href="/CeiLab2026/assets/img/Ceibal_ico.png">
     </head>
     <body>
         
