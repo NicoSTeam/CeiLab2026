@@ -51,10 +51,24 @@
                                             <input type="number" class="form-control" name="cedula" placeholder="Cédula (sin puntos ni guiones)" value="<?php echo htmlspecialchars($_GET['cedula'] ?? ''); ?>">
                                         </div>
                                     </div>
+                                    <div class="mb-3">
                                     <div class="input-group">
                                         <span class="bg-light input-group-text"><i class="bi bi-envelope"></i></span>
                                         <input type="email" class="form-control" name="email" placeholder="Email" value="<?php echo htmlspecialchars($_GET['email'] ?? ''); ?>">
                                     </div>
+                                    </div>
+                                    <div class="mb-3">
+                                    <div class="input-group">
+                                        <span class="bg-light input-group-text" id="addon-rol"></span>
+                                        <select class="form-select" aria-label="Filtrar por Rol" aria-describedby="addon-rol" name="rol">
+                                            <option value="" selected>Todos los roles...</option>
+                                            <option value="1" <?php echo (($_GET['rol'] ?? '') === '1') ? 'selected' : ''; ?>>1 - Administrador</option>
+                                            <option value="2" <?php echo (($_GET['rol'] ?? '') === '2') ? 'selected' : ''; ?>>2 - Responsable-CeiLab</option>
+                                            <option value="3" <?php echo (($_GET['rol'] ?? '') === '3') ? 'selected' : ''; ?>>3 - Docente</option>
+                                            <option value="4" <?php echo (($_GET['rol'] ?? '') === '4') ? 'selected' : ''; ?>>4 - Estudiante</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 </div>
                                 <button type="submit" class="btn d-block w-100 btn-primary fw-bold pb-2 ps-3 pe-3 pt-2">Buscar</button>
                             </form>
@@ -75,8 +89,9 @@
                         $nombre = $_GET['nombre'] ?? '';
                         $cedula = $_GET['cedula'] ?? '';
                         $email = $_GET['email'] ?? '';
+                        $rol = $_GET['rol'] ?? '';
 
-                        $resultado = $objUsuario->listarUsuarios($nombre, $cedula, $email);
+                        $resultado = $objUsuario->listarUsuarios($nombre, $cedula, $email, $rol);
 
                         if ($resultado && mysqli_num_rows($resultado) > 0) {
                         ?>

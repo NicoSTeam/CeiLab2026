@@ -144,7 +144,7 @@
             }
         }
     }
-    public function listarUsuarios($filtroNombre = '', $filtroCedula = '', $filtroEmail = '') {
+    public function listarUsuarios($filtroNombre = '', $filtroCedula = '', $filtroEmail = '', $filtroRol = '') {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
 
@@ -165,6 +165,10 @@
         if (!empty($filtroEmail)) {
             $emailEscaped = mysqli_real_escape_string($link, $filtroEmail);
             $sql .= " AND u.email LIKE '%$emailEscaped%'";
+        }
+        if (!empty($filtroRol)) {
+            $rolEscaped = mysqli_real_escape_string($link, $filtroRol);
+            $sql .= " AND r.ROL = '$rolEscaped'";
         }
 
         $sql .= " ORDER BY u.IDUsuario DESC";
