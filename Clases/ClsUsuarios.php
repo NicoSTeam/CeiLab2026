@@ -148,10 +148,10 @@
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
 
-        // Consulta uniendo usuario y rol
-        $sql = "SELECT u.IDUsuario, u.nombre, u.cedula, u.email, u.direccion, u.observaciones, r.ROL 
+        // Usamos LEFT JOIN y unimos los campos del usuario, tomando el rol de mayor importancia con MIN()
+        $sql = "SELECT u.IDUsuario, u.nombre, u.cedula, u.email, u.direccion, u.observaciones, MIN(r.ROL) AS ROL 
                 FROM usuario u 
-                INNER JOIN rol r ON u.IDUsuario = r.IDUsuario WHERE 1=1";
+                LEFT JOIN rol r ON u.IDUsuario = r.IDUsuario WHERE 1=1";
 
         // Aplicamos los filtros 
         if (!empty($filtroNombre)) {
@@ -171,6 +171,8 @@
             $sql .= " AND r.ROL = '$rolEscaped'";
         }
 
+        // Agrupamos estrictamente por el ID y los datos del usuario para que cada uno salga una sola vez
+        $sql .= " GROUP BY u.IDUsuario, u.nombre, u.cedula, u.email, u.direccion, u.observaciones";
         $sql .= " ORDER BY u.IDUsuario DESC";
         
         return mysqli_query($link, $sql);
