@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <h2 class="mb-1 text-dark">Registro</h2>
                             <p class="mb-4">Todos los campos son obligatorios</p>
                             
-                            <form id="formRegistro" action="../Clases/ClsUsuarios.php" method="POST">
+                            <form id="formRegistro" action="" method="POST">
                                 
                                 <!-- Nombre -->
                                 <div class="mb-3">
@@ -176,29 +176,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <script src="../assets/js/popper.min.js"></script>
         <script src="../bootstrap/js/bootstrap.min.js"></script>
         <script>
-        document.getElementById('formRegistro').addEventListener('submit', function(e) {
-            e.preventDefault(); // Evita recargar o cambiar de página
+            const formRegistro = document.getElementById('formRegistro');
+            if (formRegistro) {
+                formRegistro.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    let formData = new FormData(this);
 
-            let formData = new FormData(this);
-
-            fetch('', { 
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(html => {
-                // Inyectamos el HTML del modal en el contenedor
-                document.getElementById('contenedorModal').innerHTML = html;
-                
-                // Activamos y mostramos el modal mediante Bootstrap de forma segura
-                var elementoModal = document.getElementById("modalRespuesta");
-                if (elementoModal) {
-                    var miModal = new bootstrap.Modal(elementoModal);
-                    miModal.show();
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
+                    fetch('', { 
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('contenedorModal').innerHTML = html;
+                        var elementoModal = document.getElementById("modalRespuesta");
+                        if (elementoModal) {
+                            var miModal = new bootstrap.Modal(elementoModal);
+                            miModal.show();
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            }
         </script>
     </body>
 </html>

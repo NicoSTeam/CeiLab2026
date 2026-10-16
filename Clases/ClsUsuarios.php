@@ -338,7 +338,5 @@
     }
 }
 
-// Instanciamos la clase y ejecutamos el método de registro automáticamente al recibir el POST
-$objUsuario = new ClsUsuarios();
-$objUsuario->registrarUsuario();
+
 ?>
