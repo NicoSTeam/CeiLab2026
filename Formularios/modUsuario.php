@@ -11,10 +11,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fidusuario'])) {
 $idModificar = $_GET['id'] ?? null;
 $usuarioData = null;
 $telefonosData = [];
+$rolesData = []; 
 
 if ($idModificar) {
     $usuarioData = $objUsuario->obtenerUsuarioPorId($idModificar);
     $telefonosData = $objUsuario->obtenerTelefonosPorUsuario($idModificar);
+    $rolesData = $objUsuario->obtenerRolesPorUsuario($idModificar); 
 }
 ?>
 <!DOCTYPE html>
@@ -201,7 +203,7 @@ if ($idModificar) {
                                     <div class="mb-3">
                                         <label class="form-label text-muted small">Rol Principal</label>
                                         <select class="form-select" name="frol[]" required>
-                                            <option value="" selected disabled>Seleccione un rol...</option>
+                                            <option value="" disabled>Seleccione un rol...</option>
                                             <option value="1" <?php echo (($rolesData[0] ?? '') == '1') ? 'selected' : ''; ?>>1 - Administrador</option>
                                             <option value="2" <?php echo (($rolesData[0] ?? '') == '2') ? 'selected' : ''; ?>>2 - Responsable-CeiLab</option>
                                             <option value="3" <?php echo (($rolesData[0] ?? '') == '3') ? 'selected' : ''; ?>>3 - Docente</option>
@@ -213,7 +215,7 @@ if ($idModificar) {
                                     <div class="mb-4">
                                         <label class="form-label text-muted small">Rol Secundario (Opcional)</label>
                                         <select class="form-select" name="frol[]">
-                                            <option value="" selected>Ninguno / Opcional...</option>
+                                            <option value="" <?php echo empty($rolesData[1]) ? 'selected' : ''; ?>>Ninguno / Opcional...</option>
                                             <option value="1" <?php echo (($rolesData[1] ?? '') == '1') ? 'selected' : ''; ?>>1 - Administrador</option>
                                             <option value="2" <?php echo (($rolesData[1] ?? '') == '2') ? 'selected' : ''; ?>>2 - Responsable-CeiLab</option>
                                             <option value="3" <?php echo (($rolesData[1] ?? '') == '3') ? 'selected' : ''; ?>>3 - Docente</option>
