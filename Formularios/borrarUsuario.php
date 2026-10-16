@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fidusuario'])) {
         <link href="../bootstrap_theme/bootstrap.css" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="../Estilos/blocks.css">
         <link href="../Estilos/style.css" rel="stylesheet">
+        <link rel="icon" href="/CeiLab2026/assets/img/Ceibal_ico.png">
     </head>
     <body class="d-flex flex-column min-vh-100 bg-light">
         <?php include '../navbar.php'; ?> 

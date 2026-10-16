@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Custom styles for this template -->
         <link rel="stylesheet" href="../Estilos/blocks.css">
         <link href="../Estilos/style.css" rel="stylesheet">
+        <link rel="icon" href="/CeiLab2026/assets/img/Ceibal_ico.png">
     </head>
     <body class="d-flex flex-column min-vh-100 bg-light">
         
