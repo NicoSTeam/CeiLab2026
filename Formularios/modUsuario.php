@@ -115,13 +115,17 @@ if ($idModificar) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php while ($row = mysqli_fetch_assoc($resultadoListado)) { ?>
+                                            <?php while ($row = mysqli_fetch_assoc($resultadoListado)) { 
+                                            $rolArr = $objUsuario->obtenerRolesPorUsuario($row['IDUsuario']);
+                                            $textorol = !empty($rolArr) ? implode(', ', $rolArr) : 'Sin rol asignado';
+                                            
+                                            ?>
                                                 <tr>
                                                     <td><?php echo htmlspecialchars($row['IDUsuario']); ?></td>
                                                     <td><?php echo htmlspecialchars($row['nombre']); ?></td>
                                                     <td><?php echo htmlspecialchars($row['cedula']); ?></td>
                                                     <td><?php echo htmlspecialchars($row['email']); ?></td>
-                                                    <td><span class="badge bg-secondary"><?php echo htmlspecialchars($row['ROL']); ?></span></td>
+                                                    <td><span class="badge bg-secondary"><?php echo htmlspecialchars($textorol); ?></span></td>
                                                     <td class="text-center">
                                                         <a href="modUsuario.php?id=<?php echo $row['IDUsuario']; ?>" class="btn btn-sm btn-warning fw-bold px-3">Modificar</a>
                                                     </td>
