@@ -191,6 +191,151 @@
         }
         return $telefonos;
     }
+    public function obtenerUsuarioPorId($idUsuario) {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        
+        $idEscaped = mysqli_real_escape_string($link, $idUsuario);
+        $sql = "SELECT u.IDUsuario, u.nombre, u.cedula, u.email, u.direccion, u.observaciones, r.ROL 
+                FROM usuario u 
+                LEFT JOIN rol r ON u.IDUsuario = r.IDUsuario 
+                WHERE u.IDUsuario = '$idEscaped' LIMIT 1";
+        
+        $resultado = mysqli_query($link, $sql);
+        return mysqli_fetch_assoc($resultado);
+    }
+    public function modificarUsuario() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            try {
+                $idUsuario = $_POST['fidusuario'] ?? '';
+                $nombre = $_POST['fnombre'] ?? '';
+                $cedula = $_POST['fcedula'] ?? '';
+                $email = $_POST['femail'] ?? '';
+                $direccion = $_POST['fdireccion'] ?? '';
+                $observaciones = $_POST['fobservaciones'] ?? '';
+                $roles = $_POST['frol'] ?? []; //Arreglo de roles
+                $telefonos = $_POST['ftelefonos'] ?? []; //Arreglo de teléfonos
+
+                $objConexion = new Conexion();
+                $link = $objConexion->conectar();
+
+                $idUsuario = mysqli_real_escape_string($link, $idUsuario);
+                $nombre = mysqli_real_escape_string($link, $nombre);
+                $cedula = mysqli_real_escape_string($link, $cedula);
+                $email = mysqli_real_escape_string($link, $email);
+                $direccion = mysqli_real_escape_string($link, $direccion);
+                $observaciones = mysqli_real_escape_string($link, $observaciones);
+
+                //Actualiza datos de la tabla usuario
+                $sqlUsuario = "UPDATE usuario SET nombre='$nombre', cedula='$cedula', email='$email', direccion='$direccion', observaciones='$observaciones' WHERE IDUsuario='$idUsuario'";
+                $resUsuario = $objConexion->ejecutarSQL($sqlUsuario);
+
+                if ($resUsuario) {
+                    //Actualiza roles (borra los anteriores y reinserta los seleccionados)
+                    $sqlDelRol = "DELETE FROM rol WHERE IDUsuario='$idUsuario'";
+                    mysqli_query($link, $sqlDelRol);
+
+                    if (!empty($roles) && is_array($roles)) {
+                        $rolesUnicos = array_unique(array_map('trim', $roles));
+                        foreach ($rolesUnicos as $r) {
+                            if (!empty($r)) {
+                                $rEscape = mysqli_real_escape_string($link, $r);
+                                $sqlRol = "INSERT IGNORE INTO rol (IDUsuario, ROL) VALUES ('$idUsuario', '$rEscape')";
+                                mysqli_query($link, $sqlRol);
+                            }
+                        }
+                    }
+
+                    //Actualiza teléfonos (borra los anteriores y reinserta los nuevos)
+                    $sqlDelPhones = "DELETE FROM Telefonos WHERE IDUsuario='$idUsuario'";
+                    mysqli_query($link, $sqlDelPhones);
+
+                    if (!empty($telefonos) && is_array($telefonos)) {
+                        $telefonosUnicos = array_unique(array_map('trim', $telefonos));
+                        foreach ($telefonosUnicos as $tel) {
+                            if (!empty($tel)) {
+                                $telEscape = mysqli_real_escape_string($link, $tel);
+                                $sqlTelefono = "INSERT IGNORE INTO Telefonos (IDUsuario, Telefono) VALUES ('$idUsuario', '$telEscape')";
+                                mysqli_query($link, $sqlTelefono);
+                            }
+                        }
+                    }
+
+                    return '
+                    <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content shadow border-0">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title fw-bold">¡Modificación Exitosa!</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center py-4">
+                                    <p class="fs-5 text-dark mb-0">¡Los datos del usuario se actualizaron correctamente!</p>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <a href="modUsuario.php" class="btn btn-success fw-bold px-4">Volver al Listado</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
+                } else {
+                    $errorMsg = mysqli_error($link);
+                    return '
+                    <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content shadow border-0">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title fw-bold">Error de Modificación</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center py-4">
+                                    <p class="fs-5 text-dark mb-0">No se pudieron actualizar los datos.</p>
+                                    <small class="text-muted">' . htmlspecialchars($errorMsg) . '</small>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-danger px-4 fw-bold" data-bs-dismiss="modal">Intentar de nuevo</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
+                }
+            } catch (\Throwable $e) {
+                return '
+                <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content shadow border-0">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title fw-bold">Error de Conexión</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center py-4">
+                                <p class="fs-5 text-dark mb-0">No se pudo establecer comunicación con la base de datos.</p>
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                                <button type="button" class="btn btn-danger px-4 fw-bold" data-bs-dismiss="modal">Entendido</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+            }
+        }
+    }
+    public function obtenerRolesPorUsuario($idUsuario) {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        
+        $idEscaped = mysqli_real_escape_string($link, $idUsuario);
+        $sql = "SELECT ROL FROM rol WHERE IDUsuario = '$idEscaped'";
+        $resultado = mysqli_query($link, $sql);
+        
+        $roles = [];
+        if ($resultado) {
+            while ($row = mysqli_fetch_assoc($resultado)) {
+                $roles[] = $row['ROL'];
+            }
+        }
+        return $roles;
+    }
 }
 
 // Instanciamos la clase y ejecutamos el método de registro automáticamente al recibir el POST

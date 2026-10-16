@@ -1,127 +1,259 @@
+<?php
+require_once '../Clases/ClsUsuarios.php';
+$objUsuario = new ClsUsuarios();
+
+// Se envía el formulario por POST vía AJAX, procesamos la modificación
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fidusuario'])) {
+    echo $objUsuario->modificarUsuario();
+    exit;
+}
+
+$idModificar = $_GET['id'] ?? null;
+$usuarioData = null;
+$telefonosData = [];
+
+if ($idModificar) {
+    $usuarioData = $objUsuario->obtenerUsuarioPorId($idModificar);
+    $telefonosData = $objUsuario->obtenerTelefonosPorUsuario($idModificar);
+}
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <title>Blank Template for Bootstrap</title>
-        <!-- Bootstrap core CSS -->
-        <link href="bootstrap_theme/bootstrap.css" rel="stylesheet" type="text/css">
-        <!-- Custom styles for this template -->
-        <link rel="stylesheet" href="blocks.css">
-        <link href="style.css" rel="stylesheet">
+        <title>Modificar Usuario - CeiLab</title>
+        <link href="../bootstrap_theme/bootstrap.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="../Estilos/blocks.css">
+        <link href="../Estilos/style.css" rel="stylesheet">
     </head>
-    <body>
-        <nav class="bg-white navbar navbar-expand-lg navbar-light py-lg-1 text-uppercase"> 
-            <div class="container"> <a class="background-center-top fw-bold navbar-brand text-primary" href="#" style="background-image:url('assets/img/syncDyn.png');"> </a>
-                <picture>
-                    <source type="image/webp">
-                    <img src="assets/img/Ceilab-logo.jpg" class="image-fit-left-top img-thumbnail mw-100 w-50">
-                </picture>                 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown-3" aria-controls="navbarNavDropdown-3" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> 
-                </button>                 
-                <div class="collapse navbar-collapse " id="navbarNavDropdown-3"> 
-                    <ul class="mb-2 mb-lg-0 ms-auto navbar-nav"> 
-                        <li class="nav-item"> 
-</li>
-                        <li class="nav-item dropdown"> <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Usuarios</a> 
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"> <a class="dropdown-item" href="#">Registrar</a> <a class="dropdown-item" href="#">Modificar</a><a class="dropdown-item" href="#">Listar</a> <a class="dropdown-item" href="#">Eliminar</a> 
-                            </div>                             
-                        </li>
-                        <li class="nav-item"> <a class="nav-link px-lg-3 py-lg-4" href="#">Equipos</a> 
-                        </li>
-                        <li class="nav-item dropdown"> <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Solicitar material</a> 
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"> <a class="dropdown-item" href="#">Equipos</a> <a class="dropdown-item" href="#">Salas</a> 
-                            </div>                             
-                        </li>
-                        <li class="nav-item dropdown"> <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Registros</a> 
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"> <a class="dropdown-item" href="#">Reservas</a> <a class="dropdown-item" href="#">Prestamos</a> <a class="dropdown-item" href="#">Devoluciones</a> 
-                            </div>                             
-                        </li>                         
-                    </ul>                     
-                    <div class="ms-lg-3">
-                        <a class="btn btn-primary pb-2 pe-4 ps-4 pt-2" href="acceso.html">Acceder</a>
-                    </div>                     
-                </div>                 
-            </div>             
-        </nav>
-        <div class="container">
-</div>
-        <!-- Bootstrap core JavaScript
-    ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <section class="h-90 hero-section pb-5 pt-5 vh-100">
-            <div class="container pb-5 pt-5" style="background-color: #adbfdc;">
-                <div class="align-items-center mb-3 row"> 
-                    <div class="col-lg-7"> 
-                        <h3 class="fw-bold h2 mb-1 text-white">Modificación de usuarios</h3>
-                        <p class="fw-light text-white">                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vitae congue tortor. </p> 
-                    </div>                     
-                    <div class="col-lg-auto ms-auto"> 
-</div>                     
+    <body class="d-flex flex-column min-vh-100 bg-light">
+        <?php include '../navbar.php'; ?> 
+
+        <section class="hero-section flex-fill pb-5 pt-5">
+            <div class="container pb-4">
+                <div class="row">
+                    <div class="col-md-9 col-xl-8 ms-auto me-auto">
+                        <div class="bg-white p-4 shadow-sm rounded text-center">
+                            <h3 class="fw-bold h2 mb-1 text-primary">Gestión de Modificación</h3>
+                            <p class="fw-light text-secondary mb-0">Seleccione un usuario para editar sus datos o busque en el sistema.</p> 
+                        </div>
+                    </div>
                 </div>
-                <section class="bg-light pb-5 pt-5">
-                    <div class="container pb-5 pt-5"> 
+            </div>
+
+            <?php if (!$usuarioData): ?>
+                <!--LISTADO Y FILTRADO -->
+                <div class="container pb-5"> 
+                    <div class="row">
                         <div class="col-md-9 col-xl-8 ms-auto me-auto">
-                            <div class="bg-white p-4 p-lg-5">
-                                <h2 class="mb-1 text-dark">Modificaciones</h2>
-                                <p class="mb-4">Aquí puede modificar su correo o su contraseña</p>
-                                <form>
+                            <div class="bg-white p-4 p-lg-5 shadow-sm rounded">
+                                <h2 class="mb-1 text-dark h4">Buscar usuario a modificar</h2>
+                                <p class="mb-4 text-muted">Filtre por Nombre, Cédula, Email o Rol para encontrar al usuario</p>
+                                
+                                <form method="GET" action="">
                                     <div class="mb-3">
                                         <div class="mb-3">
-                                            <div class="input-group"><span class="bg-light input-group-text" id="addon-wrapping1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em">
-                                                        <g>
-                                                            <path fill="none" d="M0 0h24v24H0z"/>
-                                                            <path d="M 4 22 C 4 15.842 10.667 11.993 16 15.072 C 18.475 16.501 20 19.142 20 22 L 4 22 Z M 12 13 C 8.685 13 6 10.315 6 7 C 6 3.685 8.685 1 12 1 C 15.315 1 18 3.685 18 7 C 18 10.315 15.315 13 12 13 Z M 12 11 C 14.21 11 16 9.21 16 7 C 16 4.79 14.21 3 12 3 C 9.79 3 8 4.79 8 7 C 8 9.21 9.79 11 12 11 Z M 12 21 C 8.774 21 18.655 17.125 18.534 20.349 L 6 20 L 18 20 L 18.004 19.775 C 15.929 19.054 13.626 19.523 12 21 Z"/>
-                                                        </g>
-                                                    </svg></span>
-                                                <input type="text" class="form-control" placeholder="Nombre" aria-label="User Email" aria-describedby="addon-wrapping1" disabled="disabled">
-                                            </div>
+                                            <input type="text" class="form-control" name="nombre" placeholder="Filtrar por Nombre" value="<?php echo htmlspecialchars($_GET['nombre'] ?? ''); ?>">
                                         </div>
                                         <div class="mb-3">
-                                            <div class="input-group"><span class="bg-light input-group-text" id="addon-wrapping1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em">
-                                                        <g>
-                                                            < <path fill="none" d="M0 0h24v24H0z"/>
-                                                            <path d="M 1.862 3.608 C 1.862 3.056 2.31 2.608 2.862 2.608 L 20.862 2.608 C 21.414 2.608 21.862 3.056 21.862 3.608 L 21.862 16.867 C 21.862 17.42 21.414 18.051 20.862 18.051 L 2.862 18.028 C 2.31 18.028 1.862 17.351 1.862 16.798 L 1.862 3.608 Z M 19.862 4.608 L 3.862 4.608 L 3.862 15.453 L 19.862 15.476 L 19.862 4.608 Z M 11.862 7.261 L 17.862 7.307 L 17.839 9.399 L 11.908 9.468 L 11.862 7.261 Z M 11.862 10.608 L 17.862 10.608 L 17.862 12.608 L 11.862 12.608 L 11.862 10.608 Z M 7.576 13.733 L 10.991 13.733 C 10.991 12.629 9.956 11.249 8.852 11.249 L 6.668 11.226 C 5.563 11.226 4.138 12.675 4.138 13.779 L 7.576 13.733 Z M 7.862 9.608 C 9.401 9.608 10.364 7.942 9.594 6.608 C 9.237 5.99 8.576 5.608 7.862 5.608 C 6.322 5.608 5.36 7.275 6.13 8.608 C 6.487 9.227 7.147 9.608 7.862 9.608 Z"/>
-                                                        </g>
-                                                    </svg></span>
-                                                <input type="number" class="form-control" placeholder="Cédula (sin puntos ni guiones)" aria-label="User Email" aria-describedby="addon-wrapping1" disabled="disabled">
-                                            </div>
+                                            <input type="number" class="form-control" name="cedula" placeholder="Filtrar por Cédula" value="<?php echo htmlspecialchars($_GET['cedula'] ?? ''); ?>">
                                         </div>
-                                        <div class="input-group"><span class="bg-light input-group-text" id="addon-wrapping1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em">
-                                                    <g>
-                                                        <path fill="none" d="M0 0h24v24H0z"></path>
-                                                        <path d="M3 3h18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm17 4.238l-7.928 7.1L4 7.216V19h16V7.238zM4.511 5l7.55 6.662L19.502 5H4.511z"></path>
-                                                    </g>
-                                                </svg></span>
-                                            <input type="email" class="form-control" placeholder="Nuevo Email" aria-label="User Email" aria-describedby="addon-wrapping1">
+                                        <div class="mb-3">
+                                            <input type="email" class="form-control" name="email" placeholder="Filtrar por Email" value="<?php echo htmlspecialchars($_GET['email'] ?? ''); ?>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <select class="form-select" name="rol">
+                                                <option value="" selected>Todos los roles...</option>
+                                                <option value="1" <?php echo (($_GET['rol'] ?? '') === '1') ? 'selected' : ''; ?>>1 - Administrador</option>
+                                                <option value="2" <?php echo (($_GET['rol'] ?? '') === '2') ? 'selected' : ''; ?>>2 - Responsable-CeiLab</option>
+                                                <option value="3" <?php echo (($_GET['rol'] ?? '') === '3') ? 'selected' : ''; ?>>3 - Docente</option>
+                                                <option value="4" <?php echo (($_GET['rol'] ?? '') === '4') ? 'selected' : ''; ?>>4 - Estudiante</option>
+                                            </select>
                                         </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <div class="input-group"><span class="bg-light input-group-text" id="addon-wrapping2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em">
-                                                    <g>
-                                                        <path fill="none" d="M0 0h24v24H0z"></path>
-                                                        <path d="M10.758 11.828l7.849-7.849 1.414 1.414-1.414 1.415 2.474 2.474-1.414 1.415-2.475-2.475-1.414 1.414 2.121 2.121-1.414 1.415-2.121-2.122-2.192 2.192a5.002 5.002 0 0 1-7.708 6.294 5 5 0 0 1 6.294-7.708zm-.637 6.293A3 3 0 1 0 5.88 13.88a3 3 0 0 0 4.242 4.242z"></path>
-                                                    </g>
-                                                </svg></span>
-                                            <input type="password" class="form-control" placeholder="Nueva Contraseña" aria-label="Password" aria-describedby="addon-wrapping2"/>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn d-block w-100 btn-primary fw-bold pb-2 ps-3 pe-3 pt-2">Modificar</button>
+                                    <button type="submit" class="btn d-block w-100 btn-primary fw-bold pb-2 ps-3 pe-3 pt-2">Buscar / Filtrar</button>
                                 </form>
                             </div>
-                        </div>                         
-                    </div>                     
-                </section>                 
-                <div class="row"> 
-</div>                 
-            </div>             
+                        </div>                
+                    </div>
+                </div> 
+
+                <div class="container pb-5 pt-3 rounded shadow-sm col-md-10 col-xl-9" style="background-color: #adbfdc;">
+                    <div class="row">
+                        <div>
+                            <h3 class="mb-3 text-dark fw-bold">Seleccione un usuario para modificar</h3> 
+                            <?php
+                            // Captura todos los filtros enviados por GET
+                            $nombreFiltro = $_GET['nombre'] ?? '';
+                            $cedulaFiltro = $_GET['cedula'] ?? '';
+                            $emailFiltro  = $_GET['email'] ?? '';
+                            $rolFiltro    = $_GET['rol'] ?? '';
+
+                            $resultadoListado = $objUsuario->listarUsuarios($nombreFiltro, $cedulaFiltro, $emailFiltro, $rolFiltro);
+
+                            if ($resultadoListado && mysqli_num_rows($resultadoListado) > 0) {
+                            ?>
+                                <div class="table-responsive bg-white p-3 shadow-sm rounded">
+                                    <table class="table table-striped table-hover align-middle">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Nombre</th>
+                                                <th>Cédula</th>
+                                                <th>Email</th>
+                                                <th>Rol</th>
+                                                <th class="text-center">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php while ($row = mysqli_fetch_assoc($resultadoListado)) { ?>
+                                                <tr>
+                                                    <td><?php echo htmlspecialchars($row['IDUsuario']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['nombre']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['cedula']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                                    <td><span class="badge bg-secondary"><?php echo htmlspecialchars($row['ROL']); ?></span></td>
+                                                    <td class="text-center">
+                                                        <a href="modUsuario.php?id=<?php echo $row['IDUsuario']; ?>" class="btn btn-sm btn-warning fw-bold px-3">Modificar</a>
+                                                    </td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php } else {
+                                echo "<div class='alert alert-info text-center bg-white mb-0'>No se encontraron usuarios con los criterios especificados.</div>";
+                            }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            <?php else: ?>
+                <!-- FORMULARIO DE MODIFICACIÓN PRE-LLENADO -->
+                <div class="container pb-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-9 col-xl-8">
+                            <div class="bg-white p-4 p-lg-5 shadow rounded">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="mb-0 text-dark h4">Modificar Datos</h2>
+                                <div class="d-flex flex-column align-items-end gap-2">
+                                    <a href="modUsuario.php" class="btn btn-outline-secondary fw-bold text-center" style="width: 100%; max-width: 210px;">
+                                        ← Volver al listado
+                                    </a>
+                                    <a href="/CeiLab2026/index.php" class="btn btn-outline-primary fw-bold text-center" style="width: 100%; max-width: 210px;">
+                                        ← Volver al principio
+                                    </a>
+                                </div>
+                            </div>
+                                
+                                <form id="formModificar" action="" method="POST">
+                                    <!-- ID oculto -->
+                                    <input type="hidden" name="fidusuario" value="<?php echo htmlspecialchars($usuarioData['IDUsuario']); ?>">
+
+                                    <!-- Nombre -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted small">Nombre completo</label>
+                                        <input type="text" class="form-control" name="fnombre" value="<?php echo htmlspecialchars($usuarioData['nombre']); ?>" required>
+                                    </div>
+
+                                    <!-- Cédula -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted small">Cédula</label>
+                                        <input type="number" class="form-control" name="fcedula" value="<?php echo htmlspecialchars($usuarioData['cedula']); ?>" required>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted small">Email</label>
+                                        <input type="email" class="form-control" name="femail" value="<?php echo htmlspecialchars($usuarioData['email']); ?>" required>
+                                    </div>
+
+                                    <!-- Dirección -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted small">Dirección</label>
+                                        <input type="text" class="form-control" name="fdireccion" value="<?php echo htmlspecialchars($usuarioData['direccion']); ?>">
+                                    </div>
+
+                                    <!-- Teléfonos (carga hasta 2 campos basados en los registros previos) -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted small">Teléfonos</label>
+                                        <div class="input-group mb-2">
+                                            <input type="text" class="form-control" name="ftelefonos[]" placeholder="Teléfono principal" value="<?php echo htmlspecialchars($telefonosData[0] ?? ''); ?>">
+                                        </div>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="ftelefonos[]" placeholder="Celular secundario" value="<?php echo htmlspecialchars($telefonosData[1] ?? ''); ?>">
+                                        </div>
+                                    </div>
+
+                                    <!-- Observaciones -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted small">Observaciones</label>
+                                        <input type="text" class="form-control" name="fobservaciones" value="<?php echo htmlspecialchars($usuarioData['observaciones']); ?>">
+                                    </div>
+
+                                    <!-- Rol Principal -->
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted small">Rol Principal</label>
+                                        <select class="form-select" name="frol[]" required>
+                                            <option value="" selected disabled>Seleccione un rol...</option>
+                                            <option value="1" <?php echo (($rolesData[0] ?? '') == '1') ? 'selected' : ''; ?>>1 - Administrador</option>
+                                            <option value="2" <?php echo (($rolesData[0] ?? '') == '2') ? 'selected' : ''; ?>>2 - Responsable-CeiLab</option>
+                                            <option value="3" <?php echo (($rolesData[0] ?? '') == '3') ? 'selected' : ''; ?>>3 - Docente</option>
+                                            <option value="4" <?php echo (($rolesData[0] ?? '') == '4') ? 'selected' : ''; ?>>4 - Estudiante</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Rol Secundario -->
+                                    <div class="mb-4">
+                                        <label class="form-label text-muted small">Rol Secundario (Opcional)</label>
+                                        <select class="form-select" name="frol[]">
+                                            <option value="" selected>Ninguno / Opcional...</option>
+                                            <option value="1" <?php echo (($rolesData[1] ?? '') == '1') ? 'selected' : ''; ?>>1 - Administrador</option>
+                                            <option value="2" <?php echo (($rolesData[1] ?? '') == '2') ? 'selected' : ''; ?>>2 - Responsable-CeiLab</option>
+                                            <option value="3" <?php echo (($rolesData[1] ?? '') == '3') ? 'selected' : ''; ?>>3 - Docente</option>
+                                            <option value="4" <?php echo (($rolesData[1] ?? '') == '4') ? 'selected' : ''; ?>>4 - Estudiante</option>
+                                        </select>
+                                    </div>
+
+                                    <button type="submit" class="btn d-block w-100 btn-success fw-bold py-2">Guardar Cambios</button>
+                                </form>
+                                <div id="contenedorModal"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
         </section>
-        <!-- ... sección footer, solo habilitar cuando el archivo exista y se pase a php ... -->
-        <!-- ... <?php include 'footer.php'; ?> ... -->
-        <script src="assets/js/popper.min.js"></script>
-        <script src="bootstrap/js/bootstrap.min.js"></script>
+
+        <?php include '../footer.php'; ?>
+        <script src="../assets/js/popper.min.js"></script>
+        <script src="../bootstrap/js/bootstrap.min.js"></script>
+        <script>
+        // Script AJAX fetch para guardar sin recargar página y mostrar modal Bootstrap
+        const formModificar = document.getElementById('formModificar');
+        if (formModificar) {
+            formModificar.addEventListener('submit', function(e) {
+                e.preventDefault();
+                let formData = new FormData(this);
+
+                fetch('', { 
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('contenedorModal').innerHTML = html;
+                    var elementoModal = document.getElementById("modalRespuesta");
+                    if (elementoModal) {
+                        var miModal = new bootstrap.Modal(elementoModal);
+                        miModal.show();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        }
+        </script>
     </body>
 </html>
