@@ -114,6 +114,9 @@
                                         <?php while ($row = mysqli_fetch_assoc($resultado)) { 
                                             $telefonosArr = $objUsuario->obtenerTelefonosPorUsuario($row['IDUsuario']);
                                             $textoTelefonos = !empty($telefonosArr) ? implode(', ', $telefonosArr) : 'Sin teléfonos';
+                                            $rolArr = $objUsuario->obtenerRolesPorUsuario($row['IDUsuario']);
+                                            $textorol = !empty($rolArr) ? implode(', ', $rolArr) : 'Sin rol asignado';
+                                            
                                             ?>
                                             <tr>
                                                 <td><?php echo htmlspecialchars($row['IDUsuario']); ?></td>
@@ -124,7 +127,7 @@
                                                 <td><?php echo htmlspecialchars($textoTelefonos); ?></td>
                                                 <td>
                                                     <span class="badge bg-secondary">
-                                                        <?php echo htmlspecialchars($row['ROL']); ?>
+                                                        <?php echo htmlspecialchars($textorol); ?>
                                                     </span>
                                                 </td>
                                                 <td><?php echo htmlspecialchars($row['observaciones']); ?></td>
