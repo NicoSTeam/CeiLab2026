@@ -20,8 +20,8 @@
         <section class="hero-section flex-fill pb-5 pt-5">
             <!-- Encabezado de la página -->
             <div class="container pb-4">
-                <div class="row">
-                    <div class="col-md-9 col-xl-8 ms-auto me-auto">
+                <div class="row justify-content-center">
+                    <div class="col-md-9 col-xl-8">
                         <div class="bg-white p-4 shadow-sm rounded text-center">
                             <h3 class="fw-bold h2 mb-1 text-primary">Listado de usuarios</h3>
                             <p class="fw-light text-secondary mb-0">Consulte y filtre los usuarios registrados en el sistema CeiLab.</p> 
@@ -78,7 +78,7 @@
                 </div>
             </div> 
         
-            <div class="container pb-5 pt-5 rounded shadow-sm col-md-6" style="background-color: #adbfdc;">
+            <div class="container pb-5 pt-3 rounded shadow-sm col-md-10 col-xl-9" style="background-color: #adbfdc;">
                 <div class="row">
                     <div>
                         <h3 class="mb-3 text-dark fw-bold">Resultados</h3> 
