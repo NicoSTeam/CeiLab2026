@@ -37,6 +37,7 @@ if ($idModificar) {
                     <div class="col-md-9 col-xl-8 ms-auto me-auto">
                         <div class="bg-white p-4 shadow-sm rounded text-center">
                             <h3 class="fw-bold h2 mb-1 text-primary">Gestión de Modificación</h3>
+                            
                             <p class="fw-light text-secondary mb-0">Seleccione un usuario para editar sus datos o busque en el sistema.</p> 
                         </div>
                     </div>
@@ -49,7 +50,10 @@ if ($idModificar) {
                     <div class="row">
                         <div class="col-md-9 col-xl-8 ms-auto me-auto">
                             <div class="bg-white p-4 p-lg-5 shadow-sm rounded">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h2 class="mb-1 text-dark h4">Buscar usuario a modificar</h2>
+                                <a href="/CeiLab2026/index.php" class="btn btn-outline-primary fw-bold text-center" style="width: 100%; max-width: 210px;"> ← Volver al principio </a>
+                                </div>
                                 <p class="mb-4 text-muted">Filtre por Nombre, Cédula, Email o Rol para encontrar al usuario</p>
                                 
                                 <form method="GET" action="">

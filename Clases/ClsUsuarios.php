@@ -336,7 +336,84 @@
         }
         return $roles;
     }
+    public function eliminarUsuario($idUsuario) {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            try {
+                $objConexion = new Conexion();
+                $link = $objConexion->conectar();
+                $idUsuario = mysqli_real_escape_string($link, $idUsuario);
+
+                //Borrar roles vinculados
+                $sqlDelRol = "DELETE FROM rol WHERE IDUsuario = '$idUsuario'";
+                mysqli_query($link, $sqlDelRol);
+
+                //Borrar teléfonos vinculados
+                $sqlDelPhones = "DELETE FROM Telefonos WHERE IDUsuario = '$idUsuario'";
+                mysqli_query($link, $sqlDelPhones);
+
+                //Borrar el usuario 
+                $sqlUsuario = "DELETE FROM usuario WHERE IDUsuario = '$idUsuario'";
+                $resultado = $objConexion->ejecutarSQL($sqlUsuario);
+
+                if ($resultado) {
+                    return '
+                    <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content shadow border-0">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title fw-bold">¡Eliminación Exitosa!</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center py-4">
+                                    <p class="fs-5 text-dark mb-0">¡El usuario ha sido eliminado del sistema correctamente!</p>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <a href="borrarUsuario.php" class="btn btn-success fw-bold px-4">Aceptar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
+                } else {
+                    $errorMsg = mysqli_error($link);
+                    return '
+                    <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content shadow border-0">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title fw-bold">Error de Eliminación</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center py-4">
+                                    <p class="fs-5 text-dark mb-0">No se pudo eliminar el usuario.</p>
+                                    <small class="text-muted">' . htmlspecialchars($errorMsg) . '</small>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-danger px-4 fw-bold" data-bs-dismiss="modal">Intentar de nuevo</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
+                }
+            } catch (\Throwable $e) {
+                return '
+                <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content shadow border-0">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title fw-bold">Error de Conexión</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center py-4">
+                                <p class="fs-5 text-dark mb-0">No se pudo establecer comunicación con la base de datos.</p>
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                                <button type="button" class="btn btn-danger px-4 fw-bold" data-bs-dismiss="modal">Entendido</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+            }
+        }
+    }
 }
-
-
 ?>
