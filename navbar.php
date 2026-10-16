@@ -19,7 +19,7 @@
                         <a class="dropdown-item" href="/CeiLab2026/Formularios/registroUsuario.php">Registrar</a> 
                         <a class="dropdown-item" href="/CeiLab2026/Formularios/modUsuario.php">Modificar</a>
                         <a class="dropdown-item" href="/CeiLab2026/Formularios/listadoUsuario.php">Listar</a> 
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/borrarUsuario.html">Eliminar</a> 
+                        <a class="dropdown-item" href="/CeiLab2026/Formularios/borrarUsuario.php">Eliminar</a> 
                     </div>                         
                 </li>
                 <li class="nav-item"> 
