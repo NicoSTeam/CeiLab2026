@@ -101,13 +101,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fidusuario'])) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php while ($row = mysqli_fetch_assoc($resultadoListado)) { ?>
+                                        <?php while ($row = mysqli_fetch_assoc($resultadoListado)) { 
+                                            $rolArr = $objUsuario->obtenerRolesPorUsuario($row['IDUsuario']);
+                                            $textorol = !empty($rolArr) ? implode(', ', $rolArr) : 'Sin rol asignado';
+                                            
+                                            ?>
                                             <tr>
                                                 <td><?php echo htmlspecialchars($row['IDUsuario']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['nombre']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['cedula']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['email']); ?></td>
-                                                <td><span class="badge bg-secondary"><?php echo htmlspecialchars($row['ROL']); ?></span></td>
+                                                <td><span class="badge bg-secondary"><?php echo htmlspecialchars($textorol); ?></span></td>
                                                 <td class="text-center">
                                                     <!-- Botón que activa el modal de confirmación -->
                                                     <button type="button" class="btn btn-sm btn-danger fw-bold px-3" 
