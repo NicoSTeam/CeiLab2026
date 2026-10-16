@@ -171,6 +171,22 @@
         
         return mysqli_query($link, $sql);
     }
+    public function obtenerTelefonosPorUsuario($idUsuario) {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        
+        $idEscape = mysqli_real_escape_string($link, $idUsuario);
+        $sql = "SELECT Telefono FROM Telefonos WHERE IDUsuario = '$idEscape'";
+        $resultado = mysqli_query($link, $sql);
+        
+        $telefonos = [];
+        if ($resultado) {
+            while ($row = mysqli_fetch_assoc($resultado)) {
+                $telefonos[] = $row['Telefono'];
+            }
+        }
+        return $telefonos;
+    }
 }
 
 // Instanciamos la clase y ejecutamos el método de registro automáticamente al recibir el POST

@@ -89,18 +89,23 @@
                                             <th>Cédula</th>
                                             <th>Email</th>
                                             <th>Dirección</th>
+                                            <th>Teléfonos</th>
                                             <th>Rol</th>
                                             <th>Observaciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php while ($row = mysqli_fetch_assoc($resultado)) { ?>
+                                        <?php while ($row = mysqli_fetch_assoc($resultado)) { 
+                                            $telefonosArr = $objUsuario->obtenerTelefonosPorUsuario($row['IDUsuario']);
+                                            $textoTelefonos = !empty($telefonosArr) ? implode(', ', $telefonosArr) : 'Sin teléfonos';
+                                            ?>
                                             <tr>
                                                 <td><?php echo htmlspecialchars($row['IDUsuario']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['nombre']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['cedula']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['email']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['direccion']); ?></td>
+                                                <td><?php echo htmlspecialchars($textoTelefonos); ?></td>
                                                 <td>
                                                     <span class="badge bg-secondary">
                                                         <?php echo htmlspecialchars($row['ROL']); ?>
