@@ -1,4 +1,6 @@
 <?php
+require_once '../Clases/ClsLogin.php';
+ClsLogin::verificarSesion(); 
 require_once '../Clases/ClsUsuarios.php';
 
 // Si la petición viene por POST vía fetch, procesamos y devolvemos solo el modal

@@ -1,4 +1,6 @@
 <?php
+require_once '../Clases/ClsLogin.php';
+ClsLogin::verificarSesion();
 require_once '../Clases/ClsUsuarios.php';
 $objUsuario = new ClsUsuarios();
 

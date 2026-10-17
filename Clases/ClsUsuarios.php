@@ -74,7 +74,7 @@
                                     <p class="fs-5 text-dark mb-0">¡Usuario, rol y teléfonos registrados con éxito!</p>
                                 </div>
                                 <div class="modal-footer justify-content-center">
-                                    <a href="/CeiLab2026/Formularios/acceso.html" class="btn btn-success fw-bold px-4">Ir a Iniciar Sesión</a>
+                                    <a href="/CeiLab2026/Formularios/acceso.php" class="btn btn-success fw-bold px-4">Ir a Iniciar Sesión</a>
                                     <button type="button" class="btn btn-primary px-4 fw-bold" data-bs-dismiss="modal">volver</button>
                                 </div>
                             </div>

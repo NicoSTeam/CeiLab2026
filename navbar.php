@@ -1,3 +1,12 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verificamos si el usuario actual tiene el rol de Administrador ('1')
+$esAdministrador = isset($_SESSION['roles']) && in_array('1', $_SESSION['roles']);
+$estaLogueado = isset($_SESSION['IDUsuario']);
+?>
 <nav class="navbar navbar-expand-lg navbar-light py-lg-1 text-uppercase shadow-sm" style="background-color: #adbfdc;"> 
     <div class="container">    
         <picture>
@@ -13,7 +22,9 @@
         
         <div class="collapse navbar-collapse" id="navbarNavDropdown-3"> 
             <ul class="mb-2 mb-lg-0 ms-auto navbar-nav"> 
-                <li class="nav-item dropdown"> 
+                <!-- MÓDULO RESTRINGIDO: Solo visible para Administradores -->
+                <?php if ($esAdministrador): ?>
+                    <li class="nav-item dropdown"> 
                     <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Usuarios</a> 
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"> 
                         <a class="dropdown-item" href="/CeiLab2026/Formularios/registroUsuario.php">Registrar</a> 
@@ -22,6 +33,7 @@
                         <a class="dropdown-item" href="/CeiLab2026/Formularios/borrarUsuario.php">Eliminar</a> 
                     </div>                         
                 </li>
+                <?php endif; ?>
                 <li class="nav-item"> 
                     <a class="nav-link px-lg-3 py-lg-4" href="#">Equipos</a> 
                 </li>
@@ -39,11 +51,23 @@
                         <a class="dropdown-item" href="#">Prestamos</a> 
                         <a class="dropdown-item" href="#">Devoluciones</a> 
                     </div>                         
-                </li>                         
-            </ul>                 
-            <div class="ms-lg-3">
-                <a class="btn btn-primary pb-2 pe-4 ps-4 pt-2" href="/CeiLab2026/Formularios/acceso.html">Acceder</a>
-            </div>                 
+                </li> 
+                <!-- SECCIÓN DE AUTENTICACIÓN -->
+                <?php if ($estaLogueado): ?>
+                    <li class="nav-item px-lg-3 py-lg-4">
+                        <span class="nav-link fw-bold ms-2">Hola, <?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
+                    </li>
+                </ul>    
+                    <div class="ms-lg-3">
+                        <!-- Se agrega ?action=logout a la URL -->
+                        <a class="btn btn-primary pb-2 pe-4 ps-4 pt-2" href="/CeiLab2026/Clases/ClsLogin.php?action=logout">Cerrar Sesión</a>
+                    </div>
+                <?php else: ?>
+                </ul> 
+                    <div class="ms-lg-3">   
+                        <a class="btn btn-primary pb-2 pe-4 ps-4 pt-2" href="/CeiLab2026/Formularios/acceso.php">Acceder</a>
+                    </div>
+                <?php endif; ?>                                
         </div>                 
     </div>         
 </nav>

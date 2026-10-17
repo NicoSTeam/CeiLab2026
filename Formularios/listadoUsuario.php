@@ -1,3 +1,7 @@
+<?php
+require_once '../Clases/ClsLogin.php';
+ClsLogin::verificarSesion(); 
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>

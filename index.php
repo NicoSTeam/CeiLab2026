@@ -1,3 +1,10 @@
+<?php
+// Inicia la sesión sin forzar redirección si es invitado.
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once 'Clases/ClsLogin.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
