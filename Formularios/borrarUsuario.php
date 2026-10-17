@@ -96,12 +96,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fidusuario'])) {
                                             <th>Nombre</th>
                                             <th>Cédula</th>
                                             <th>Email</th>
+                                            <th>Dirección</th>
+                                            <th>Teléfonos</th>
                                             <th>Rol</th>
                                             <th class="text-center">Acción</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php while ($row = mysqli_fetch_assoc($resultadoListado)) { 
+                                            $telefonosArr = $objUsuario->obtenerTelefonosPorUsuario($row['IDUsuario']);
+                                            $textoTelefonos = !empty($telefonosArr) ? implode(', ', $telefonosArr) : 'Sin teléfonos';
                                             $rolArr = $objUsuario->obtenerRolesPorUsuario($row['IDUsuario']);
                                             $textorol = !empty($rolArr) ? implode(', ', $rolArr) : 'Sin rol asignado';
                                             
@@ -111,6 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fidusuario'])) {
                                                 <td><?php echo htmlspecialchars($row['nombre']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['cedula']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                                <td><?php echo htmlspecialchars($row['direccion']); ?></td>
+                                                <td><?php echo htmlspecialchars($textoTelefonos); ?></td>
                                                 <td><span class="badge bg-secondary"><?php echo htmlspecialchars($textorol); ?></span></td>
                                                 <td class="text-center">
                                                     <!-- Botón que activa el modal de confirmación -->

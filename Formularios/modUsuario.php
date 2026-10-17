@@ -110,12 +110,17 @@ if ($idModificar) {
                                                 <th>Nombre</th>
                                                 <th>Cédula</th>
                                                 <th>Email</th>
+                                                <th>Dirección</th>
+                                                <th>Teléfonos</th>
                                                 <th>Rol</th>
                                                 <th class="text-center">Acción</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php while ($row = mysqli_fetch_assoc($resultadoListado)) { 
+                                            $telefonosArr = $objUsuario->obtenerTelefonosPorUsuario($row['IDUsuario']);
+                                            $textoTelefonos = !empty($telefonosArr) ? implode(', ', $telefonosArr) : 'Sin teléfonos';
+ 
                                             $rolArr = $objUsuario->obtenerRolesPorUsuario($row['IDUsuario']);
                                             $textorol = !empty($rolArr) ? implode(', ', $rolArr) : 'Sin rol asignado';
                                             
@@ -125,6 +130,8 @@ if ($idModificar) {
                                                     <td><?php echo htmlspecialchars($row['nombre']); ?></td>
                                                     <td><?php echo htmlspecialchars($row['cedula']); ?></td>
                                                     <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['direccion']); ?></td>
+                                                    <td><?php echo htmlspecialchars($textoTelefonos); ?></td>
                                                     <td><span class="badge bg-secondary"><?php echo htmlspecialchars($textorol); ?></span></td>
                                                     <td class="text-center">
                                                         <a href="modUsuario.php?id=<?php echo $row['IDUsuario']; ?>" class="btn btn-sm btn-warning fw-bold px-3">Modificar</a>
