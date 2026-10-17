@@ -1,5 +1,6 @@
 <?php
-    include ("../Persistencia/connect.php");
+    
+    require_once __DIR__ . '/../Persistencia/connect.php';
 
    class ClsUsuarios {
     

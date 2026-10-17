@@ -1,5 +1,5 @@
 <?php
-include(__DIR__ . '/../Persistencia/connect.php');
+require_once __DIR__ . '/../Persistencia/connect.php';
 
 class ClsLogin {
 
