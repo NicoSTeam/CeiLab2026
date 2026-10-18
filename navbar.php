@@ -5,6 +5,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Verificamos si el usuario actual tiene el rol de Administrador ('1')
 $esAdministrador = isset($_SESSION['roles']) && in_array('1', $_SESSION['roles']);
+$esDot = isset($_SESSION['roles']) && in_array('2', $_SESSION['roles']);
+$esDocente = isset($_SESSION['roles']) && in_array('3', $_SESSION['roles']);
+$esEstudiante = isset($_SESSION['roles']) && in_array('4', $_SESSION['roles']);
 $estaLogueado = isset($_SESSION['IDUsuario']);
 ?>
 <nav class="navbar navbar-expand-lg navbar-light py-lg-1 text-uppercase shadow-sm" style="background-color: #adbfdc;"> 
