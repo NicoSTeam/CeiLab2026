@@ -22,7 +22,7 @@
                 
                 <div class="checkbox mb-3">
                     <label class="text-white">
-                        <input type="checkbox" value="remember-me"> Recuérdame
+                        <input type="checkbox" value="on" id="rememberMe" name="rememberMe"> Recuérdame
                     </label>
                 </div>
                 

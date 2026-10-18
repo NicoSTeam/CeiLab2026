@@ -40,6 +40,19 @@ class ClsLogin {
                             $rolesUsuario[] = $r['ROL'];
                         }
                         $_SESSION['roles'] = $rolesUsuario;
+                        
+                        //funcionalidad para remember me
+                        $rememberMe = isset($_POST['rememberMe']) && ($_POST['rememberMe'] === 'on' || $_POST['rememberMe'] === 'true' || $_POST['rememberMe'] == '1');
+
+                        if ($rememberMe) {
+                            // Guarda el email en una cookie por 30 días
+                            setcookie('remember_email', $email, time() + (86400 * 30), "/", "", false, true);
+                        } else {
+                            // Si no está marcado, elimina la cookie si existía
+                            if (isset($_COOKIE['remember_email'])) {
+                                setcookie('remember_email', '', time() - 3600, "/");
+                            }
+                        }
 
                         return '
                         <div class="modal fade" id="modalRespuesta" tabindex="-1">
