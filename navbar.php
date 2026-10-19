@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Verificamos si el usuario actual tiene el rol de Administrador ('1')
+// Verificamos si el usuario actual tiene rol
 $esAdministrador = isset($_SESSION['roles']) && in_array('1', $_SESSION['roles']);
 $esDot = isset($_SESSION['roles']) && in_array('2', $_SESSION['roles']);
 $esDocente = isset($_SESSION['roles']) && in_array('3', $_SESSION['roles']);
@@ -37,8 +37,19 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                     </div>                         
                 </li>
                 <?php endif; ?>
+                <?php if ($esAdministrador || $esDot || $esDocente): ?>
+                <li class="nav-item dropdown"> 
+                    <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Salas</a> 
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"> 
+                     <?php if ($esAdministrador): ?>
+                        <a class="dropdown-item" href="/CeiLab2026/Formularios/gestionarSala.php">Gestionar Salas</a> 
+                    <?php endif; ?>
+                        <a class="dropdown-item" href="/CeiLab2026/Formularios/disponibilidadSala.php">Ver Disponibilidad</a> 
+                    </div> 
+                </li>
+                <?php endif; ?>
                 <li class="nav-item"> 
-                    <a class="nav-link px-lg-3 py-lg-4" href="#">Equipos</a> 
+                    <a class="nav-link px-lg-3 py-lg-4" href="/CeiLab2026/Formularios/equipos.html">Equipos</a> 
                 </li>
                 <li class="nav-item dropdown"> 
                     <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Solicitar material</a> 
