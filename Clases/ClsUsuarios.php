@@ -10,11 +10,11 @@
             // Capturamos los datos enviados desde el formulario con sus prefijos 'f'
             $nombre = $_POST['fnombre'] ?? '';
             $cedula = $_POST['fcedula'] ?? '';
-            $email = $_POST['femail'] ?? '';
+            $email = $_POST['femail_registro'] ?? '';
             $direccion = $_POST['fdireccion'] ?? '';
             $observaciones = $_POST['fobservaciones'] ?? '';
             $rol = $_POST['frol'] ?? '';
-            $contrasenia = password_hash($_POST['fcontrasenia'] ?? '', PASSWORD_DEFAULT);
+            $contrasenia = password_hash($_POST['fcontrasenia_registro'] ?? '', PASSWORD_DEFAULT);
             $telefonos = $_POST['ftelefonos'] ?? []; 
 
             // Instanciamos la clase Conexion para obtener el link

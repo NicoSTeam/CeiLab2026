@@ -7,8 +7,8 @@ class ClsLogin {
     public function iniciarSesion() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             try {
-                $email = $_POST['femail'] ?? '';
-                $contrasenia = $_POST['fcontrasenia'] ?? '';
+                $email = $_POST['femailSesion'] ?? '';
+                $contrasenia = $_POST['fcontraseniaSesion'] ?? '';
 
                 $objConexion = new Conexion();
                 $link = $objConexion->conectar();
@@ -155,7 +155,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     exit();
 }
 // Disparador automático para peticiones AJAX enviadas por POST
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['femail'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['femailSesion'])) {
     $objLogin = new ClsLogin();
     echo $objLogin->iniciarSesion();
     exit;

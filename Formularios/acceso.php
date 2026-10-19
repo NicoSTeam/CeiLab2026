@@ -15,10 +15,10 @@
                 <h1 class="fw-normal h3 mb-3 text-white">Acceso</h1>
                 
                 <label for="inputEmail" class="visually-hidden">Email address</label>
-                <input type="email" id="inputEmail" class="form-control" name="femail" placeholder="Tu email" value="<?php echo htmlspecialchars($_COOKIE['remember_email'] ?? ''); ?>" required autofocus>
+                <input type="email" id="inputEmail" class="form-control" name="femailSesion" placeholder="Tu email" value="<?php echo htmlspecialchars($_COOKIE['remember_email'] ?? ''); ?>" required autofocus>
                 
                 <label for="inputPassword" class="visually-hidden">Password</label>
-                <input type="password" id="inputPassword" class="form-control" name="fcontrasenia" placeholder="Tu contraseña" required>
+                <input type="password" id="inputPassword" class="form-control" name="fcontraseniaSesion" placeholder="Tu contraseña" required>
                 
                 <div class="checkbox mb-3">
                     <label class="text-white">
