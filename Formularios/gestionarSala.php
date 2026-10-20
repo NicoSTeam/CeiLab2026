@@ -4,8 +4,6 @@ ClsLogin::verificarSesion();
 require_once '../Clases/ClsSala.php';
 
 $objSala = new ClsSala();
-$mensaje = "";
-$tipoAlerta = "";
 $salaEditando = null;
 
 // Procesar el formulario (Registrar o Modificar)
@@ -18,48 +16,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     if ($accion === 'registrar') {
         if (!empty($idSalon)) {
             if ($objSala->registrarSala($idSalon, $observaciones, $disponibilidad)) {
-                $mensaje = "¡Sala registrada exitosamente!";
-                $tipoAlerta = "success";
+                $_SESSION['mensaje'] = "¡Sala registrada exitosamente!";
+                $_SESSION['tipoAlerta'] = "success";
             } else {
-                $mensaje = "Error al registrar la sala (es posible que el ID ya exista).";
-                $tipoAlerta = "danger";
+                $_SESSION['mensaje'] = "Error al registrar la sala (es posible que el ID ya exista).";
+                $_SESSION['tipoAlerta'] = "danger";
             }
         } else {
-            $mensaje = "El identificador de la sala es obligatorio.";
-            $tipoAlerta = "warning";
+            $_SESSION['mensaje'] = "El identificador de la sala es obligatorio.";
+            $_SESSION['tipoAlerta'] = "warning";
         }
     } elseif ($accion === 'modificar') {
         $idOriginal = $_POST['idOriginal'] ?? '';
         if (!empty($idOriginal) && !empty($idSalon)) {
             if ($objSala->modificarSala($idOriginal, $idSalon, $observaciones, $disponibilidad)) {
-                $mensaje = "¡Sala modificada exitosamente!";
-                $tipoAlerta = "success";
+                $_SESSION['mensaje'] = "¡Sala modificada exitosamente!";
+                $_SESSION['tipoAlerta'] = "success";
             } else {
-                $mensaje = "Error al modificar la sala (es posible que el nuevo ID ya exista).";
-                $tipoAlerta = "danger";
+                $_SESSION['mensaje'] = "Error al modificar la sala (es posible que el nuevo ID ya exista).";
+                $_SESSION['tipoAlerta'] = "danger";
             }
         } else {
-            $mensaje = "Los campos de identificador son obligatorios.";
-            $tipoAlerta = "warning";
+            $_SESSION['mensaje'] = "Los campos de identificador son obligatorios.";
+            $_SESSION['tipoAlerta'] = "warning";
         }
     }
+    // Redirigir para limpiar el POST y evitar reenvíos al recargar
+    header("Location: gestionarSala.php");
+    exit();
 }
+
+// Procesar eliminación si se solicita vía GET
+if (isset($_GET['eliminar'])) {
+    $idEliminar = $_GET['eliminar'];
+    if ($objSala->eliminarSala($idEliminar)) {
+        $_SESSION['mensaje'] = "Sala eliminada correctamente.";
+        $_SESSION['tipoAlerta'] = "success";
+    } else {
+        $_SESSION['mensaje'] = "No se pudo eliminar la sala.";
+        $_SESSION['tipoAlerta'] = "danger";
+    }
+    // Redirigir para limpiar el parámetro ?eliminar de la URL
+    header("Location: gestionarSala.php");
+    exit();
+}
+
+// Recuperar mensaje flash de la sesión (si existe) y limpiarlo inmediatamente
+$mensaje = $_SESSION['mensaje'] ?? '';
+$tipoAlerta = $_SESSION['tipoAlerta'] ?? 'success';
+unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
 
 // Si se solicita editar, cargamos los datos de la sala
 if (isset($_GET['editar'])) {
     $salaEditando = $objSala->obtenerSalaPorId($_GET['editar']);
-}
-
-// Procesar eliminación si se solicita
-if (isset($_GET['eliminar'])) {
-    $idEliminar = $_GET['eliminar'];
-    if ($objSala->eliminarSala($idEliminar)) {
-        $mensaje = "Sala eliminada correctamente.";
-        $tipoAlerta = "success";
-    } else {
-        $mensaje = "No se pudo eliminar la sala.";
-        $tipoAlerta = "danger";
-    }
 }
 
 $listaSalas = $objSala->listarSalas();
@@ -193,8 +202,9 @@ $listaSalas = $objSala->listarSalas();
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-4 text-center">
-                        <p class="fs-5 mb-1">¿Estás seguro de que deseas eliminar la sala?</p>
-                        <p class="fw-bold fs-4 text-danger mb-0" id="nombreSalaEliminar"></p>
+                        <p class="fs-5 mb-0 text-center">
+                            ¿Estás seguro de que deseas eliminar la sala <span class="fw-bold text-danger" id="nombreSalaEliminar"></span>?
+                        </p>
                     </div>
                     <div class="modal-footer border-0 justify-content-center pb-4">
                         <button type="button" class="btn btn-secondary fw-bold rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
@@ -244,11 +254,11 @@ $listaSalas = $objSala->listarSalas();
                     var btnConfirmar = document.getElementById('btnConfirmarEliminar');
                     
                     nombreSalaElem.textContent = idSalon;
-                    btnConfirmar.href = 'gestionarSala.php?eliminar=' + encodeURIComponent(idSalon);
+                    btnConfirmar.href = 'gestionarSala.php?eliminar=' + idSalon;
                 });
             }
 
-            // Desplegar automáticamente el modal de notificación cuando haya un mensaje de respuesta
+            // Desplega automáticamente el modal de notificación cuando haya un mensaje de respuesta
             <?php if (!empty($mensaje)): ?>
                 var modalNoti = new bootstrap.Modal(document.getElementById('modalNotificacion'));
                 modalNoti.show();
