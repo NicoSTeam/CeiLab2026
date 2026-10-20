@@ -10,12 +10,15 @@ $esDocente = isset($_SESSION['roles']) && in_array('3', $_SESSION['roles']);
 $esEstudiante = isset($_SESSION['roles']) && in_array('4', $_SESSION['roles']);
 $estaLogueado = isset($_SESSION['IDUsuario']);
 ?>
-<nav class="navbar navbar-expand-lg navbar-light py-lg-1 text-uppercase shadow-sm" style="background-color: #adbfdc;"> 
+<style>
+    
+</style>
+<nav class="navbar navbar-expand-lg navbar-light py-lg-2 text-uppercase shadow" style="background-color: #adbfdc; border-bottom: 3px solid rgba(0, 0, 0, 0.15);"> 
     <div class="container">    
         <picture>
             <source type="image/webp">
             <a href="/CeiLab2026/index.php" class="d-inline-block text-decoration-none p-0 m-0">
-                <img src="/CeiLab2026/assets/img/Ceilab-logo.jpg" class="img-thumbnail" style="max-width: 180px; height: auto;" alt="Logo CeiLab">
+                <img src="/CeiLab2026/assets/img/Ceilab-logo.jpg" class="img-thumbnail shadow-sm rounded-3" style="max-width: 180px; height: auto;" alt="Logo CeiLab">
             </a>
         </picture>                
         
@@ -24,65 +27,64 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
         </button>                
         
         <div class="collapse navbar-collapse" id="navbarNavDropdown-3"> 
-            <ul class="mb-2 mb-lg-0 ms-auto navbar-nav"> 
+            <ul class="mb-2 mb-lg-0 ms-auto navbar-nav align-items-lg-center gap-1"> 
                 <!-- MÓDULO RESTRINGIDO: Solo visible para Administradores -->
                 <?php if ($esAdministrador): ?>
                     <li class="nav-item dropdown"> 
-                    <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Usuarios</a> 
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"> 
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/registroUsuario.php">Registrar</a> 
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/modUsuario.php">Modificar</a>
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/listadoUsuario.php">Listar</a> 
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/borrarUsuario.php">Eliminar</a> 
-                    </div>                         
+                    <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Usuarios</a> 
+                    <div class="dropdown-menu shadow border-0 rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink"> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/registroUsuario.php">Registrar</a> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/modUsuario.php">Modificar</a>
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/listadoUsuario.php">Listar</a> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/borrarUsuario.php">Eliminar</a> 
+                    </div>                        
                 </li>
                 <?php endif; ?>
                 <?php if ($esAdministrador || $esDot || $esDocente): ?>
                 <li class="nav-item dropdown"> 
-                    <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Salas</a> 
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"> 
-                     <?php if ($esAdministrador): ?>
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/gestionarSala.php">Gestionar Salas</a> 
+                    <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Salas</a> 
+                    <div class="dropdown-menu shadow border-0 rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink"> 
+                       <?php if ($esAdministrador): ?>
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/gestionarSala.php">Gestionar Salas</a> 
                     <?php endif; ?>
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/disponibilidadSala.php">Ver Disponibilidad</a> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/disponibilidadSala.php">Ver Disponibilidad</a> 
                     </div> 
                 </li>
                 <?php endif; ?>
                 <li class="nav-item"> 
-                    <a class="nav-link px-lg-3 py-lg-4" href="/CeiLab2026/Formularios/equipos.php">Equipos</a> 
+                    <a class="nav-link px-lg-3 py-lg-2 fw-bold text-dark rounded-3" href="/CeiLab2026/Formularios/equipos.php">Equipos</a> 
                 </li>
                 <li class="nav-item dropdown"> 
-                    <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Solicitar material</a> 
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2"> 
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/EnProgreso.php">Solicitar equipos</a> 
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/EnProgreso.php">Consultar estado de las solicitudes</a>
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/EnProgreso.php">Actualizar estado de las solicitudes</a>  
-                    </div>                         
+                    <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Solicitar material</a> 
+                    <div class="dropdown-menu shadow border-0 rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink2"> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Solicitar equipos</a> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Consultar estado de las solicitudes</a>
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Actualizar estado de las solicitudes</a>  
+                    </div>                        
                 </li>
                 <li class="nav-item dropdown"> 
-                    <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink3" role="button" data-bs-toggle="dropdown" aria-expanded="false">Registros</a> 
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink3"> 
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/EnProgreso.php">Reservas</a> 
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/EnProgreso.php">Prestamos</a> 
-                        <a class="dropdown-item" href="/CeiLab2026/Formularios/EnProgreso.php">Devoluciones</a> 
-                    </div>                         
+                    <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink3" role="button" data-bs-toggle="dropdown" aria-expanded="false">Registros</a> 
+                    <div class="dropdown-menu shadow border-0 rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink3"> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Reservas</a> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Prestamos</a> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Devoluciones</a> 
+                    </div>                        
                 </li> 
                 <!-- SECCIÓN DE AUTENTICACIÓN -->
                 <?php if ($estaLogueado): ?>
-                    <li class="nav-item px-lg-3 py-lg-4">
-                        <span class="nav-link fw-bold ms-2">Hola, <?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
+                    <li class="nav-item px-lg-2 py-lg-2">
+                        <span class="nav-link fw-bold text-dark ms-2 rounded-3 bg-white bg-opacity-50 px-3 py-2 shadow-sm">Hola, <?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
                     </li>
                 </ul>    
-                    <div class="ms-lg-3">
-                        <!-- Se agrega ?action=logout a la URL -->
-                        <a class="btn btn-primary pb-2 pe-4 ps-4 pt-2" href="/CeiLab2026/Clases/ClsLogin.php?action=logout">Cerrar Sesión</a>
+                    <div class="ms-lg-2">
+                        <a class="btn btn-primary fw-bold shadow-sm rounded-pill px-4 py-2" href="/CeiLab2026/Clases/ClsLogin.php?action=logout">Cerrar Sesión</a>
                     </div>
                 <?php else: ?>
                 </ul> 
-                    <div class="ms-lg-3">   
-                        <a class="btn btn-primary pb-2 pe-4 ps-4 pt-2" href="/CeiLab2026/Formularios/acceso.php">Acceder</a>
+                    <div class="ms-lg-2">   
+                        <a class="btn btn-primary fw-bold shadow-sm rounded-pill px-4 py-2" href="/CeiLab2026/Formularios/acceso.php">Acceder</a>
                     </div>
-                <?php endif; ?>                                
-        </div>                 
-    </div>         
+                <?php endif; ?>                                 
+        </div>            
+    </div>        
 </nav>

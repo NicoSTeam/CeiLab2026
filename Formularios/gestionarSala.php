@@ -24,12 +24,12 @@ require_once '../Clases/ClsUsuarios.php';
         
         <!-- Barra de navegación -->
         <?php include '../navbar.php'; ?> 
-
+        <section class="hero-section flex-fill pb-5 pt-5">
         
 
 
 
-
+        </section>
         <!-- Footer -->
         <?php include '../footer.php'; ?>
         
