@@ -108,5 +108,31 @@ class ClsSala {
             return false;
         }
     }
+    // Método para listar salas con filtros 
+    public function listarSalasFiltradas($idSalon = '', $disponibilidad = '') {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+
+        $sql = "SELECT IDSalon, Observaciones, Disponibilidad FROM sala_ceilab WHERE 1=1";
+        
+        if (!empty($idSalon)) {
+            $idSalon = mysqli_real_escape_string($link, trim($idSalon));
+            $sql .= " AND IDSalon LIKE '%$idSalon%'";
+        }
+        
+        if ($disponibilidad !== '') {
+            $disponibilidad = mysqli_real_escape_string($link, trim($disponibilidad));
+            $sql .= " AND Disponibilidad = '$disponibilidad'";
+        }
+
+        $resultado = mysqli_query($link, $sql);
+        $salas = [];
+        if ($resultado) {
+            while ($row = mysqli_fetch_assoc($resultado)) {
+                $salas[] = $row;
+            }
+        }
+        return $salas;
+    }
 }    
 ?>
