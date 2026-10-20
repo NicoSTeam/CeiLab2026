@@ -1,3 +1,34 @@
+/* Efecto de profundidad y relieve */
+.navbar-nav .nav-link {
+    transition: all 0.2s ease-in-out;
+}
+.navbar-nav .nav-link:hover {
+   background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    transform: translateY(-2px);
+}
+/* Efecto en las opciones del menú */
+.dropdown-item {
+  transition: all 0.15s ease-in-out;
+}
+.dropdown-item:hover {
+    background-color: #e2e8f0;
+    transform: translateX(3px);
+}
+.navbar .img-thumbnail {
+    transition: all 0.2s ease-in-out;
+}
+.navbar .img-thumbnail:hover {
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    transform: translateY(-2px);
+}
+.dropdown-menu {
+    background-color: #adbfdc;
+}
+.dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    transform: translateX(3px);
+}
 .hero-section {
     /* 1. Capa azul semitransparente (RGBA: Rojo, Verde, Azul, Opacidad) */
     /* Ajusta el 0.6 final para dar más o menos transparencia (entre 0.0 y 1.0) */

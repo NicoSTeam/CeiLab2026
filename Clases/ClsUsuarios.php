@@ -7,7 +7,7 @@
     public function registrarUsuario() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
-            // Capturamos los datos enviados desde el formulario con sus prefijos 'f'
+            // Capturamos los datos enviados desde el formulario
             $nombre = $_POST['fnombre'] ?? '';
             $cedula = $_POST['fcedula'] ?? '';
             $email = $_POST['femail'] ?? '';
@@ -22,12 +22,12 @@
             $link = $objConexion->conectar();
 
             // Limpiamos los datos para evitar inyecciones SQL básicas en MySQLi
-            $nombre = mysqli_real_escape_string($link, $nombre);
-            $cedula = mysqli_real_escape_string($link, $cedula);
-            $email = mysqli_real_escape_string($link, $email);
-            $direccion = mysqli_real_escape_string($link, $direccion);
-            $observaciones = mysqli_real_escape_string($link, $observaciones);
-            $rol = mysqli_real_escape_string($link, $rol);
+            $nombre = mysqli_real_escape_string($link, trim($nombre));
+            $cedula = mysqli_real_escape_string($link, trim($cedula));
+            $email = mysqli_real_escape_string($link, trim($email));
+            $direccion = mysqli_real_escape_string($link, trim($direccion));
+            $observaciones = mysqli_real_escape_string($link, trim($observaciones));
+            $rol = mysqli_real_escape_string($link, trim($rol));
 
             //SQL de inserción
             $sql = "INSERT INTO usuario (nombre, cedula, email, direccion, observaciones, contraseña) 
@@ -222,12 +222,12 @@
                 $objConexion = new Conexion();
                 $link = $objConexion->conectar();
 
-                $idUsuario = mysqli_real_escape_string($link, $idUsuario);
-                $nombre = mysqli_real_escape_string($link, $nombre);
-                $cedula = mysqli_real_escape_string($link, $cedula);
-                $email = mysqli_real_escape_string($link, $email);
-                $direccion = mysqli_real_escape_string($link, $direccion);
-                $observaciones = mysqli_real_escape_string($link, $observaciones);
+                $idUsuario = mysqli_real_escape_string($link, trim($idUsuario));
+                $nombre = mysqli_real_escape_string($link, trim($nombre));
+                $cedula = mysqli_real_escape_string($link, trim($cedula));
+                $email = mysqli_real_escape_string($link, trim($email));
+                $direccion = mysqli_real_escape_string($link, trim($direccion));
+                $observaciones = mysqli_real_escape_string($link, trim($observaciones));
 
                 //Actualiza datos de la tabla usuario
                 $sqlUsuario = "UPDATE usuario SET nombre='$nombre', cedula='$cedula', email='$email', direccion='$direccion', observaciones='$observaciones' WHERE IDUsuario='$idUsuario'";
