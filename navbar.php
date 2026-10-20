@@ -49,21 +49,22 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                 </li>
                 <?php endif; ?>
                 <li class="nav-item"> 
-                    <a class="nav-link px-lg-3 py-lg-4" href="/CeiLab2026/Formularios/equipos.html">Equipos</a> 
+                    <a class="nav-link px-lg-3 py-lg-4" href="/CeiLab2026/Formularios/equipos.php">Equipos</a> 
                 </li>
                 <li class="nav-item dropdown"> 
                     <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Solicitar material</a> 
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2"> 
-                        <a class="dropdown-item" href="#">Equipos</a> 
-                        <a class="dropdown-item" href="#">Salas</a> 
+                        <a class="dropdown-item" href="/CeiLab2026/Formularios/EnProgreso.php">Solicitar equipos</a> 
+                        <a class="dropdown-item" href="/CeiLab2026/Formularios/EnProgreso.php">Consultar estado de las solicitudes</a>
+                        <a class="dropdown-item" href="/CeiLab2026/Formularios/EnProgreso.php">Actualizar estado de las solicitudes</a>  
                     </div>                         
                 </li>
                 <li class="nav-item dropdown"> 
                     <a class="nav-link px-lg-3 py-lg-4 dropdown-toggle" href="#" id="navbarDropdownMenuLink3" role="button" data-bs-toggle="dropdown" aria-expanded="false">Registros</a> 
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink3"> 
-                        <a class="dropdown-item" href="#">Reservas</a> 
-                        <a class="dropdown-item" href="#">Prestamos</a> 
-                        <a class="dropdown-item" href="#">Devoluciones</a> 
+                        <a class="dropdown-item" href="/CeiLab2026/Formularios/EnProgreso.php">Reservas</a> 
+                        <a class="dropdown-item" href="/CeiLab2026/Formularios/EnProgreso.php">Prestamos</a> 
+                        <a class="dropdown-item" href="/CeiLab2026/Formularios/EnProgreso.php">Devoluciones</a> 
                     </div>                         
                 </li> 
                 <!-- SECCIÓN DE AUTENTICACIÓN -->
