@@ -46,9 +46,23 @@ class ClsSala {
         $link = $objConexion->conectar();
 
         $idSalon = mysqli_real_escape_string($link, $idSalon);
-        $sql = "DELETE FROM sala_ceilab WHERE IDSalon = '$idSalon'";
-        
-        return mysqli_query($link, $sql);
+
+        //Verificar si hay equipos asociados a esta sala
+        $sqlCheck = "SELECT COUNT(*) as total FROM equipo WHERE IDSala_ceilab = '$idSalon'";
+        $resCheck = mysqli_query($link, $sqlCheck);
+        if ($resCheck) {
+            $row = mysqli_fetch_assoc($resCheck);
+            if ($row['total'] > 0) {
+                return "foreign_key"; //  Tiene equipos asociados
+            }
+        }
+
+        try {
+            $sql = "DELETE FROM sala_ceilab WHERE IDSalon = '$idSalon'";
+            return mysqli_query($link, $sql);
+        } catch (mysqli_sql_exception $e) {
+            return false;
+        }
     }
 
     public function obtenerSalaPorId($idSalon) {

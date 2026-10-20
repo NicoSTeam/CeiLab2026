@@ -49,13 +49,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
 // Procesar eliminación si se solicita vía GET
 if (isset($_GET['eliminar'])) {
     $idEliminar = $_GET['eliminar'];
-    if ($objSala->eliminarSala($idEliminar)) {
+    $resultadoEliminar = $objSala->eliminarSala($idEliminar);
+
+    if ($resultadoEliminar === true) {
         $_SESSION['mensaje'] = "Sala eliminada correctamente.";
         $_SESSION['tipoAlerta'] = "success";
+    } elseif ($resultadoEliminar === "foreign_key") {
+        $_SESSION['mensaje'] = "No se puede eliminar la sala porque tiene equipos asociados.";
+        $_SESSION['tipoAlerta'] = "warning";
     } else {
         $_SESSION['mensaje'] = "No se pudo eliminar la sala.";
         $_SESSION['tipoAlerta'] = "danger";
     }
+    
     // Redirigir para limpiar el parámetro ?eliminar de la URL
     header("Location: gestionarSala.php");
     exit();
@@ -215,21 +221,26 @@ $listaSalas = $objSala->listarSalas();
         </div>
 
         <!-- MODAL DE NOTIFICACIÓN DE RESPUESTA -->
-        <?php if (!empty($mensaje)): ?>
+        <!-- MODAL DE NOTIFICACIÓN DE RESPUESTA -->
+        <?php if (!empty($mensaje)): 
+            $esWarning = ($tipoAlerta === 'warning');
+            $claseTextoHeader = $esWarning ? 'text-dark' : 'text-white';
+            $claseBotonCierre = $esWarning ? '' : 'btn-close-white';
+        ?>
         <div class="modal fade" id="modalNotificacion" tabindex="-1" aria-labelledby="modalNotificacionLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow-lg rounded-4">
-                    <div class="modal-header bg-<?php echo $tipoAlerta; ?> text-white border-0 rounded-top-4">
+                    <div class="modal-header bg-<?php echo $tipoAlerta; ?> <?php echo $claseTextoHeader; ?> border-0 rounded-top-4">
                         <h5 class="modal-title fw-bold" id="modalNotificacionLabel">
                             <?php echo ($tipoAlerta === 'success') ? '¡Operación Exitosa!' : 'Atención'; ?>
                         </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close <?php echo $claseBotonCierre; ?>" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-4 text-center">
                         <p class="fs-5 mb-0"><?php echo htmlspecialchars($mensaje); ?></p>
                     </div>
                     <div class="modal-footer border-0 justify-content-center pb-4">
-                        <button type="button" class="btn btn-<?php echo $tipoAlerta; ?> fw-bold rounded-pill px-4 text-white" data-bs-dismiss="modal">Aceptar</button>
+                        <button type="button" class="btn btn-<?php echo $tipoAlerta; ?> fw-bold rounded-pill px-4 <?php echo $esWarning ? 'text-dark' : 'text-white'; ?>" data-bs-dismiss="modal">Aceptar</button>
                     </div>
                 </div>
             </div>
