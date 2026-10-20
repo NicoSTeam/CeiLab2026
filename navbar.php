@@ -31,19 +31,19 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                 <!-- MÓDULO RESTRINGIDO: Solo visible para Administradores -->
                 <?php if ($esAdministrador): ?>
                     <li class="nav-item dropdown"> 
-                    <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Usuarios</a> 
-                    <div class="dropdown-menu shadow border-0 rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink"> 
+                    <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Usuarios</a> 
+                    <div class="dropdown-menu shadow border border-3 border-white rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink"> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/registroUsuario.php">Registrar</a> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/modUsuario.php">Modificar</a>
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/listadoUsuario.php">Listar</a> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/borrarUsuario.php">Eliminar</a> 
                     </div>                        
-                </li>
+                    </li>
                 <?php endif; ?>
                 <?php if ($esAdministrador || $esDot || $esDocente): ?>
                 <li class="nav-item dropdown"> 
                     <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Salas</a> 
-                    <div class="dropdown-menu shadow border-0 rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink"> 
+                    <div class="dropdown-menu shadow border border-3 border-white rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink"> 
                        <?php if ($esAdministrador): ?>
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/gestionarSala.php">Gestionar Salas</a> 
                     <?php endif; ?>
@@ -56,7 +56,7 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                 </li>
                 <li class="nav-item dropdown"> 
                     <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Solicitar material</a> 
-                    <div class="dropdown-menu shadow border-0 rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink2"> 
+                    <div class="dropdown-menu shadow border border-3 border-white rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink2"> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Solicitar equipos</a> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Consultar estado de las solicitudes</a>
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Actualizar estado de las solicitudes</a>  
@@ -64,7 +64,7 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                 </li>
                 <li class="nav-item dropdown"> 
                     <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink3" role="button" data-bs-toggle="dropdown" aria-expanded="false">Registros</a> 
-                    <div class="dropdown-menu shadow border-0 rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink3"> 
+                    <div class="dropdown-menu shadow border border-3 border-white rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink3"> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Reservas</a> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Prestamos</a> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Devoluciones</a> 
