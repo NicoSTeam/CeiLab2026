@@ -152,7 +152,8 @@
         // Usamos LEFT JOIN y unimos los campos del usuario, tomando el rol de mayor importancia con MIN()
         $sql = "SELECT u.IDUsuario, u.nombre, u.cedula, u.email, u.direccion, u.observaciones, MIN(r.ROL) AS ROL 
                 FROM usuario u 
-                LEFT JOIN rol r ON u.IDUsuario = r.IDUsuario WHERE 1=1";
+                LEFT JOIN rol r ON u.IDUsuario = r.IDUsuario 
+                WHERE u.activo = 1";
 
         // Aplicamos los filtros 
         if (!empty($filtroNombre)) {
@@ -346,16 +347,8 @@
                 $link = $objConexion->conectar();
                 $idUsuario = mysqli_real_escape_string($link, $idUsuario);
 
-                //Borrar roles vinculados
-                $sqlDelRol = "DELETE FROM rol WHERE IDUsuario = '$idUsuario'";
-                mysqli_query($link, $sqlDelRol);
-
-                //Borrar teléfonos vinculados
-                $sqlDelPhones = "DELETE FROM Telefonos WHERE IDUsuario = '$idUsuario'";
-                mysqli_query($link, $sqlDelPhones);
-
-                //Borrar el usuario 
-                $sqlUsuario = "DELETE FROM usuario WHERE IDUsuario = '$idUsuario'";
+                // Baja lógica 
+                $sqlUsuario = "UPDATE usuario SET activo = 0 WHERE IDUsuario = '$idUsuario'";
                 $resultado = $objConexion->ejecutarSQL($sqlUsuario);
 
                 if ($resultado) {
@@ -364,11 +357,11 @@
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content shadow border-0">
                                 <div class="modal-header bg-success text-white">
-                                    <h5 class="modal-title fw-bold">¡Eliminación Exitosa!</h5>
+                                    <h5 class="modal-title fw-bold">¡Baja Lógica Exitosa!</h5>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body text-center py-4">
-                                    <p class="fs-5 text-dark mb-0">¡El usuario ha sido eliminado del sistema correctamente!</p>
+                                    <p class="fs-5 text-dark mb-0">¡El usuario ha sido dado de baja correctamente del sistema!</p>
                                 </div>
                                 <div class="modal-footer justify-content-center">
                                     <a href="borrarUsuario.php" class="btn btn-success fw-bold px-4">Aceptar</a>
@@ -383,11 +376,11 @@
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content shadow border-0">
                                 <div class="modal-header bg-danger text-white">
-                                    <h5 class="modal-title fw-bold">Error de Eliminación</h5>
+                                    <h5 class="modal-title fw-bold">Error de Baja</h5>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body text-center py-4">
-                                    <p class="fs-5 text-dark mb-0">No se pudo eliminar el usuario.</p>
+                                    <p class="fs-5 text-dark mb-0">No se pudo realizar la baja lógica del usuario.</p>
                                     <small class="text-muted">' . htmlspecialchars($errorMsg) . '</small>
                                 </div>
                                 <div class="modal-footer justify-content-center">
