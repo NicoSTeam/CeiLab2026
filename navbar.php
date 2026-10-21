@@ -57,7 +57,7 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                     <div class="dropdown-menu shadow border border-3 border-white rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink2"> 
                         <?php if ($esAdministrador || $esDot || $esDocente ): ?>
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/registrarEquipo.php">Registrar equipos</a> 
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Modificar equipos</a>
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/modEquipo.php">Modificar equipos</a>
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Eliminar equipos</a>  
                         <?php endif; ?>
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Consultar equipos</a> 
