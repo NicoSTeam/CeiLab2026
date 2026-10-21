@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-10-2026 a las 11:55:02
+-- Tiempo de generación: 21-10-2026 a las 17:44:09
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -41,10 +41,7 @@ CREATE TABLE `equipo` (
 --
 
 INSERT INTO `equipo` (`IDEquipo`, `Estado`, `Observaciones`, `Tipo`, `IDSala_ceilab`, `Disponibilidad`) VALUES
-(1, 'Inserbible', 'Pantalla destruida', 'Ceibalita', 1, 1),
-(2, 'Aceptable', '  ', 'Ceibalita', 1, 2),
-(3, 'Fuera de servicio', 'Problema desconocido  ', 'Impresora 3D', 1, 2),
-(4, 'Aceptable', '    ', 'DRON', 1, 1);
+(5, 'Disponible', 'Primer ceibalita', 'Ceibalita', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -92,7 +89,12 @@ CREATE TABLE `rol` (
 
 INSERT INTO `rol` (`IDUsuario`, `ROL`) VALUES
 (12, 1),
-(15, 2);
+(15, 2),
+(15, 3),
+(49, 1),
+(50, 2),
+(50, 3),
+(51, 4);
 
 -- --------------------------------------------------------
 
@@ -111,7 +113,8 @@ CREATE TABLE `sala_ceilab` (
 --
 
 INSERT INTO `sala_ceilab` (`IDSalon`, `Observaciones`, `Disponibilidad`) VALUES
-(1, 'Salon inexistente', 1);
+(1, 'Salon inexistente', 1),
+(2, '', 0);
 
 -- --------------------------------------------------------
 
@@ -136,8 +139,19 @@ CREATE TABLE `solicitud_material` (
 
 CREATE TABLE `telefonos` (
   `IDUsuario` int(11) NOT NULL,
-  `Telefono` int(11) NOT NULL
+  `Telefono` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `telefonos`
+--
+
+INSERT INTO `telefonos` (`IDUsuario`, `Telefono`) VALUES
+(49, '42894578'),
+(49, '9999999'),
+(50, '0912323237'),
+(50, '42222223'),
+(51, '42222223');
 
 -- --------------------------------------------------------
 
@@ -159,23 +173,27 @@ CREATE TABLE `tiene_equipos` (
 CREATE TABLE `usuario` (
   `IDUsuario` int(10) NOT NULL,
   `Nombre` varchar(30) DEFAULT NULL,
-  `Contraseña` varchar(50) DEFAULT NULL,
+  `Contraseña` varchar(61) DEFAULT NULL,
   `Email` varchar(30) DEFAULT NULL,
   `Direccion` varchar(50) NOT NULL,
   `Faltas` int(10) DEFAULT NULL,
   `Observaciones` varchar(50) NOT NULL,
   `Fecha_creacion` date DEFAULT NULL,
   `Crador_IDUsuario` int(11) DEFAULT NULL,
-  `cedula` int(8) NOT NULL
+  `cedula` int(8) NOT NULL,
+  `activo` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`IDUsuario`, `Nombre`, `Contraseña`, `Email`, `Direccion`, `Faltas`, `Observaciones`, `Fecha_creacion`, `Crador_IDUsuario`, `cedula`) VALUES
-(12, 'Nico', '$2y$10$pyFbPskQCYoR96og3Jp4r.Pe9mJar3T1PEGd0ooIcSP', 'a@a', 'lejos', NULL, 'No duerme', NULL, NULL, 48850556),
-(15, 'Gonzalo', '$2y$10$vNcNqpKojJyHoSeKBwvzauhxDe3D6XhscbZ7o72zeqj', 'a@a', 'lejos', NULL, 'No duerme', NULL, NULL, 5555);
+INSERT INTO `usuario` (`IDUsuario`, `Nombre`, `Contraseña`, `Email`, `Direccion`, `Faltas`, `Observaciones`, `Fecha_creacion`, `Crador_IDUsuario`, `cedula`, `activo`) VALUES
+(12, 'Nico', '$2y$10$pyFbPskQCYoR96og3Jp4r.Pe9mJar3T1PEGd0ooIcSP', 'nico@gmail.com', 'lejos', NULL, 'No duerme', NULL, NULL, 48850556, 1),
+(15, 'Gonzalo', '$2y$10$vNcNqpKojJyHoSeKBwvzauhxDe3D6XhscbZ7o72zeqj', 'a@a', 'lejos', NULL, 'No duerme', NULL, NULL, 5555, 1),
+(49, 'Nico', '$2y$10$4oOilxbMg.B5h2Pm17f2EebI6E1x/dwLiyhhNVNxmsBLq.q/Pf9XW', 'nico1@gmail.com', 'lejos', NULL, 'No duerme', NULL, NULL, 48850556, 1),
+(50, 'Eduardo', '$2y$10$DPp0zZ45PF.svnYYloNo7.5xsJcmp6PZe8Stt8lZ3hF9d0Hc37Fvm', 'eduardo@gmail.com', 'cerp', NULL, 'Es Profe', NULL, NULL, 12345678, 0),
+(51, 'Estudiante', '$2y$10$X2J4KZ9MOle9R566qUHDueJWJzD0v0z3PPlqVtLmywELPih1VpdQW', 'estudiante@gmail.com', 'su casa', NULL, 'va a clase', NULL, NULL, 12345678, 1);
 
 --
 -- Índices para tablas volcadas
@@ -246,10 +264,16 @@ ALTER TABLE `usuario`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `equipo`
+--
+ALTER TABLE `equipo`
+  MODIFY `IDEquipo` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `IDUsuario` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `IDUsuario` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- Restricciones para tablas volcadas
