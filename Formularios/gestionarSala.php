@@ -221,7 +221,6 @@ $listaSalas = $objSala->listarSalas();
         </div>
 
         <!-- MODAL DE NOTIFICACIÓN DE RESPUESTA -->
-        <!-- MODAL DE NOTIFICACIÓN DE RESPUESTA -->
         <?php if (!empty($mensaje)): 
             $esWarning = ($tipoAlerta === 'warning');
             $claseTextoHeader = $esWarning ? 'text-dark' : 'text-white';
