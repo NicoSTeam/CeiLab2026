@@ -181,8 +181,8 @@ $listaSalas = $objSala->listarSalas();
                                                 </td>
                                                 <td><?php echo htmlspecialchars($sala['Observaciones']); ?></td>
                                                 <td class="text-center">
-                                                    <a href="gestionarSala.php?editar=<?php echo urlencode($sala['IDSalon']); ?>" class="btn btn-sm btn-outline-warning text-dark fw-bold px-3 me-1">Modificar</a>
-                                                    <button type="button" class="btn btn-sm btn-outline-danger fw-bold px-3" data-bs-toggle="modal" data-bs-target="#modalEliminar" data-idsalon="<?php echo htmlspecialchars($sala['IDSalon']); ?>">
+                                                    <a href="gestionarSala.php?editar=<?php echo urlencode($sala['IDSalon']); ?>" class="btn btn-sm btn-outline-warning text-dark rounded-pill fw-bold px-3 me-1">Modificar</a>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger fw-bold px-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#modalEliminar" data-idsalon="<?php echo htmlspecialchars($sala['IDSalon']); ?>">
                                                         Eliminar
                                                     </button>
                                                 </td>

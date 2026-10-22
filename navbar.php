@@ -58,12 +58,12 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                 <li class="nav-item dropdown"> 
                     <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Equipos</a> 
                     <div class="dropdown-menu shadow border border-3 border-white rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink2"> 
-                        <?php if ($esAdministrador || $esDot || $esDocente ): ?>
+                        <?php if ($esAdministrador || $esDot ): ?>
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/registrarEquipo.php">Registrar equipos</a> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/modEquipo.php">Modificar equipos</a>
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Eliminar equipos</a>  
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/borrarEquipo.php">Eliminar equipos</a>  
                         <?php endif; ?>
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Consultar equipos</a> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/listadoEquipos.php">Consultar equipos</a> 
                     </div>                        
                 </li>
                 <?php endif; ?>
