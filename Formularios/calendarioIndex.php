@@ -3,6 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once __DIR__ . '/../Clases/ClsCalendarioDOT.php';
+
 $anioIndex = isset($_GET['anio_dot']) ? (int)$_GET['anio_dot'] : (int)date('Y');
 $mesIndex = isset($_GET['mes_dot']) ? (int)$_GET['mes_dot'] : (int)date('m');
 $diaActualIndex = (int)date('j');
@@ -14,12 +16,14 @@ $mesesEspañolIndex = [
 ];
 $nombreMesIndex = $mesesEspañolIndex[$mesIndex] ?? '';
 
-// Obtenemos los horarios registrados por el DOT en la sesión
-$horariosDOTRegistrados = $_SESSION['horarios_dot'] ?? [];
+// Consulta los horarios registrados en la Base de Datos para el mes actual
+$objCalendarioDOT = new ClsCalendarioDOT();
+$horariosDOTRegistrados = $objCalendarioDOT->obtenerHorariosMes($anioIndex, $mesIndex);
 ?>
 
 <div class="bg-white rounded-4 p-4 shadow-sm w-100">
     
+    <!-- Cabecera del mes -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="fw-bold text-dark h5 mb-0">Calendario del DOT</h4>
         <div class="btn-group shadow-sm">
@@ -29,9 +33,9 @@ $horariosDOTRegistrados = $_SESSION['horarios_dot'] ?? [];
             $mesSig = $mesIndex + 1; $anioSig = $anioIndex;
             if ($mesSig > 12) { $mesSig = 1; $anioSig++; }
             ?>
-            <a href="?anio_dot=<?php echo $anioAnt; ?>&mes_dot=<?php echo $mesAnt; ?>" class="btn btn-outline-dark btn-sm fw-bold px-2 py-1">◀</a>
+            <a href="?anio_dot=<?php echo $anioAnt; ?>&mes_dot=<?php echo $mesAnt; ?>" class="btn btn-outline-dark btn-sm fw-bold px-2 py-1" title="Mes Anterior">◀</a>
             <a href="index.php" class="btn btn-outline-dark btn-sm fw-bold px-2 py-1" title="Mes actual">Hoy</a>
-            <a href="?anio_dot=<?php echo $anioSig; ?>&mes_dot=<?php echo $mesSig; ?>" class="btn btn-outline-dark btn-sm fw-bold px-2 py-1">▶</a>
+            <a href="?anio_dot=<?php echo $anioSig; ?>&mes_dot=<?php echo $mesSig; ?>" class="btn btn-outline-dark btn-sm fw-bold px-2 py-1" title="Mes Siguiente">▶</a>
         </div>
     </div>
 
@@ -39,11 +43,12 @@ $horariosDOTRegistrados = $_SESSION['horarios_dot'] ?? [];
         <?php echo "$nombreMesIndex $anioIndex"; ?>
     </div>
 
+    <!-- Tabla de días del mini calendario -->
     <div class="table-responsive">
         <table class="table table-bordered text-center align-middle mb-0 w-100">
             <thead class="table-dark">
                 <tr>
-                    <th>L</th><th>M</th><th>X</th><th>J</th><th>V</th><th>S</th><th>D</th>
+                    <th>LU</th><th>MA</th><th>MI</th><th>JU</th><th>VI</th><th>SA</th><th>DO</th>
                 </tr>
             </thead>
             <tbody>
@@ -67,7 +72,7 @@ $horariosDOTRegistrados = $_SESSION['horarios_dot'] ?? [];
                     if ($tieneHorario) {
                         $cadenasHoras = [];
                         foreach ($horariosDOTRegistrados[$fechaCelda] as $h) {
-                            $cadenasHoras[] = $h['inicio'] . '-' . $h['fin'];
+                            $cadenasHoras[] = $h['inicio'] . '-' . $h['fin'] . ' (' . $h['nombre_dot'] . ')';
                         }
                         $tooltipTexto = implode(', ', $cadenasHoras);
                     }
@@ -107,16 +112,15 @@ $horariosDOTRegistrados = $_SESSION['horarios_dot'] ?? [];
             </tbody>
         </table>
     </div>
-
-    <div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="mt-3 text-center">
         <span class="text-muted" style="font-size: 11px;">
-            <span class="badge bg-success bg-opacity-75 p-1"> </span> Pase el cursor sobre los días marcados
+            <span class="badge bg-success bg-opacity-75 p-1"> </span> Pase el cursor sobre los días marcados para ver el horario
         </span>
-        <a href="Formularios/calendarioDOT.php" class="fw-bold text-primary text-decoration-none small">Ver más... →</a>
     </div>
 
 </div>
 
+<!-- Script para inicializar los Tooltips de Bootstrap -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

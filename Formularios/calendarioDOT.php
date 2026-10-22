@@ -1,18 +1,19 @@
 <?php
-// Aseguramos que la sesión esté iniciada para persistir los horarios y verificar acceso
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once '../Clases/ClsLogin.php';
 ClsLogin::verificarSesion(); 
 
-// Inicializar el arreglo en sesión para los horarios del DOT si no existe
-if (!isset($_SESSION['horarios_dot'])) {
-    $_SESSION['horarios_dot'] = [];
-}
+require_once '../Clases/ClsCalendarioDOT.php';
+$objCalendarioDOT = new ClsCalendarioDOT();
 
-// Procesar el formulario cuando el DOT agrega un nuevo horario
+// Capturar el ID del usuario actualmente autenticado en la sesión
+$idUsuario = $_SESSION['IDUsuario'] ?? null;
+
+//PROCESA Y AGREGA NUEVO HORARIO
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'agregar_horario') {
+
     $anioPost = (int)$_POST['anio'];
     $mesPost = (int)$_POST['mes'];
     $diaPost = (int)$_POST['dia'];
@@ -20,18 +21,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     $horaFin = $_POST['hora_fin'] ?? '';
     $descripcion = trim($_POST['descripcion'] ?? 'Presencial en Sala');
 
-    // Llave única para la fecha (Ej: "2026-10-25")
-    $fechaKey = sprintf("%04d-%02d-%02d", $anioPost, $mesPost, $diaPost);
+    $fechaDB = sprintf("%04d-%02d-%02d", $anioPost, $mesPost, $diaPost);
 
-    if (!empty($horaInicio) && !empty($horaFin)) {
-        $_SESSION['horarios_dot'][$fechaKey][] = [
-            'inicio' => $horaInicio,
-            'fin' => $horaFin,
-            'descripcion' => !empty($descripcion) ? $descripcion : 'Presencial en Sala'
-        ];
+    if ($idUsuario && !empty($horaInicio) && !empty($horaFin)) {
+        $objCalendarioDOT->registrarHorario($idUsuario, $fechaDB, $horaInicio, $horaFin, $descripcion);
     }
 
-    // Redirigir para evitar reenvío de formulario y mantener el día seleccionado
+    header("Location: calendarioDOT.php?anio=$anioPost&mes=$mesPost&dia=$diaPost");
+    exit();
+}
+
+//PROCESA Y ELIMINA HORARIO
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'eliminar_horario') {
+    $idDot = (int)$_POST['idDot'];
+    $anioPost = (int)$_POST['anio'];
+    $mesPost = (int)$_POST['mes'];
+    $diaPost = (int)$_POST['dia'];
+
+    if ($idDot > 0) {
+        $objCalendarioDOT->eliminarHorario($idDot);
+    }
+
     header("Location: calendarioDOT.php?anio=$anioPost&mes=$mesPost&dia=$diaPost");
     exit();
 }
@@ -41,12 +51,12 @@ $anioActual = date('Y');
 $mesActual = date('m');
 $diaActual = date('j');
 
-// Capturar año, mes y día desde la URL
+// Captura año, mes y día desde la URL
 $anio = isset($_GET['anio']) ? (int)$_GET['anio'] : (int)$anioActual;
 $mes = isset($_GET['mes']) ? (int)$_GET['mes'] : (int)$mesActual;
 $diaSeleccionado = isset($_GET['dia']) ? (int)$_GET['dia'] : null;
 
-// Validar límites de meses y años
+// Valida límites de meses y años
 if ($mes < 1) { $mes = 12; $anio--; } 
 elseif ($mes > 12) { $mes = 1; $anio++; }
 
@@ -63,6 +73,9 @@ $mesesEspañol = [
 ];
 $nombreMes = $mesesEspañol[$mes] ?? '';
 $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $mes, $diaSeleccionado) : '';
+
+// Consulta los horarios registrados en la Base de Datos para el mes en pantalla
+$horariosMesBD = $objCalendarioDOT->obtenerHorariosMes($anio, $mes);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -90,7 +103,7 @@ $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $m
                             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                                 <div>
                                     <h2 class="fw-bold text-dark mb-1">Gestión de Horarios - DOT</h2>
-                                    <p class="text-muted mb-0">Seleccione un día en el calendario para registrar o consultar los bloques de presencia en el salón.</p>
+                                    <p class="text-muted mb-0">Seleccione un día en el calendario para registrar, consultar o eliminar bloques de atención presencial.</p>
                                 </div>
                                 <a href="../index.php" class="btn btn-outline-secondary fw-bold rounded-pill px-4 shadow-sm">
                                     ← Volver al Inicio
@@ -98,12 +111,12 @@ $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $m
                             </div>
 
                             <div class="row g-4">
-                                <!-- Columna del Calendario Principal -->
+                                <!--  Calendario Principal -->
                                 <div class="<?php echo $diaSeleccionado ? 'col-lg-7' : 'col-lg-12'; ?>">
                                     <div class="border rounded-4 p-4 shadow-sm h-100" style="background-color: #adbfdc !important;">
                                         <div class="bg-white rounded-4 p-3 shadow-sm h-100 d-flex flex-column justify-content-between">
                                             
-                                            <!-- Cabecera del Mes con Navegación -->
+                                            <!-- Cabecera del Mes con la Nav -->
                                             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                                                 <h4 class="fw-bold text-dark mb-0 fs-5">
                                                     <?php echo "$nombreMes $anio"; ?>
@@ -121,7 +134,7 @@ $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $m
                                                 </div>
                                             </div>
 
-                                            <!-- Tabla de Días -->
+                                            <!-- Días del Mes -->
                                             <div class="table-responsive">
                                                 <table class="table table-bordered text-center align-middle mb-0 small">
                                                     <thead class="table-dark">
@@ -146,7 +159,7 @@ $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $m
                                                             $esHoy = ($esMesActual && $dia == (int)$diaActual);
                                                             $esSeleccionado = ($diaSeleccionado == $dia);
                                                             $fechaIteracion = sprintf("%04d-%02d-%02d", $anio, $mes, $dia);
-                                                            $tieneHorariosGuardados = !empty($_SESSION['horarios_dot'][$fechaIteracion]);
+                                                            $tieneHorariosGuardados = !empty($horariosMesBD[$fechaIteracion]);
                                                             
                                                             if ($esSeleccionado) {
                                                                 $claseDia = 'bg-warning text-dark fw-bold rounded shadow-sm';
@@ -182,13 +195,13 @@ $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $m
                                                 </table>
                                             </div>
                                             <div class="text-muted small mt-3 text-center">
-                                                * Haga clic en cualquier día para registrar o ver los horarios del DOT.
+                                                * Haga clic en cualquier día para administrar o registrar los horarios del DOT.
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Columna de Gestión y Horarios para el Día Seleccionado -->
+                                <!-- Panel de Gestión para el Día Seleccionado -->
                                 <?php if ($diaSeleccionado): ?>
                                 <div class="col-lg-5">
                                     <div class="border rounded-4 p-4 shadow-sm h-100 bg-white d-flex flex-column justify-content-between">
@@ -200,26 +213,37 @@ $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $m
                                                 <a href="calendarioDOT.php?anio=<?php echo $anio; ?>&mes=<?php echo $mes; ?>" class="btn-close" aria-label="Cerrar"></a>
                                             </div>
                                             
-                                            <!-- Listado de Horarios Registrados para este día -->
-                                            <h6 class="text-muted fw-bold small mb-2">Horarios ya registrados:</h6>
-                                            <div class="list-group mb-4 overflow-auto" style="max-height: 180px;">
+                                            <!-- Lista Horarios en la BD para este día -->
+                                            <h6 class="text-muted fw-bold small mb-2">Horarios asignados:</h6>
+                                            <div class="list-group mb-4 overflow-auto" style="max-height: 200px;">
                                                 <?php 
-                                                if (!empty($_SESSION['horarios_dot'][$fechaSeleccionadaKey])):
-                                                    foreach ($_SESSION['horarios_dot'][$fechaSeleccionadaKey] as $h):
+                                                if (!empty($horariosMesBD[$fechaSeleccionadaKey])):
+                                                    foreach ($horariosMesBD[$fechaSeleccionadaKey] as $h):
                                                 ?>
                                                     <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 mb-2 rounded-3 border shadow-sm">
                                                         <div>
                                                             <span class="fw-bold text-dark"><?php echo htmlspecialchars($h['inicio'] . ' - ' . $h['fin']); ?></span>
                                                             <div class="text-muted small"><?php echo htmlspecialchars($h['descripcion']); ?></div>
+                                                            <div class="text-muted" style="font-size: 10px;">Resp: <?php echo htmlspecialchars($h['nombre_dot']); ?></div>
                                                         </div>
-                                                        <span class="badge bg-success">Activo</span>
+                                                        <!-- Formulario para eliminar mediante idDot -->
+                                                        <form action="calendarioDOT.php" method="POST" onsubmit="return confirm('¿Desea eliminar este horario?');">
+                                                            <input type="hidden" name="accion" value="eliminar_horario">
+                                                            <input type="hidden" name="idDot" value="<?php echo $h['idDot']; ?>">
+                                                            <input type="hidden" name="anio" value="<?php echo $anio; ?>">
+                                                            <input type="hidden" name="mes" value="<?php echo $mes; ?>">
+                                                            <input type="hidden" name="dia" value="<?php echo $diaSeleccionado; ?>">
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm border-0 fw-bold px-2" title="Eliminar horario">
+                                                                ✕
+                                                            </button>
+                                                        </form>
                                                     </div>
                                                 <?php 
                                                     endforeach;
                                                 else: 
                                                 ?>
                                                     <div class="text-muted small fst-italic p-2 bg-light rounded-3 text-center">
-                                                        No hay horarios registrados para este día.
+                                                        No hay horarios registrados en la BD para este día.
                                                     </div>
                                                 <?php endif; ?>
                                             </div>
@@ -231,7 +255,7 @@ $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $m
                                                 <input type="hidden" name="mes" value="<?php echo $mes; ?>">
                                                 <input type="hidden" name="dia" value="<?php echo $diaSeleccionado; ?>">
 
-                                                <h6 class="fw-bold text-dark small mb-3">Agregar nuevo horario:</h6>
+                                                <h6 class="fw-bold text-dark small mb-3">Registrar nuevo horario:</h6>
                                                 
                                                 <div class="row g-2 mb-2">
                                                     <div class="col-6">
@@ -250,7 +274,7 @@ $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $m
                                                 </div>
 
                                                 <button type="submit" class="btn btn-primary btn-sm fw-bold w-100 rounded-pill py-2 shadow-sm">
-                                                    + Guardar Horario
+                                                    + Guardar en Base de Datos
                                                 </button>
                                             </form>
                                         </div>

@@ -17,7 +17,7 @@ class ClsSala {
             return false; // Ya existe, retornamos falso para que muestre el mensaje de error
         }
 
-        //Inserción protegiendo con try-catch
+        //Inserción con try-catch
         try {
             $sql = "INSERT INTO sala_ceilab (IDSalon, Observaciones, Disponibilidad) VALUES ('$idSalon', '$observaciones', '$disponibilidad')";
             return mysqli_query($link, $sql);
@@ -92,7 +92,7 @@ class ClsSala {
             $sqlCheck = "SELECT IDSalon FROM sala_ceilab WHERE IDSalon = '$nuevoId'";
             $resultadoCheck = mysqli_query($link, $sqlCheck);
             if ($resultadoCheck && mysqli_num_rows($resultadoCheck) > 0) {
-                return false; // El nuevo ID ya está en uso
+                return false; // Por si el nuevo ID ya está en uso
             }
         }
 
@@ -107,8 +107,7 @@ class ClsSala {
         } catch (mysqli_sql_exception $e) {
             return false;
         }
-    }
-    // Método para listar salas con filtros 
+    } 
     public function listarSalasFiltradas($idSalon = '', $disponibilidad = '') {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
