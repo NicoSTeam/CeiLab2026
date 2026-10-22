@@ -47,10 +47,9 @@ require_once 'Clases/ClsLogin.php';
                 </div>                 
                 <div class="row"> 
                     <div class="col-sm-6 col-xl-6 pb-3 pt-3"> 
-                        <div class="d-block pb-5 ps-4 pe-4 pt-5 shadow rounded-4" style="background-color: #adbfdc;"> 
-                            <h4 class="fw-bold h5">Calendario del DOT</h4> 
-                            <img src="/CeiLab2026/assets/img/workInProgress.jpeg" class="img-thumbnail" style="with: auto; height: auto;" alt="workInProgress">
-                            <a href="#">Ver más...</a> 
+                        <div class="d-block pb-5 ps-4 pe-4 pt-5 shadow rounded-4" style="background-color: #adbfdc;">  
+                            <?php include 'Formularios/calendarioIndex.php'; ?>
+                            
                         </div>                         
                     </div>
                     <div class="col-sm-6 col-xl-6 pb-3 pt-3"> 
