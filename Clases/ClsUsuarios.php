@@ -217,8 +217,9 @@
                 $email = $_POST['femail'] ?? '';
                 $direccion = $_POST['fdireccion'] ?? '';
                 $observaciones = $_POST['fobservaciones'] ?? '';
-                $roles = $_POST['frol'] ?? []; //Arreglo de roles
-                $telefonos = $_POST['ftelefonos'] ?? []; //Arreglo de teléfonos
+                $roles = $_POST['frol'] ?? []; 
+                $telefonos = $_POST['ftelefonos'] ?? []; 
+                $nuevaContrasenia = $_POST['fcontrasenia'] ?? ''; 
 
                 $objConexion = new Conexion();
                 $link = $objConexion->conectar();
@@ -230,12 +231,17 @@
                 $direccion = mysqli_real_escape_string($link, trim($direccion));
                 $observaciones = mysqli_real_escape_string($link, trim($observaciones));
 
-                //Actualiza datos de la tabla usuario
-                $sqlUsuario = "UPDATE usuario SET nombre='$nombre', cedula='$cedula', email='$email', direccion='$direccion', observaciones='$observaciones' WHERE IDUsuario='$idUsuario'";
+                if (!empty($nuevaContrasenia)) {
+                    $contraseniaHash = password_hash($nuevaContrasenia, PASSWORD_DEFAULT);
+                    $sqlUsuario = "UPDATE usuario SET nombre='$nombre', cedula='$cedula', email='$email', direccion='$direccion', observaciones='$observaciones', contraseña='$contraseniaHash' WHERE IDUsuario='$idUsuario'";
+                } else {
+                    $sqlUsuario = "UPDATE usuario SET nombre='$nombre', cedula='$cedula', email='$email', direccion='$direccion', observaciones='$observaciones' WHERE IDUsuario='$idUsuario'";
+                }
+
                 $resUsuario = $objConexion->ejecutarSQL($sqlUsuario);
 
                 if ($resUsuario) {
-                    //Actualiza roles (borra los anteriores y reinserta los seleccionados)
+                    // Actualiza roles (borra los anteriores y reinserta los seleccionados)
                     $sqlDelRol = "DELETE FROM rol WHERE IDUsuario='$idUsuario'";
                     mysqli_query($link, $sqlDelRol);
 
@@ -250,7 +256,7 @@
                         }
                     }
 
-                    //Actualiza teléfonos (borra los anteriores y reinserta los nuevos)
+                    // Actualiza teléfonos (borra los anteriores y reinserta los nuevos)
                     $sqlDelPhones = "DELETE FROM Telefonos WHERE IDUsuario='$idUsuario'";
                     mysqli_query($link, $sqlDelPhones);
 
@@ -304,7 +310,7 @@
                     </div>';
                 }
             } catch (\Throwable $e) {
-                return '
+                 return '
                 <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content shadow border-0">

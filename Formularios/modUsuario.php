@@ -236,6 +236,10 @@ if ($idModificar) {
                                             <option value="4" <?php echo (($rolesData[1] ?? '') == '4') ? 'selected' : ''; ?>>4 - Estudiante</option>
                                         </select>
                                     </div>
+                                    <div class="mb-4">
+                                        <label for="fcontrasenia" class="form-label ">Nueva Contraseña <small class="text-muted">(Opcional)</small></label>
+                                        <input type="password" class="form-control rounded-3 shadow-sm" id="fcontrasenia" name="fcontrasenia" placeholder="Dejar en blanco para mantener la actual">
+                                    </div>
 
                                     <button type="submit" class="btn d-block w-100 btn-success fw-bold py-2">Guardar Cambios</button>
                                 </form>
