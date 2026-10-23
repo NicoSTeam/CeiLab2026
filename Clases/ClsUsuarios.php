@@ -1,147 +1,167 @@
 <?php
     
-    require_once __DIR__ . '/../Persistencia/connect.php';
+require_once __DIR__ . '/../Persistencia/connect.php';
 
-   class ClsUsuarios {
-    
+class ClsUsuarios {
+     
     public function registrarUsuario() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        try {
-            // Capturamos los datos enviados desde el formulario
-            $nombre = $_POST['fnombre'] ?? '';
-            $cedula = $_POST['fcedula'] ?? '';
-            $email = $_POST['femail'] ?? '';
-            $direccion = $_POST['fdireccion'] ?? '';
-            $observaciones = $_POST['fobservaciones'] ?? '';
-            $rol = $_POST['frol'] ?? '';
-            $contrasenia = password_hash($_POST['fcontrasenia'] ?? '', PASSWORD_DEFAULT);
-            $telefonos = $_POST['ftelefonos'] ?? []; 
+            try {
+                // Capturamos los datos enviados desde el formulario
+                $nombre = $_POST['fnombre'] ?? '';
+                $cedula = $_POST['fcedula'] ?? '';
+                $email = $_POST['femail'] ?? '';
+                $direccion = $_POST['fdireccion'] ?? '';
+                $observaciones = $_POST['fobservaciones'] ?? '';
+                $rol = $_POST['frol'] ?? '';
+                $contrasenia = password_hash($_POST['fcontrasenia'] ?? '', PASSWORD_DEFAULT);
+                $telefonos = $_POST['ftelefonos'] ?? []; 
 
-            // Instanciamos la clase Conexion para obtener el link
-            $objConexion = new Conexion();
-            $link = $objConexion->conectar();
+                // Instanciamos la clase Conexion para obtener el link
+                $objConexion = new Conexion();
+                $link = $objConexion->conectar();
 
-            // Limpiamos los datos para evitar inyecciones SQL básicas en MySQLi
-            $nombre = mysqli_real_escape_string($link, trim($nombre));
-            $cedula = mysqli_real_escape_string($link, trim($cedula));
-            $email = mysqli_real_escape_string($link, trim($email));
-            $direccion = mysqli_real_escape_string($link, trim($direccion));
-            $observaciones = mysqli_real_escape_string($link, trim($observaciones));
-            $rol = mysqli_real_escape_string($link, trim($rol));
+                // Limpiamos los datos para evitar inyecciones SQL básicas en MySQLi
+                $nombre = mysqli_real_escape_string($link, trim($nombre));
+                $cedula = mysqli_real_escape_string($link, trim($cedula));
+                $email = mysqli_real_escape_string($link, trim($email));
+                $direccion = mysqli_real_escape_string($link, trim($direccion));
+                $observaciones = mysqli_real_escape_string($link, trim($observaciones));
+                $rol = mysqli_real_escape_string($link, trim($rol));
 
-            //SQL de inserción
-            $sql = "INSERT INTO usuario (nombre, cedula, email, direccion, observaciones, contraseña) 
-                    VALUES ('$nombre', '$cedula', '$email', '$direccion', '$observaciones', '$contrasenia')";
+                if ($this->verificarMail($email)) {
+                        return '
+                        <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content shadow border-0">
+                                    <div class="modal-header bg-warning text-dark">
+                                        <h5 class="modal-title fw-bold">Atención</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-center py-4">
+                                        <p class="fs-5 text-dark mb-0">El mail ingresado ya existe en el sistema, por favor, ingrese otro.</p>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="btn btn-warning px-4 fw-bold text-dark" data-bs-dismiss="modal">Entendido</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+                    }
 
-            // Ejecutamos la consulta
-            $resultadoUsuario = $objConexion->ejecutarSQL($sql);
+                //SQL de inserción
+                $sql = "INSERT INTO usuario (nombre, cedula, email, direccion, observaciones, contraseña) 
+                        VALUES ('$nombre', '$cedula', '$email', '$direccion', '$observaciones', '$contrasenia')";
 
-            if ($resultadoUsuario) {
-                //Buscar el ID del usuario usando su cédula (que acabamos de insertar)
-                $sqlBuscarId = "SELECT IDUsuario FROM usuario WHERE cedula = '$cedula' ORDER BY IDUsuario DESC LIMIT 1";
-                $resultadoId = mysqli_query($link, $sqlBuscarId);
+                // Ejecutamos la consulta
+                $resultadoUsuario = $objConexion->ejecutarSQL($sql);
 
-                if ($row = mysqli_fetch_assoc($resultadoId)) {
-                    $idUsuario = $row['IDUsuario'];
+                if ($resultadoUsuario) {
+                    //Buscar el ID del usuario usando su cédula (que acabamos de insertar)
+                    $sqlBuscarId = "SELECT IDUsuario FROM usuario WHERE cedula = '$cedula' ORDER BY IDUsuario DESC LIMIT 1";
+                    $resultadoId = mysqli_query($link, $sqlBuscarId);
 
-                    //Insertar el rol en la tabla vinculada usando ese ID
-                    $sqlRol = "INSERT INTO rol (IDUsuario, ROL) VALUES ('$idUsuario', '$rol')";
-                    $resultadoRol = mysqli_query($link, $sqlRol);
+                    if ($row = mysqli_fetch_assoc($resultadoId)) {
+                        $idUsuario = $row['IDUsuario'];
 
-                    //Inserta los telefonos
-                    if (!empty($telefonos) && is_array($telefonos)) {
-                        // Limpiamos espacios y eliminamos duplicados enviados en el formulario
-                        $telefonosUnicos = array_unique(array_map('trim', $telefonos));
-                        
-                        foreach ($telefonosUnicos as $tel) {
-                            if (!empty($tel)) {
-                                $telEscape = mysqli_real_escape_string($link, $tel);
-                                // INSERT IGNORE evita que la aplicación falle si el número se repite
-                                $sqlTelefono = "INSERT IGNORE INTO Telefonos (IDUsuario, Telefono) VALUES ('$idUsuario', '$telEscape')";
-                                mysqli_query($link, $sqlTelefono);
+                        //Insertar el rol en la tabla vinculada usando ese ID
+                        $sqlRol = "INSERT INTO rol (IDUsuario, ROL) VALUES ('$idUsuario', '$rol')";
+                        $resultadoRol = mysqli_query($link, $sqlRol);
+
+                        //Inserta los telefonos
+                        if (!empty($telefonos) && is_array($telefonos)) {
+                            // Limpiamos espacios y eliminamos duplicados enviados en el formulario
+                            $telefonosUnicos = array_unique(array_map('trim', $telefonos));
+                            
+                            foreach ($telefonosUnicos as $tel) {
+                                if (!empty($tel)) {
+                                    $telEscape = mysqli_real_escape_string($link, $tel);
+                                    // INSERT IGNORE evita que la aplicación falle si el número se repite
+                                    $sqlTelefono = "INSERT IGNORE INTO Telefonos (IDUsuario, Telefono) VALUES ('$idUsuario', '$telEscape')";
+                                    mysqli_query($link, $sqlTelefono);
+                                }
                             }
                         }
+                        
+                        return '
+                        <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content shadow border-0">
+                                    <div class="modal-header bg-success text-white">
+                                        <h5 class="modal-title fw-bold">¡Registro Exitoso!</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-center py-4">
+                                        <p class="fs-5 text-dark mb-0">¡Usuario, rol y teléfonos registrados con éxito!</p>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <a href="/CeiLab2026/Formularios/acceso.php" class="btn btn-success fw-bold px-4">Ir a Iniciar Sesión</a>
+                                        <button type="button" class="btn btn-primary px-4 fw-bold" data-bs-dismiss="modal">volver</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+                    } else {
+                        return '
+                        <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content shadow border-0">
+                                    <div class="modal-header bg-warning text-dark">
+                                        <h5 class="modal-title fw-bold">Atención</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-center py-4">
+                                        <p class="fs-5 text-dark mb-0">El usuario se creó, pero no se pudo recuperar su ID.</p>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Entendido</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
                     }
-                    
+                } else {
+                    $errorMsg = mysqli_error($link);
                     return '
                     <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content shadow border-0">
-                                <div class="modal-header bg-success text-white">
-                                    <h5 class="modal-title fw-bold">¡Registro Exitoso!</h5>
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title fw-bold">Error de Registro</h5>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body text-center py-4">
-                                    <p class="fs-5 text-dark mb-0">¡Usuario, rol y teléfonos registrados con éxito!</p>
+                                    <p class="fs-5 text-dark mb-0">No se pudo registrar el usuario en el sistema.</p>
+                                    <small class="text-muted">' . htmlspecialchars($errorMsg) . '</small>
                                 </div>
                                 <div class="modal-footer justify-content-center">
-                                    <a href="/CeiLab2026/Formularios/acceso.php" class="btn btn-success fw-bold px-4">Ir a Iniciar Sesión</a>
-                                    <button type="button" class="btn btn-primary px-4 fw-bold" data-bs-dismiss="modal">volver</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>';
-                } else {
-                    return '
-                    <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content shadow border-0">
-                                <div class="modal-header bg-warning text-dark">
-                                    <h5 class="modal-title fw-bold">Atención</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body text-center py-4">
-                                    <p class="fs-5 text-dark mb-0">El usuario se creó, pero no se pudo recuperar su ID.</p>
-                                </div>
-                                <div class="modal-footer justify-content-center">
-                                    <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Entendido</button>
+                                    <button type="button" class="btn btn-danger px-4 fw-bold" data-bs-dismiss="modal">Intentar de nuevo</button>
                                 </div>
                             </div>
                         </div>
                     </div>';
                 }
-            } else {
-                $errorMsg = mysqli_error($link);
-                return '
-                <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content shadow border-0">
-                            <div class="modal-header bg-danger text-white">
-                                <h5 class="modal-title fw-bold">Error de Registro</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body text-center py-4">
-                                <p class="fs-5 text-dark mb-0">No se pudo registrar el usuario en el sistema.</p>
-                                <small class="text-muted">' . htmlspecialchars($errorMsg) . '</small>
-                            </div>
-                            <div class="modal-footer justify-content-center">
-                                <button type="button" class="btn btn-danger px-4 fw-bold" data-bs-dismiss="modal">Intentar de nuevo</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>';
-            }
-        } catch (\Throwable $e) {
-                // Capturamos cualquier error crítico (como la base de datos apagada o fallos de red)
-                $errorConexion = $e->getMessage();
-                return '
-                <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content shadow border-0">
-                            <div class="modal-header bg-danger text-white">
-                                <h5 class="modal-title fw-bold">Error de Conexión</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body text-center py-4">
-                                <p class="fs-5 text-dark mb-0">No se pudo establecer comunicación con la base de datos.</p>
-                                <small class="text-muted">Asegúrate de que el servidor MySQL esté encendido.</small>
-                            </div>
-                            <div class="modal-footer justify-content-center">
-                                <button type="button" class="btn btn-danger px-4 fw-bold" data-bs-dismiss="modal">Entendido</button>
+            } catch (\Throwable $e) {
+                    // Capturamos cualquier error crítico (como la base de datos apagada o fallos de red)
+                    $errorConexion = $e->getMessage();
+                    return '
+                    <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content shadow border-0">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title fw-bold">Error de Conexión</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center py-4">
+                                    <p class="fs-5 text-dark mb-0">No se pudo establecer comunicación con la base de datos.</p>
+                                    <small class="text-muted">Asegúrate de que la base de datos de MySQL esté encendida.</small>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-danger px-4 fw-bold" data-bs-dismiss="modal">Entendido</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>';
+                    </div>';
             }
         }
     }
@@ -230,6 +250,26 @@
                 $email = mysqli_real_escape_string($link, trim($email));
                 $direccion = mysqli_real_escape_string($link, trim($direccion));
                 $observaciones = mysqli_real_escape_string($link, trim($observaciones));
+
+                if ($this->verificarMail($email, $idUsuario)) {
+                        return '
+                        <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content shadow border-0">
+                                    <div class="modal-header bg-warning text-dark">
+                                        <h5 class="modal-title fw-bold">Atención</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-center py-4">
+                                        <p class="fs-5 text-dark mb-0">El mail ingresado ya existe en el sistema, por favor, ingrese otro.</p>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="btn btn-warning px-4 fw-bold text-dark" data-bs-dismiss="modal">Entendido</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+                    }
 
                 if (!empty($nuevaContrasenia)) {
                     $contraseniaHash = password_hash($nuevaContrasenia, PASSWORD_DEFAULT);
@@ -416,6 +456,27 @@
                 </div>';
             }
         }
+    }
+    public function verificarMail($email, $idUsuarioActual = null) {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+
+        $emailEscaped = mysqli_real_escape_string($link, trim($email));
+
+        $sql = "SELECT COUNT(*) as total FROM usuario WHERE email = '$emailEscaped' AND activo = 1";
+
+        // Si se pasa un ID/Documento, se excluye al usuario actual
+        if (!empty($idUsuarioActual)) {
+            $idEscaped = mysqli_real_escape_string($link, trim($idUsuarioActual));
+            $sql .= " AND IDUsuario != '$idEscaped'"; 
+        }
+
+        $resultado = mysqli_query($link, $sql);
+        if ($resultado && $row = mysqli_fetch_assoc($resultado)) {
+            return ($row['total'] > 0); // Devuelve true si el mail ya existe
+        }
+
+        return false;
     }
 }
 ?>
