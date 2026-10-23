@@ -113,10 +113,15 @@ $listaSalas = $objSala->listarSalasFiltradas($idSalonFiltro, $disponibilidadFilt
                                                 </td>
                                                 <td><?php echo htmlspecialchars($sala['Observaciones']); ?></td>
                                                 <td class="text-center">
-                                                    <!-- Espacio para futura integración de calendario/reservas -->
-                                                    <a href="calendarioSala.php?idsala=<?php echo urlencode($sala['IDSalon']); ?>" class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-3 shadow-sm text-decoration-none">
-                                                        Ver Calendario
-                                                    </a>
+                                                    <?php if ($esDisponible): ?>
+                                                        <a href="calendarioSala.php?idsala=<?php echo urlencode($sala['IDSalon']); ?>" class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-3 shadow-sm text-decoration-none">
+                                                            Ver Calendario
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <a href="#" class="btn btn-sm btn-outline-secondary fw-bold rounded-pill px-3 shadow-sm text-decoration-none disabled" tabindex="-1" aria-disabled="true" title="Sala no disponible para reservas">
+                                                            Ver Calendario
+                                                        </a>
+                                                    <?php endif; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

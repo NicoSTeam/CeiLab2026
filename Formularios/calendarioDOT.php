@@ -139,7 +139,7 @@ $horariosMesBD = $objCalendarioDOT->obtenerHorariosMes($anio, $mes);
                                                 <table class="table table-bordered text-center align-middle mb-0 small">
                                                     <thead class="table-dark">
                                                         <tr>
-                                                            <th>L</th><th>M</th><th>X</th><th>J</th><th>V</th><th>S</th><th>D</th>
+                                                            <th>LU</th><th>MA</th><th>MI</th><th>JU</th><th>VI</th><th>SA</th><th>DO</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -195,7 +195,10 @@ $horariosMesBD = $objCalendarioDOT->obtenerHorariosMes($anio, $mes);
                                                 </table>
                                             </div>
                                             <div class="text-muted small mt-3 text-center">
-                                                * Haga clic en cualquier día para administrar o registrar los horarios del DOT.
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5m-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5"/>
+                                                </svg>
+                                                Haga clic en cualquier día para administrar o registrar los horarios del DOT.
                                             </div>
                                         </div>
                                     </div>
@@ -280,7 +283,7 @@ $horariosMesBD = $objCalendarioDOT->obtenerHorariosMes($anio, $mes);
                                         </div>
 
                                         <div class="mt-3 text-center">
-                                            <a href="calendarioDOT.php?anio=<?php echo $anio; ?>&mes=<?php echo $mes; ?>" class="text-muted small text-decoration-none">Cerrar panel de edición</a>
+                                            <a href="calendarioDOT.php?anio=<?php echo $anio; ?>&mes=<?php echo $mes; ?>" class="btn btn-light btn-sm text-secondary fw-bold rounded-pill w-100 border shadow-sm py-2">Cerrar panel de edición</a>
                                         </div>
                                     </div>
                                 </div>
