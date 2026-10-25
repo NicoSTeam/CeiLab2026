@@ -40,3 +40,27 @@
     background-position: center;
     background-repeat: no-repeat;
 }
+/* Fondos y botones de advertencia (Modales, headers, botones) */
+.bg-warning {
+    background-color: #ee8802 !important;
+    border-color: #000000 !important;
+    color: #f0f0f0 !important; /* Texto oscuro para mantener alta legibilidad */
+}
+.btn-warning {
+    background-color: #ff8800 !important;
+    border-color: #000000 !important;
+    color: #e3e4e5 !important; /* Texto oscuro para mantener alta legibilidad */
+}
+/* Efecto hover para botones de advertencia */
+.btn-warning:hover, 
+.btn-warning:focus {
+    background-color: #ee9910 !important;
+    border-color: #ffffff !important;
+    color: #212529 !important;
+}
+/* Alertas de advertencia en formularios o tablas */
+.alert-warning {
+    background-color: #fffde7 !important;
+    border-color: #fff59d !important;
+    color: #7f6000 !important;
+}
