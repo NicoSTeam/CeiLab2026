@@ -385,7 +385,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
                                                         <label class="form-label small text-muted mb-1">Inicio</label>
                                                         <select class="form-select form-select-sm rounded-3 shadow-sm" name="hora_inicio" required>
                                                             <option value="">Seleccione...</option>
-                                                            <?php for ($h = 7; $h <= 21; $h++): $val = sprintf("%02d:00:00", $h); ?>
+                                                            <?php for ($h = 7; $h <= 22; $h++): $val = sprintf("%02d:00:00", $h); ?>
                                                                 <option value="<?php echo $val; ?>" <?php echo ($horaInicio === $val) ? 'selected' : ''; ?>><?php echo sprintf("%02d:00", $h); ?></option>
                                                             <?php endfor; ?>
                                                         </select>
@@ -394,7 +394,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
                                                         <label class="form-label small text-muted mb-1">Fin</label>
                                                         <select class="form-select form-select-sm rounded-3 shadow-sm" name="hora_fin" required>
                                                             <option value="">Seleccione...</option>
-                                                            <?php for ($h = 8; $h <= 22; $h++): $val = sprintf("%02d:00:00", $h); ?>
+                                                            <?php for ($h = 8; $h <= 23; $h++): $val = sprintf("%02d:00:00", $h); ?>
                                                                 <option value="<?php echo $val; ?>" <?php echo ($horaFin === $val) ? 'selected' : ''; ?>><?php echo sprintf("%02d:00", $h); ?></option>
                                                             <?php endfor; ?>
                                                         </select>
