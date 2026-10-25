@@ -63,7 +63,10 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/modEquipo.php">Modificar equipos</a>
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/borrarEquipo.php">Eliminar equipos</a>  
                         <?php endif; ?>
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/listadoEquipos.php">Consultar equipos</a> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/listadoEquipos.php">Consultar equipos</a>
+                        <?php if ($esAdministrador || $esDot || $esDocente ): ?>
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/calendarioEquipos.php">Reservar equipos</a>
+                        <?php endif; ?> 
                     </div>                        
                 </li>
                 <?php endif; ?>

@@ -111,5 +111,64 @@ class ClsEquipo {
             return false;
         }
     }
+    // Método para listar un equipo por disponibilidad en un rango horario determinado
+    public function listarEquiposDisponibles($fecha, $horaInicio, $horaFin, $filtroTipo = '') {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+
+        $fechaEscaped = mysqli_real_escape_string($link, trim($fecha));
+        $inicioEscaped = mysqli_real_escape_string($link, trim($horaInicio));
+        $finEscaped = mysqli_real_escape_string($link, trim($horaFin));
+
+        $sql = "
+            SELECT e.IDEquipo, e.Estado, e.Observaciones, e.Tipo, e.IDSala_ceilab, e.Disponibilidad 
+            FROM equipo e
+            WHERE e.activo = 1 
+              AND e.Disponibilidad = 1
+        ";
+
+        if (!empty($filtroTipo)) {
+            $tipoEscaped = mysqli_real_escape_string($link, trim($filtroTipo));
+            $sql .= " AND e.Tipo = '$tipoEscaped'";
+        }
+
+        // Uso NOT EXISTS para excluir los equipos ocupados en ese rango horario
+        $sql .= " AND NOT EXISTS (
+                  SELECT 1
+                  FROM tiene_equipos te
+                  JOIN reservas r ON te.IDReservas = r.IDReservas
+                  WHERE te.IDEquipo = e.IDEquipo
+                    AND r.Fecha = '$fechaEscaped'
+                    AND r.activo = 1
+                    AND ('$inicioEscaped' < r.HoraFin AND '$finEscaped' > r.HoraInicio)
+              )
+            ORDER BY e.Tipo, e.IDEquipo ASC;
+        ";
+
+        $resultado = mysqli_query($link, $sql);
+        $equipos = [];
+        if ($resultado) {
+            while ($row = mysqli_fetch_assoc($resultado)) {
+                $equipos[] = $row;
+            }
+        }
+        return $equipos;
+    }
+    // Método para obtener los tipos de equipos para el selector
+    public function obtenerTiposEquipos() {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        
+        $sql = "SELECT DISTINCT Tipo FROM equipo WHERE activo = 1 AND Tipo IS NOT NULL AND Tipo != '' ORDER BY Tipo ASC";
+        $resultado = mysqli_query($link, $sql);
+        $tipos = [];
+        
+        if ($resultado) {
+            while ($row = mysqli_fetch_assoc($resultado)) {
+                $tipos[] = $row['Tipo'];
+            }
+        }
+        return $tipos;
+    }
 }
 ?>

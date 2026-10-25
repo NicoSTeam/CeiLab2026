@@ -258,5 +258,296 @@ class ClsReservas {
             </div>
         </div>';
     }
+    public function registrarReservaEquipos($idUsuario, $fecha, $horaInicio, $horaFin, $arrayEquipos) {
+        if (empty($arrayEquipos) || !is_array($arrayEquipos)) {
+            return '
+            <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content shadow border-0">
+                        <div class="modal-header bg-warning text-dark">
+                            <h5 class="modal-title fw-bold">Atención</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                            <p class="fs-5 text-dark mb-0">Debe seleccionar al menos un equipo para realizar la reserva.</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-warning px-4 fw-bold text-dark" data-bs-dismiss="modal">Entendido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+        }
+
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+
+        $idUsuarioEscaped = mysqli_real_escape_string($link, trim($idUsuario));
+        $fechaEscaped = mysqli_real_escape_string($link, trim($fecha));
+        $inicioEscaped = mysqli_real_escape_string($link, trim($horaInicio));
+        $finEscaped = mysqli_real_escape_string($link, trim($horaFin));
+
+        // Obtener el IDSala_ceilab del primer equipo seleccionado para cumplir con el NOT NULL de la BD
+        $primerEquipo = mysqli_real_escape_string($link, trim($arrayEquipos[0]));
+        $sqlSalonEq = "SELECT IDSala_ceilab FROM equipo WHERE IDEquipo = '$primerEquipo' LIMIT 1";
+        $resSalonEq = mysqli_query($link, $sqlSalonEq);
+        $idSalon = 1; // Valor por defecto de respaldo
+        if ($resSalonEq && $rowSalon = mysqli_fetch_assoc($resSalonEq)) {
+            $idSalon = $rowSalon['IDSala_ceilab'] ?? 1;
+        }
+
+        // Calcular cantidad de horas
+        $timestampInicio = strtotime($horaInicio);
+        $timestampFin = strtotime($horaFin);
+        $canthoras = ($timestampFin - $timestampInicio) / 3600;
+
+        //Inserto la cabecera en la tabla reservas usando la misma conexión ($link)
+        $sqlReserva = "INSERT INTO reservas (CantHoras, IDSalon, IDUsuario, Fecha, HoraInicio, HoraFin, activo) 
+                       VALUES ('$canthoras', '$idSalon', '$idUsuarioEscaped', '$fechaEscaped', '$inicioEscaped', '$finEscaped', 1)";
+
+        if (mysqli_query($link, $sqlReserva)) {
+            //Tomamos el ID generado en esta misma conexión
+            $idReservaGenerado = mysqli_insert_id($link);
+
+            //Inserto cada equipo seleccionado en la tabla tiene_equipos con el ID real
+            foreach ($arrayEquipos as $idEquipo) {
+                $idEquipoEscaped = mysqli_real_escape_string($link, trim($idEquipo));
+                $sqlTieneEquipo = "INSERT INTO tiene_equipos (IDEquipo, IDReservas) VALUES ('$idEquipoEscaped', '$idReservaGenerado')";
+                mysqli_query($link, $sqlTieneEquipo);
+            }
+
+            return '
+            <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content shadow border-0">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title fw-bold">¡Reserva Exitosa!</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                            <p class="fs-5 text-dark mb-0">La reserva de los equipos seleccionados se ha registrado correctamente.</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-success px-4 fw-bold" onclick="location.reload();">Entendido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+        } else {
+            return '
+            <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content shadow border-0">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title fw-bold">Error</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                            <p class="fs-5 text-dark mb-0">Hubo un error al procesar la reserva de equipos.</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-danger px-4 fw-bold" data-bs-dismiss="modal">Entendido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+        }
+    }
+    public function obtenerReservasEquiposMes($anio, $mes) {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+
+        $anio = (int)$anio;
+        $mes = (int)$mes;
+
+        $sql = "
+            SELECT r.IDReservas, r.Fecha, r.HoraInicio, r.HoraFin, r.IDUsuario, 
+                   u.Nombre AS nombre_usuario, te.IDEquipo, e.Tipo
+            FROM reservas r
+            JOIN usuario u ON r.IDUsuario = u.IDUsuario
+            JOIN tiene_equipos te ON r.IDReservas = te.IDReservas
+            JOIN equipo e ON te.IDEquipo = e.IDEquipo
+            WHERE r.activo = 1 
+              AND YEAR(r.Fecha) = $anio 
+              AND MONTH(r.Fecha) = $mes
+            ORDER BY r.Fecha ASC, r.HoraInicio ASC;
+        ";
+
+        $resultado = mysqli_query($link, $sql);
+        $reservasPorDia = [];
+
+        if ($resultado) {
+            while ($row = mysqli_fetch_assoc($resultado)) {
+                $fecha = $row['Fecha'];
+                $reservasPorDia[$fecha][] = $row;
+            }
+        }
+
+        return $reservasPorDia;
+    }
+    public function eliminarEquipoDeReserva($idReserva, $idEquipo, $idUsuarioSesion, $rolesSesion) {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+
+        $idReserva = (int)$idReserva;
+        $idEquipo = mysqli_real_escape_string($link, trim($idEquipo));
+
+        //Eliminar únicamente el equipo de la tabla tiene_equipos
+        $sqlDelete = "DELETE FROM tiene_equipos WHERE IDReservas = $idReserva AND IDEquipo = '$idEquipo'";
+        if (mysqli_query($link, $sqlDelete)) {
+            
+            //Check por si quedan equipos en esta reserva
+            $sqlCheck = "SELECT COUNT(*) as total FROM tiene_equipos WHERE IDReservas = $idReserva";
+            $resCheck = mysqli_query($link, $sqlCheck);
+            $rowCheck = mysqli_fetch_assoc($resCheck);
+
+            // Si ya no quedan equipos asociados, elimino la cabecera de la reserva
+            if ($rowCheck['total'] == 0) {
+                $sqlDelReserva = "UPDATE reservas SET activo = 0 WHERE IDReservas = $idReserva";
+                mysqli_query($link, $sqlDelReserva);
+            }
+
+            return '
+            <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content shadow border-0">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title fw-bold">Equipo Retirado</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                            <p class="fs-5 text-dark mb-0">El equipo fue removido de la reserva correctamente.</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-success px-4 fw-bold" onclick="location.reload();">Entendido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+        } else {
+            return '
+            <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content shadow border-0">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title fw-bold">Error</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                            <p class="fs-5 text-dark mb-0">No se pudo retirar el equipo de la reserva.</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-danger px-4 fw-bold" data-bs-dismiss="modal">Entendido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+        }
+    }
+    public function agregarEquiposAReserva($idReserva, $arrayEquipos) {
+        if (empty($arrayEquipos) || !is_array($arrayEquipos)) {
+            return '
+            <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content shadow border-0">
+                        <div class="modal-header bg-warning text-dark">
+                            <h5 class="modal-title fw-bold">Atención</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                            <p class="fs-5 text-dark mb-0">Debe seleccionar al menos un equipo para agregar.</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-warning px-4 fw-bold text-dark" data-bs-dismiss="modal">Entendido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+        }
+
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        $idReserva = (int)$idReserva;
+
+        $agregados = 0;
+        foreach ($arrayEquipos as $idEquipo) {
+            $idEquipoEscaped = mysqli_real_escape_string($link, trim($idEquipo));
+            
+            // Verifico que no esté ya agregado para evitar duplicar
+            $sqlCheck = "SELECT 1 FROM tiene_equipos WHERE IDReservas = $idReserva AND IDEquipo = '$idEquipoEscaped'";
+            $resCheck = mysqli_query($link, $sqlCheck);
+            
+            if (mysqli_num_rows($resCheck) == 0) {
+                $sqlIns = "INSERT INTO tiene_equipos (IDEquipo, IDReservas) VALUES ('$idEquipoEscaped', $idReserva)";
+                if (mysqli_query($link, $sqlIns)) {
+                    $agregados++;
+                }
+            }
+        }
+
+        return '
+        <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow border-0">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title fw-bold">¡Equipos Agregados!</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <p class="fs-5 text-dark mb-0">Se han agregado ' . $agregados . ' equipo(s) correctamente a la reserva.</p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-success px-4 fw-bold" onclick="location.reload();">Entendido</button>
+                    </div>
+                </div>
+            </div>
+        </div>';
+    }
+    // Método para listar equipos disponibles para una reserva ya existente por horario
+    public function listarEquiposDisponiblesParaReservaExistente($idReserva) {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        $idReserva = (int)$idReserva;
+
+        //Tomo la fecha y horario de la reserva existente
+        $sqlRes = "SELECT Fecha, HoraInicio, HoraFin FROM reservas WHERE IDReservas = $idReserva LIMIT 1";
+        $resRes = mysqli_query($link, $sqlRes);
+        if (!$resRes || mysqli_num_rows($resRes) === 0) return [];
+        $datosRes = mysqli_fetch_assoc($resRes);
+
+        $fecha = $datosRes['Fecha'];
+        $horaInicio = $datosRes['HoraInicio'];
+        $horaFin = $datosRes['HoraFin'];
+
+        //Busco equipos activos, libres y que no estén asignados a esta reserva ni ocupados en ese horario
+        $sql = "
+            SELECT e.IDEquipo, e.Estado, e.Observaciones, e.Tipo, e.IDSala_ceilab, e.Disponibilidad 
+            FROM equipo e
+            WHERE e.activo = 1 
+              AND e.Disponibilidad = 1
+              AND e.IDEquipo NOT IN (
+                  SELECT IDEquipo FROM tiene_equipos WHERE IDReservas = $idReserva
+              )
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM tiene_equipos te
+                  JOIN reservas r ON te.IDReservas = r.IDReservas
+                  WHERE te.IDEquipo = e.IDEquipo
+                    AND r.Fecha = '$fecha'
+                    AND r.activo = 1
+                    AND ('$horaInicio' < r.HoraFin AND '$horaFin' > r.HoraInicio)
+              )
+            ORDER BY e.Tipo, e.IDEquipo ASC;
+        ";
+
+        $resultado = mysqli_query($link, $sql);
+        $equipos = [];
+        if ($resultado) {
+            while ($row = mysqli_fetch_assoc($resultado)) {
+                $equipos[] = $row;
+            }
+        }
+        return $equipos;
+    }
 }
 ?>
