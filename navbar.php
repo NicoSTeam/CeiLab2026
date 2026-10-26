@@ -69,6 +69,7 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                         <?php endif; ?>
                         <?php if ($esAdministrador || $esDot ): ?>
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/gestionPrestamoEquipos.php">Prestamo equipos</a>
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/gestionDevolucionEquipos.php">Devolución equipos</a>
                         <?php endif; ?>  
                     </div>                        
                 </li>
