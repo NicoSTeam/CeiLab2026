@@ -503,13 +503,13 @@ class ClsReservas {
             </div>
         </div>';
     }
-    // Método para listar equipos disponibles para una reserva ya existente por horario
+    // Método para listar equipos disponibles para una reserva ya existente por horario (incluyendo validación de préstamos activos en operaciones)
     public function listarEquiposDisponiblesParaReservaExistente($idReserva) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
         $idReserva = (int)$idReserva;
 
-        //Tomo la fecha y horario de la reserva existente
+        // Tomo la fecha y horario de la reserva existente
         $sqlRes = "SELECT Fecha, HoraInicio, HoraFin FROM reservas WHERE IDReservas = $idReserva LIMIT 1";
         $resRes = mysqli_query($link, $sqlRes);
         if (!$resRes || mysqli_num_rows($resRes) === 0) return [];
@@ -519,7 +519,7 @@ class ClsReservas {
         $horaInicio = $datosRes['HoraInicio'];
         $horaFin = $datosRes['HoraFin'];
 
-        //Busco equipos activos, libres y que no estén asignados a esta reserva ni ocupados en ese horario
+        // Busco equipos activos, libres, que no estén asignados a esta reserva, ni ocupados por otras reservas, ni prestados en ese horario
         $sql = "
             SELECT e.IDEquipo, e.Estado, e.Observaciones, e.Tipo, e.IDSala_ceilab, e.Disponibilidad 
             FROM equipo e
@@ -536,6 +536,16 @@ class ClsReservas {
                     AND r.Fecha = '$fecha'
                     AND r.activo = 1
                     AND ('$horaInicio' < r.HoraFin AND '$horaFin' > r.HoraInicio)
+              )
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM operaciones o
+                  WHERE o.IDEquipo = e.IDEquipo
+                    AND o.Accion = 1
+                    AND o.Fecha = '$fecha'
+                    AND o.HoraInicio IS NOT NULL 
+                    AND o.HoraFin IS NOT NULL
+                    AND ('$horaInicio' < o.HoraFin AND '$horaFin' > o.HoraInicio)
               )
             ORDER BY e.Tipo, e.IDEquipo ASC;
         ";

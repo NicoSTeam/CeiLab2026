@@ -112,41 +112,47 @@ class ClsEquipo {
         }
     }
     // Método para listar un equipo por disponibilidad en un rango horario determinado
-    public function listarEquiposDisponibles($fecha, $horaInicio, $horaFin, $filtroTipo = '') {
+    public function listarEquiposDisponibles($fecha, $horaInicio, $horaFin, $tipo = '') {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
-
-        $fechaEscaped = mysqli_real_escape_string($link, trim($fecha));
-        $inicioEscaped = mysqli_real_escape_string($link, trim($horaInicio));
-        $finEscaped = mysqli_real_escape_string($link, trim($horaFin));
+        
+        $fecha = mysqli_real_escape_string($link, $fecha);
+        $horaInicio = mysqli_real_escape_string($link, $horaInicio);
+        $horaFin = mysqli_real_escape_string($link, $horaFin);
+        $filtroTipo = !empty($tipo) ? "AND e.Tipo = '" . mysqli_real_escape_string($link, $tipo) . "'" : "";
 
         $sql = "
-            SELECT e.IDEquipo, e.Estado, e.Observaciones, e.Tipo, e.IDSala_ceilab, e.Disponibilidad 
+            SELECT e.* 
             FROM equipo e
             WHERE e.activo = 1 
               AND e.Disponibilidad = 1
-        ";
-
-        if (!empty($filtroTipo)) {
-            $tipoEscaped = mysqli_real_escape_string($link, trim($filtroTipo));
-            $sql .= " AND e.Tipo = '$tipoEscaped'";
-        }
-
-        // Uso NOT EXISTS para excluir los equipos ocupados en ese rango horario
-        $sql .= " AND NOT EXISTS (
-                  SELECT 1
+              $filtroTipo
+              AND e.IDEquipo NOT IN (
+                  -- 1. Excluir equipos ocupados por otras reservas activas en ese horario
+                  SELECT te.IDEquipo 
                   FROM tiene_equipos te
                   JOIN reservas r ON te.IDReservas = r.IDReservas
-                  WHERE te.IDEquipo = e.IDEquipo
-                    AND r.Fecha = '$fechaEscaped'
-                    AND r.activo = 1
-                    AND ('$inicioEscaped' < r.HoraFin AND '$finEscaped' > r.HoraInicio)
+                  WHERE r.activo = 1 
+                    AND r.Fecha = '$fecha'
+                    AND ('$horaInicio' < r.HoraFin AND '$horaFin' > r.HoraInicio)
               )
-            ORDER BY e.Tipo, e.IDEquipo ASC;
+              AND NOT EXISTS (
+                  -- 2. Excluir equipos que ya fueron prestados (Accion = 1 en operaciones) para ese día y horario
+                  SELECT 1
+                  FROM operaciones o
+                  WHERE o.IDEquipo = e.IDEquipo
+                    AND o.Accion = 1 
+                    AND o.Fecha = '$fecha'
+                    AND o.HoraInicio IS NOT NULL 
+                    AND o.HoraFin IS NOT NULL
+                    AND ('$horaInicio' < o.HoraFin AND '$horaFin' > o.HoraInicio)
+              )
+            ORDER BY e.Tipo ASC, e.IDEquipo ASC;
         ";
 
         $resultado = mysqli_query($link, $sql);
         $equipos = [];
+
         if ($resultado) {
             while ($row = mysqli_fetch_assoc($resultado)) {
                 $equipos[] = $row;
