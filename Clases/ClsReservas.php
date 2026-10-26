@@ -503,13 +503,13 @@ class ClsReservas {
             </div>
         </div>';
     }
-    // Método para listar equipos disponibles para una reserva ya existente por horario (incluyendo validación de préstamos activos en operaciones)
+    //Método para listar equipos disponibles para una reserva ya existente por horario (incluyendo validación de préstamos activos en operaciones)
     public function listarEquiposDisponiblesParaReservaExistente($idReserva) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
         $idReserva = (int)$idReserva;
 
-        // Tomo la fecha y horario de la reserva existente
+        //Tomo la fecha y horario de la reserva existente
         $sqlRes = "SELECT Fecha, HoraInicio, HoraFin FROM reservas WHERE IDReservas = $idReserva LIMIT 1";
         $resRes = mysqli_query($link, $sqlRes);
         if (!$resRes || mysqli_num_rows($resRes) === 0) return [];

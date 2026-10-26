@@ -85,7 +85,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                     
                     <div class="card shadow-lg border-0 rounded-4 p-4 mb-5 bg-white bg-opacity-95">
                         
-                        <!-- Contenedor para inyectar modales dinámicos (OBLIGATORIO) -->
+                        <!-- Contenedor para inyectar modales dinámicos -->
                         <div id="contenedorModal"></div>
 
                         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
@@ -93,13 +93,13 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                 <h2 class="fw-bold text-dark mb-1">Gestión de Préstamos Diarios</h2>
                                 <h5 class="text-muted mb-0">Fecha actual: <b><?php echo date('d/m/Y'); ?></b></h5>
                             </div>
-                            <a href="calendarioEquipos.php" class="btn btn-outline-secondary fw-bold rounded-pill px-4 shadow-sm">
-                                ← Volver al Calendario
+                            <a href="/CeiLab2026/index.php" class="btn btn-outline-secondary fw-bold rounded-pill px-4 shadow-sm">
+                                ← Volver al inicio
                             </a>
                         </div>
 
                         <div class="row g-4">
-                            <!-- Columna Izquierda: Reservas Programadas para Hoy -->
+                            <!-- Columna izquierda: reservas programadas para hoy -->
                             <div class="col-lg-6">
                                 <div class="border rounded-4 p-3 shadow-sm h-100 bg-light">
                                     <h5 class="fw-bold text-dark mb-3">📅 Reservas para Hoy</h5>
@@ -147,19 +147,19 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                 </div>
                             </div>
 
-                            <!-- Columna Derecha: Préstamo Directo (Sin Reserva Previa) -->
+                            <!-- Columna derecha: préstamo directo (sin reserva previa) -->
                             <div class="col-lg-6">
                                 <div class="border rounded-4 p-3 shadow-sm h-100 bg-white">
-                                    <h5 class="fw-bold text-dark mb-3">⚡ Préstamo Directo (Sin Reserva)</h5>
+                                    <h5 class="fw-bold text-dark mb-3"> Préstamo Directo (Sin Reserva)</h5>
                                     
-                                    <!-- Paso 1: Seleccionar Horario -->
+                                    <!-- Paso 1: selecciono horario -->
                                     <form method="GET" action="gestionPrestamoEquipos.php" class="mb-3">
                                         <label class="form-label small fw-bold text-muted mb-1">1. Definir Franja Horaria:</label>
                                         <div class="row g-2 mb-2">
                                             <div class="col-6">
                                                 <select class="form-select form-select-sm rounded-3 shadow-sm" name="hora_inicio" required>
                                                     <option value="">Inicio...</option>
-                                                    <?php for ($h = 7; $h <= 21; $h++): $val = sprintf("%02d:00:00", $h); ?>
+                                                    <?php for ($h = 7; $h <= 22; $h++): $val = sprintf("%02d:00:00", $h); ?>
                                                         <option value="<?php echo $val; ?>" <?php echo ($horaInicioDir === $val) ? 'selected' : ''; ?>><?php echo sprintf("%02d:00", $h); ?></option>
                                                     <?php endfor; ?>
                                                 </select>
@@ -167,7 +167,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                             <div class="col-6">
                                                 <select class="form-select form-select-sm rounded-3 shadow-sm" name="hora_fin" required>
                                                     <option value="">Fin...</option>
-                                                    <?php for ($h = 8; $h <= 22; $h++): $val = sprintf("%02d:00:00", $h); ?>
+                                                    <?php for ($h = 8; $h <= 23; $h++): $val = sprintf("%02d:00:00", $h); ?>
                                                         <option value="<?php echo $val; ?>" <?php echo ($horaFinDir === $val) ? 'selected' : ''; ?>><?php echo sprintf("%02d:00", $h); ?></option>
                                                     <?php endfor; ?>
                                                 </select>
@@ -178,7 +178,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                         </button>
                                     </form>
 
-                                    <!-- Paso 2: Seleccionar Usuario y Equipos -->
+                                    <!-- Paso 2: selecciono usuario y equipos -->
                                     <?php if (!empty($horaInicioDir) && !empty($horaFinDir)): 
                                         $listaDisponibles = $objEquipo->listarEquiposDisponibles($fechaHoy, $horaInicioDir, $horaFinDir, $tipoFiltroDir);
                                     ?>
@@ -254,7 +254,6 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                             </div>
                                         </form>
                                     <?php endif; ?>
-
                                 </div>
                             </div>
                         </div>
@@ -270,7 +269,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
     <script src="../bootstrap/js/bootstrap.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // 1. Convertir reserva existente en préstamo
+        //Convierto reserva existente en préstamo
         document.addEventListener('click', function (e) {
             const btn = e.target.closest('.btn-convertir');
             if (!btn) return;
@@ -329,7 +328,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
             }
         });
 
-        // 2. Registrar Préstamo Directo por AJAX
+        //Registro préstamo directo por AJAX
         document.addEventListener('submit', function (e) {
             const formDir = e.target.closest('#formPrestamoDirecto');
             if (!formDir) return;
@@ -337,7 +336,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
 
             const checkboxes = formDir.querySelectorAll('input[name="equipos[]"]:checked');
             if (checkboxes.length === 0) {
-                // Inyectar el modal de advertencia estandarizado cuando no hay equipos seleccionados
+                //Veo el modal de advertencia cuando no hay equipos seleccionados
                 document.getElementById('contenedorModal').innerHTML = `
                     <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">

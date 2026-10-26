@@ -10,7 +10,7 @@ require_once '../Clases/ClsReservas.php';
 $objEquipo = new ClsEquipo();
 $objReserva = new ClsReservas();
 
-// Recupera ID y Roles de la sesión actual
+//Recupera ID y Roles de la sesión actual
 $idUsuarioSesion = $_SESSION['IDUsuario'] ?? $_SESSION['id_usuario'] ?? null;
 $rolesSesion = $_SESSION['Roles'] ?? $_SESSION['roles'] ?? [];
 
@@ -37,7 +37,7 @@ if (is_array($rolesSesion)) {
     }
 }
 
-// Parámetros de fecha, horario y filtro de equipo
+//Parámetros de fecha, horario y filtro de equipo
 $anioActual = date('Y');
 $mesActual = date('m');
 $diaActual = date('j');
@@ -69,7 +69,7 @@ $mesesEspañol = [
 $nombreMes = $mesesEspañol[$mes] ?? '';
 $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $mes, $diaSeleccionado) : '';
 
-// Procesamiento de peticiones POST (AJAX)
+//Procesamiento de peticiones POST (AJAX)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['accion']) && $_POST['accion'] === 'eliminar_reserva') {
         $idReservaDel = $_POST['idReserva'] ?? 0;
@@ -280,7 +280,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
                                 </div>
                             </div>
 
-                            <!-- Panel Lateral para el Día Seleccionado -->
+                            <!-- Panel Lateral para el día Seleccionado -->
                             <?php if ($diaSeleccionado): ?>
                             <div class="col-lg-5">
                                 <div class="border rounded-4 p-4 shadow-sm h-100 bg-white d-flex flex-column justify-content-between">
@@ -490,7 +490,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
     <script src="../bootstrap/js/bootstrap.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Envío por AJAX del formulario de reserva múltiple de equipos
+        //Envío por AJAX del formulario de reserva múltiple de equipos
         const formEquipos = document.getElementById('formReservaEquipos');
         if (formEquipos) {
             formEquipos.addEventListener('submit', function (e) {
@@ -544,7 +544,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
             });
         }
 
-        // Eventos para el botón de eliminar reserva completa
+        //Eventos para el botón de eliminar reserva completa
         document.addEventListener('click', function (e) {
             const boton = e.target.closest('.btn-eliminar-reserva');
             if (!boton) return;
@@ -603,7 +603,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
             }
         });
 
-        // Evento para quitar un equipo individual de una reserva
+        //Evento para quitar un equipo individual de una reserva
         document.addEventListener('click', function (e) {
             const botonEq = e.target.closest('.btn-eliminar-equipo');
             if (!botonEq) return;
@@ -665,7 +665,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
             }
         });
 
-        // Evento para abrir el modal de agregar equipos a una reserva existente
+        //Evento para abrir el modal de agregar equipos a una reserva existente
         document.addEventListener('click', function (e) {
             const btnAbrir = e.target.closest('.btn-abrir-agregar');
             if (!btnAbrir) return;
@@ -691,7 +691,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
             .catch(error => console.error('Error:', error));
         });
 
-        // Evento para enviar el formulario de agregar equipos extra mediante AJAX
+        //Evento para enviar el formulario de agregar equipos extra mediante AJAX
         document.addEventListener('submit', function (e) {
             const formExtra = e.target.closest('#formAgregarExtra');
             if (!formExtra) return;
@@ -724,26 +724,26 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
             })
             .catch(error => console.error('Error:', error));
         });
-        // Validación de rango de horarios 
+        //Validación de rango de horarios 
         document.addEventListener('submit', function (e) {
-            // Identificamos el formulario de selección de horario 
+            //Identificamos el formulario de selección de horario 
             const formHorario = e.target.closest('form[action="calendarioEquipos.php"]');
             if (!formHorario) return;
 
             const selectInicio = formHorario.querySelector('select[name="hora_inicio"]');
             const selectFin = formHorario.querySelector('select[name="hora_fin"]');
 
-            // Si el formulario contiene los selectores de hora de inicio y fin
+            //Si el formulario contiene los selectores de hora de inicio y fin
             if (selectInicio && selectFin) {
                 const horaInicio = selectInicio.value;
                 const horaFin = selectFin.value;
 
-                // Verifico si ambos campos están llenos
+                //Verifico si ambos campos están llenos
                 if (horaInicio !== "" && horaFin !== "") {
                     if (horaInicio >= horaFin) {
-                        e.preventDefault(); // Evito que se envíe el formulario o la recarga
+                        e.preventDefault(); //Evito que se envíe el formulario o la recarga
 
-                        // Inyectamos y mostramos el modal de error solicitado
+                        //Inyecto y muestra el modal de error solicitado
                         document.getElementById('contenedorModal').innerHTML = `
                             <div class="modal fade" id="modalRangoIncorrecto" tabindex="-1" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">

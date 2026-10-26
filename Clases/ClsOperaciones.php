@@ -3,7 +3,7 @@ require_once __DIR__ . '/../Persistencia/connect.php';
 
 class ClsOperaciones {
 
-    // Registrar un préstamo (Accion = 1) o devolución (Accion = 2)
+    // Registrar un préstamo (accion = 1) o devolución (accion = 2)
     public function registrarOperacion($idUsuarioOperador, $idUsuarioDestino, $idEquipo, $accion, $observaciones = '') {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -21,8 +21,7 @@ class ClsOperaciones {
 
         return mysqli_query($link, $sql);
     }
-
-    // Obtener lista de usuarios activos para el selector de préstamos directos
+    // Obtengo la lista de usuarios activos para el selector de préstamos directos
     public function obtenerUsuariosActivos() {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -36,8 +35,7 @@ class ClsOperaciones {
         }
         return $usuarios;
     }
-
-    // Convertir una reserva existente en préstamo (Accion = 1) usando los nuevos campos de horario en operaciones
+    // Convierto una reserva existente en préstamo (accion = 1) 
     public function convertirReservaEnPrestamo($idReserva, $idUsuarioOperador) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -96,8 +94,7 @@ class ClsOperaciones {
             return $this->generarModalRespuesta("Error", $e->getMessage(), "bg-danger text-white", "btn-danger");
         }
     }
-
-    // Registrar un préstamo directo (sin reserva previa) guardando los horarios directamente en operaciones
+    // Registro un préstamo directo (sin reserva previa) guardando los horarios directamente en operaciones
     public function registrarPrestamoDirecto($idUsuarioCliente, $horaInicio, $horaFin, $arrayEquipos) {
         if (empty($arrayEquipos) || !is_array($arrayEquipos)) {
             return $this->generarModalRespuesta("Atención", "Debe seleccionar al menos un equipo para realizar el préstamo.", "bg-warning text-dark", "btn-warning");
@@ -123,7 +120,7 @@ class ClsOperaciones {
         mysqli_begin_transaction($link);
 
         try {
-            // Se inserta directamente en operaciones con su hora de inicio y fin, sin tocar la tabla reservas
+            //Inserto directamente en operaciones con su hora de inicio y fin
             foreach ($arrayEquipos as $idEquipo) {
                 $idEquipoEscaped = mysqli_real_escape_string($link, trim($idEquipo));
 

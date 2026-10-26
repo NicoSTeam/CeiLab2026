@@ -96,7 +96,6 @@ class ClsEquipo {
             return false;
         }
     }
-
     // Método para realizar la baja lógica de un equipo 
     public function eliminarEquipo($idEquipo) {
         $objConexion = new Conexion();
