@@ -54,8 +54,10 @@ require_once 'Clases/ClsLogin.php';
                     </div>
                     <div class="col-sm-6 col-xl-6 pb-3 pt-3"> 
                         <div class="d-block pb-5 ps-4 pe-4 pt-5 shadow rounded-4" style="background-color: #adbfdc;"> 
+                            <div class="bg-white rounded-4 p-4">
                             <h4 class="fw-bold h5">Novedades</h4> 
-                            <img src="/CeiLab2026/assets/img/workInProgress.jpeg" class="img-thumbnail" style="with: auto; height: auto;" alt="workInProgress">
+                            <img src="/CeiLab2026/assets/img/novedades.jpeg" class="img-thumbnail" style="with: auto; height: auto;" alt="workInProgress">
+                            </div>  
                         </div>                         
                     </div> 
                     <div class="col-12 pt-3">
