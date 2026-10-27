@@ -29,17 +29,17 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
         <div class="collapse navbar-collapse" id="navbarNavDropdown-3"> 
             <ul class="mb-2 mb-lg-0 ms-auto navbar-nav align-items-lg-center gap-1"> 
                 <!-- MÓDULO RESTRINGIDO: Solo visible para Administradores -->
-                <?php if ($esAdministrador): ?>
+                <?php if ($esAdministrador || $esDot): ?>
                     <li class="nav-item dropdown"> 
                     <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Usuarios</a> 
                     <div class="dropdown-menu shadow border border-3 border-white rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink"> 
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/registroUsuario.php">Registrar</a> 
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/modUsuario.php">Modificar</a>
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/listadoUsuario.php">Listar</a> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/registroUsuario.php">Registrar</a>   
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/listadoUsuario.php">Listar</a>
+                        <?php if ($esAdministrador): ?> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/modUsuario.php">Modificar</a> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/borrarUsuario.php">Eliminar</a>
-                    <?php if ($esAdministrador || $esDot): ?>  
+                        <?php endif; ?>  
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/calendarioDOT.php">Modificar horarios del DOT</a> 
-                    <?php endif; ?>
                     </div>                        
                     </li>
                 <?php endif; ?>
