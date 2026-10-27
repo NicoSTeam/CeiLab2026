@@ -48,6 +48,25 @@ class ClsUsuarios {
                             </div>
                         </div>';
                     }
+                    if ($this->verificarCedula($cedula)) {
+                        return '
+                        <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content shadow border-0">
+                                    <div class="modal-header bg-warning text-dark">
+                                        <h5 class="modal-title fw-bold">Atención</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-center py-4">
+                                        <p class="fs-5 text-dark mb-0">La cédula ingresada ya existe en el sistema, por favor, ingrese otra.</p>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="btn btn-warning px-4 fw-bold text-dark" data-bs-dismiss="modal">Entendido</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+                    }
 
                 //SQL de inserción
                 $sql = "INSERT INTO usuario (nombre, cedula, email, direccion, observaciones, contraseña) 
@@ -270,6 +289,25 @@ class ClsUsuarios {
                             </div>
                         </div>';
                     }
+                if ($this->verificarCedula($cedula)) {
+                        return '
+                        <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content shadow border-0">
+                                    <div class="modal-header bg-warning text-dark">
+                                        <h5 class="modal-title fw-bold">Atención</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-center py-4">
+                                        <p class="fs-5 text-dark mb-0">La cédula ingresada ya existe en el sistema, por favor, ingrese otra.</p>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="btn btn-warning px-4 fw-bold text-dark" data-bs-dismiss="modal">Entendido</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+                    }
 
                 if (!empty($nuevaContrasenia)) {
                     $contraseniaHash = password_hash($nuevaContrasenia, PASSWORD_DEFAULT);
@@ -474,6 +512,27 @@ class ClsUsuarios {
         $resultado = mysqli_query($link, $sql);
         if ($resultado && $row = mysqli_fetch_assoc($resultado)) {
             return ($row['total'] > 0); // Devuelve true si el mail ya existe
+        }
+
+        return false;
+    }
+    public function verificarCedula($cedula, $idUsuarioActual = null) {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+
+        $cedulaEscaped = mysqli_real_escape_string($link, trim($cedula));
+
+        $sql = "SELECT COUNT(*) as total FROM usuario WHERE cedula = '$cedulaEscaped' AND activo = 1";
+
+        // Si se pasa un ID, se excluye al usuario actual (ideal para cuando estás editando su perfil)
+        if (!empty($idUsuarioActual)) {
+            $idEscaped = mysqli_real_escape_string($link, trim($idUsuarioActual));
+            $sql .= " AND IDUsuario != '$idEscaped'"; 
+        }
+
+        $resultado = mysqli_query($link, $sql);
+        if ($resultado && $row = mysqli_fetch_assoc($resultado)) {
+            return ($row['total'] > 0); // Devuelve true si la cédula ya existe en otro usuario activo
         }
 
         return false;
