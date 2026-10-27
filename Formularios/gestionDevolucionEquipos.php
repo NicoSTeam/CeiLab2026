@@ -250,13 +250,13 @@ $equiposPrestados = $objOperaciones->obtenerEquiposPrestadosActualmente();
                 selectEstadoDev.addEventListener('change', function () {
                     const optDisponible = selectNuevoEst.querySelector('option[value="Disponible"]');
                     if (this.value === 'roto') {
-                        selectNuevoEst.value = 'EnMantenimiento';
-                        optDisponible.disabled = true;
-                        bloqueFalta.classList.remove('d-none');
+                        selectNuevoEst.value = 'EnMantenimiento'; // Fuerza el mantenimiento o no disponible
+                        optDisponible.disabled = true;             // Bloquea Disponible
+                        bloqueFalta.classList.remove('d-none');   // Muestra el bloque de faltas
                     } else {
-                        optDisponible.disabled = false;
-                        selectNuevoEst.value = 'Disponible';
-                        bloqueFalta.classList.add('d-none');
+                        optDisponible.disabled = false;            // Vuelve a habilitar Disponible
+                        selectNuevoEst.value = 'Disponible';      // Vuelve por defecto a Disponible
+                        bloqueFalta.classList.add('d-none');      // Oculta faltas
                         document.getElementById('checkAplicarFalta').checked = false;
                     }
                 });

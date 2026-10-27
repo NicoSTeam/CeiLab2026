@@ -10,7 +10,7 @@ require_once '../Clases/ClsEquipo.php';
 $objOperaciones = new ClsOperaciones();
 $objEquipo = new ClsEquipo();
 
-// Recuperar ID y Roles de la sesión actual
+//Recuperar ID y Roles de la sesión actual
 $idUsuarioSesion = $_SESSION['IDUsuario'] ?? $_SESSION['id_usuario'] ?? null;
 $rolesSesion = $_SESSION['Roles'] ?? $_SESSION['roles'] ?? [];
 

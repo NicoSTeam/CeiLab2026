@@ -24,7 +24,6 @@ class ClsEquipo {
             return false;
         }
     }
-
     // Método para listar equipos activos filtrando por tipo y disponibilidad
     public function listarEquipos($filtroTipo = '', $filtroDisponibilidad = '') {
         $objConexion = new Conexion();
@@ -54,7 +53,6 @@ class ClsEquipo {
         }
         return $equipos;
     }
-
     // Método para obtener equipo por su ID
     public function obtenerEquipoPorId($idEquipo) {
         $objConexion = new Conexion();
@@ -69,7 +67,6 @@ class ClsEquipo {
         }
         return null;
     }
-
     // Método para modificar un equipo
     public function modificarEquipo($idEquipo, $estado, $observaciones, $tipo, $idSala) {
         $objConexion = new Conexion();

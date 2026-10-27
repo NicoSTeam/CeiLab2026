@@ -2,31 +2,18 @@
 require_once __DIR__ . '/../Persistencia/connect.php';
 
 class ClsOperaciones {
-
-    //Registrar un préstamo (accion = 1) o devolución (accion = 2)
-    public function registrarOperacion($idUsuarioOperador, $idUsuarioDestino, $idEquipo, $accion, $observaciones = '') {
-        $objConexion = new Conexion();
-        $link = $objConexion->conectar();
-
-        $idUsuarioOperador = (int)$idUsuarioOperador;
-        $idUsuarioDestino = (int)$idUsuarioDestino;
-        $idEquipo = mysqli_real_escape_string($link, trim($idEquipo));
-        $accion = (int)$accion;
-        $fechaHoy = date('Y-m-d');
-        $observaciones = mysqli_real_escape_string($link, trim($observaciones));
-
-        // Insertamos en operaciones (nota: guardamos el IDUsuario del cliente/destinatario)
-        $sql = "INSERT INTO operaciones (Accion, Fecha, Observaciones, IDUsuario, IDEquipo) 
-                VALUES ($accion, '$fechaHoy', '$observaciones', $idUsuarioDestino, '$idEquipo')";
-
-        return mysqli_query($link, $sql);
-    }
+    
     //Obtengo la lista de usuarios activos para el selector de préstamos directos
     public function obtenerUsuariosActivos() {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
         
-        $sql = "SELECT IDUsuario, Nombre, email, COALESCE(Faltas, 0) AS Faltas FROM usuario ORDER BY Nombre ASC";
+        // Se añade WHERE activo = 1 para excluir a los usuarios inactivos o dados de baja
+        $sql = "SELECT IDUsuario, Nombre, email, COALESCE(Faltas, 0) AS Faltas 
+                FROM usuario 
+                WHERE activo = 1 
+                ORDER BY Nombre ASC";
+                
         $resultado = mysqli_query($link, $sql);
         $usuarios = [];
         
@@ -285,11 +272,9 @@ class ClsOperaciones {
                 throw new Exception("Error al registrar la operación de devolución.");
             }
 
-            // 2. Actualizar el estado, la disponibilidad Y las observaciones directamente en la tabla equipo
-            // Nota: Si prefieres conservar las observaciones anteriores y concatenar, puedes usar CONCAT, 
-            // pero actualizar el campo directamente refleja el parte DOT más reciente de la devolución.
-            $disponibilidadEquipo = ($estadoDevolucion === 'normal') ? 1 : 0;
-            
+            // 2. Actualizar el estado, la disponibilidad Y las observaciones en la tabla equipo
+            $disponibilidadEquipo = ($nuevoEstadoEquipo === 'Disponible') ? 1 : 0;
+
             // Si el usuario no escribió observaciones, podemos mantener o limpiar, pero aseguramos registrar el texto ingresado
             $obsEquipoEscaped = !empty($observacionesDevolucion) ? $observacionesDevolucion : "Devolución en estado " . $estadoDevolucion;
             
