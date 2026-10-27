@@ -3,7 +3,7 @@ require_once __DIR__ . '/../Persistencia/connect.php';
 
 class ClsOperaciones {
 
-    // Registrar un préstamo (accion = 1) o devolución (accion = 2)
+    //Registrar un préstamo (accion = 1) o devolución (accion = 2)
     public function registrarOperacion($idUsuarioOperador, $idUsuarioDestino, $idEquipo, $accion, $observaciones = '') {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -21,22 +21,22 @@ class ClsOperaciones {
 
         return mysqli_query($link, $sql);
     }
-    // Obtengo la lista de usuarios activos para el selector de préstamos directos
+    //Obtengo la lista de usuarios activos para el selector de préstamos directos
     public function obtenerUsuariosActivos() {
-    $objConexion = new Conexion();
-    $link = $objConexion->conectar();
-    
-    $sql = "SELECT IDUsuario, Nombre, email, COALESCE(Faltas, 0) AS Faltas FROM usuario ORDER BY Nombre ASC";
-    $resultado = mysqli_query($link, $sql);
-    $usuarios = [];
-    
-    if ($resultado) {
-        while ($row = mysqli_fetch_assoc($resultado)) {
-            $usuarios[] = $row;
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        
+        $sql = "SELECT IDUsuario, Nombre, email, COALESCE(Faltas, 0) AS Faltas FROM usuario ORDER BY Nombre ASC";
+        $resultado = mysqli_query($link, $sql);
+        $usuarios = [];
+        
+        if ($resultado) {
+            while ($row = mysqli_fetch_assoc($resultado)) {
+                $usuarios[] = $row;
+            }
         }
+        return $usuarios;
     }
-    return $usuarios;
-}
     // Convierto una reserva existente en préstamo (accion = 1) 
     public function convertirReservaEnPrestamo($idReserva, $idUsuarioOperador) {
         $objConexion = new Conexion();
@@ -141,13 +141,13 @@ class ClsOperaciones {
             return $this->generarModalRespuesta("Error", $e->getMessage(), "bg-danger text-white", "btn-danger");
         }
     }
-    // Obtener reservas del día actual
+    //Obtener reservas del día actual
     public function obtenerReservasDelDia($fecha) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
         $fecha = mysqli_real_escape_string($link, $fecha);
 
-        // Consulta que trae la reserva, el usuario responsable y sus faltas
+        //Consulta que trae la reserva, el usuario responsable y sus faltas
         $sql = "
             SELECT r.IDReservas, r.Fecha, r.HoraInicio, r.HoraFin, 
                    u.IDUsuario, u.Nombre AS nombre_usuario, u.email, COALESCE(u.Faltas, 0) AS Faltas
@@ -163,7 +163,7 @@ class ClsOperaciones {
         if ($resultado) {
             while ($row = mysqli_fetch_assoc($resultado)) {
                 $idReserva = $row['IDReservas'];
-                // Obtener equipos de la reserva
+                //Obtener equipos de la reserva
                 $sqlEq = "SELECT te.IDEquipo, e.Tipo FROM tiene_equipos te JOIN equipo e ON te.IDEquipo = e.IDEquipo WHERE te.IDReservas = $idReserva";
                 $resEq = mysqli_query($link, $sqlEq);
                 $equipos = [];

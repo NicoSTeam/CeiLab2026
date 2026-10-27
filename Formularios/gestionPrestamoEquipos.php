@@ -39,14 +39,14 @@ if (is_array($rolesSesion)) {
 
 $fechaHoy = date('Y-m-d');
 
-// Parámetros para préstamo directo
+//Parámetros para préstamo directo
 $horaInicioDir = $_GET['hora_inicio'] ?? $_POST['hora_inicio'] ?? '';
 $horaFinDir = $_GET['hora_fin'] ?? $_POST['hora_fin'] ?? '';
 $tipoFiltroDir = $_GET['tipo_equipo'] ?? '';
 $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
 $listaUsuarios = $objOperaciones->obtenerUsuariosActivos();
 
-// Procesamiento de peticiones POST
+//Procesamiento de peticiones POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['accion']) && $_POST['accion'] === 'convertir_reserva') {
         $idReserva = $_POST['idReserva'] ?? 0;
@@ -105,8 +105,8 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                         <div class="row g-4">
                             <!-- Columna Izquierda: Reservas Programadas para Hoy -->
                             <div class="col-lg-6">
-                                <div class="border-0 rounded-4 p-3 shadow-sm h-100 bg-white">
-                                    <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                                <div class="border-0 rounded-4 p-3 shadow-sm h-100 bg-light">
+                                    <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2 ">
                                         <span>📅</span> Reservas Programadas Hoy
                                     </h5>
                                     
@@ -118,7 +118,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                                     $esRiesgoso = $faltasRes > 5;
                                                 ?>
                                                     <div class="col-12">
-                                                        <div class="card border-0 shadow-sm rounded-3 p-3 bg-light border-start <?php echo $esRiesgoso ? 'border-danger bg-danger bg-opacity-10' : 'border-primary'; ?> border-4 position-relative overflow-hidden transition-all">
+                                                        <div class="card border-0 shadow-sm rounded-3 p-3  border-start <?php echo $esRiesgoso ? 'border-danger bg-danger bg-opacity-10' : 'border-primary'; ?> border-4 position-relative overflow-hidden transition-all">
                                                             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
                                                                 <div>
                                                                     <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill mb-1 fw-bold" style="font-size: 0.75rem;">
@@ -168,7 +168,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                 </div>
                             </div>
 
-                            <!-- Columna derecha: préstamo directo (sin reserva previa) -->
+                            <!-- Columna derecha: préstamo directo sin reserva previa -->
                             <div class="col-lg-6">
                                 <div class="border rounded-4 p-3 shadow-sm h-100 bg-white">
                                     <h5 class="fw-bold text-dark mb-3"> Préstamo Directo (Sin Reserva)</h5>
@@ -298,10 +298,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
     <script src="../bootstrap/js/bootstrap.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        
-        // ==========================================
-        // 1. CONVERTIR / ENTREGAR RESERVA EXISTENTE
-        // ==========================================
+        // 1. CONVERTIR RESERVA EXISTENTE
         document.addEventListener('click', function (e) {
             const btn = e.target.closest('.btn-convertir');
             if (!btn) return;
@@ -360,9 +357,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
             }
         });
 
-        // ==========================================
         // 2. CANCELAR RESERVA EXISTENTE (CONTROL DE FALTAS)
-        // ==========================================
         document.addEventListener('click', function (e) {
             const btnCancel = e.target.closest('.btn-cancelar-reserva');
             if (!btnCancel) return;
@@ -423,9 +418,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
             }
         });
 
-        // ==========================================
         // 3. ALERTA DINÁMICA DE FALTAS (> 5) EN PRÉSTAMO DIRECTO
-        // ==========================================
         document.addEventListener('change', function (e) {
             if (e.target && e.target.id === 'selectUsuarioDestino') {
                 const selectedOption = e.target.options[e.target.selectedIndex];
@@ -442,9 +435,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
             }
         });
 
-        // ==========================================
         // 4. REGISTRAR PRÉSTAMO DIRECTO POR AJAX
-        // ==========================================
         document.addEventListener('submit', function (e) {
             const formDir = e.target.closest('#formPrestamoDirecto');
             if (!formDir) return;

@@ -10,7 +10,7 @@ require_once '../Clases/ClsEquipo.php';
 $objOperaciones = new ClsOperaciones();
 $objEquipo = new ClsEquipo();
 
-// Recuperar ID y Roles de la sesión actual
+//Recuperar ID y Roles de la sesión actual
 $idUsuarioSesion = $_SESSION['IDUsuario'] ?? $_SESSION['id_usuario'] ?? null;
 $rolesSesion = $_SESSION['Roles'] ?? $_SESSION['roles'] ?? [];
 
@@ -37,7 +37,7 @@ if (is_array($rolesSesion)) {
     }
 }
 
-// Procesamiento de peticiones POST (Devoluciones y No Devoluciones)
+//Procesamiento de peticiones POST (Devoluciones y No Devoluciones)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['accion']) && $_POST['accion'] === 'registrar_devolucion') {
         $idEquipo = $_POST['id_equipo'] ?? '';
@@ -170,7 +170,7 @@ $equiposPrestados = $objOperaciones->obtenerEquiposPrestadosActualmente();
     <script src="../bootstrap/js/bootstrap.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // 1. Abrir modal de Devolución Normal/Roto
+        //1. Abrir modal de Devolución Normal/Roto
         document.addEventListener('click', function (e) {
             const btnDev = e.target.closest('.btn-devolucion');
             if (btnDev) {
@@ -262,7 +262,7 @@ $equiposPrestados = $objOperaciones->obtenerEquiposPrestadosActualmente();
                 });
             }
 
-            // 2. Abrir modal para marcar equipo como "No Devuelto"
+            //2. Abrir modal para marcar equipo como "No Devuelto"
             const btnNoDev = e.target.closest('.btn-no-devuelto');
             if (btnNoDev) {
                 const idEquipo = btnNoDev.getAttribute('data-idequipo');
@@ -312,7 +312,7 @@ $equiposPrestados = $objOperaciones->obtenerEquiposPrestadosActualmente();
             }
         });
 
-        // 3. Enviar formularios por AJAX
+        //3. Enviar formularios por AJAX
         document.addEventListener('submit', function (e) {
             const formDev = e.target.closest('#formDevolucion') || e.target.closest('#formNoDevuelto');
             if (!formDev) return;
@@ -326,7 +326,7 @@ $equiposPrestados = $objOperaciones->obtenerEquiposPrestadosActualmente();
             })
             .then(response => response.text())
             .then(html => {
-                // Cerrar modales activos
+                //Cerrar modales activos
                 ['modalDevolucion', 'modalNoDevuelto'].forEach(id => {
                     var el = document.getElementById(id);
                     if (el) {
@@ -335,7 +335,7 @@ $equiposPrestados = $objOperaciones->obtenerEquiposPrestadosActualmente();
                     }
                 });
 
-                // Inyectar y mostrar modal de respuesta
+                //Inyectar y mostrar modal de respuesta
                 document.getElementById('contenedorModal').innerHTML = html;
                 var modalRespEl = document.getElementById('modalRespuesta');
                 if (modalRespEl) {
