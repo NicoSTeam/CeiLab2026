@@ -63,9 +63,10 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                 </select>
                             </div>
 
-                            <!-- Botones de Acción (ocupan el espacio disponible equitativamente) -->
+                            <!-- Botones -->
                             <div class="d-flex gap-2 flex-grow-1" style="min-width: 200px;">
                                 <button type="submit" class="btn btn-primary fw-bold shadow-sm flex-fill">Filtrar</button>
+                                <a href="borrarEquipo.php" class="btn btn-outline-secondary fw-bold shadow-sm">Limpiar</a>
                             </div>
                         </form>
                         
