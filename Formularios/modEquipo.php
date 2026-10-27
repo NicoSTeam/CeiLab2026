@@ -106,7 +106,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                         <label for="estado" class="form-label fw-bold text-dark">Estado</label>
                                         <select class="form-select rounded-3 shadow-sm" id="estado" name="estado" required>
                                             <?php 
-                                            $estadosPermitidos = ["Disponible", "Reservado", "EnPrestamo", "EnMantenimiento", "NoDisponible"];
+                                            $estadosPermitidos = ["Disponible", "EnMantenimiento", "NoDisponible"];
                                             foreach ($estadosPermitidos as $e) {
                                                 $selected = ($equipoEditando['Estado'] === $e) ? 'selected' : '';
                                                 echo "<option value=\"$e\" $selected>$e</option>";
