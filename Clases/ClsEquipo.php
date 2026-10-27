@@ -113,8 +113,9 @@ class ClsEquipo {
         $link = $objConexion->conectar();
         
         $fecha = mysqli_real_escape_string($link, $fecha);
-        $horaInicio = mysqli_real_escape_string($link, $horaInicio);
-        $horaFin = mysqli_real_escape_string($link, $horaFin);
+        $horaInicio = mysqli_real_escape_string($link, strlen($horaInicio) == 5 ? $horaInicio . ':00' : $horaInicio);
+        $horaFin = mysqli_real_escape_string($link, strlen($horaFin) == 5 ? $horaFin . ':00' : $horaFin);
+        
         $filtroTipo = !empty($tipo) ? "AND e.Tipo = '" . mysqli_real_escape_string($link, $tipo) . "'" : "";
 
         $sql = "
@@ -123,25 +124,37 @@ class ClsEquipo {
             WHERE e.activo = 1 
               AND e.Disponibilidad = 1
               $filtroTipo
-              AND e.IDEquipo NOT IN (
-                  -- 1. Excluir equipos ocupados por otras reservas activas en ese horario
-                  SELECT te.IDEquipo 
+              -- 1. Excluir equipos ocupados por reservas activas
+              AND NOT EXISTS (
+                  SELECT 1 
                   FROM tiene_equipos te
                   JOIN reservas r ON te.IDReservas = r.IDReservas
-                  WHERE r.activo = 1 
+                  WHERE te.IDEquipo = e.IDEquipo
+                    AND r.activo = 1 
                     AND r.Fecha = '$fecha'
-                    AND ('$horaInicio' < r.HoraFin AND '$horaFin' > r.HoraInicio)
+                    AND (TIME('$horaInicio') < TIME(r.HoraFin) AND TIME('$horaFin') > TIME(r.HoraInicio))
               )
+              -- 2. Excluir equipos con préstamos activos (vinculados por orden de IDOperaciones)
               AND NOT EXISTS (
-                  -- 2. Excluir equipos que ya fueron prestados (Accion = 1 en operaciones) para ese día y horario
-                  SELECT 1
-                  FROM operaciones o
-                  WHERE o.IDEquipo = e.IDEquipo
-                    AND o.Accion = 1 
-                    AND o.Fecha = '$fecha'
-                    AND o.HoraInicio IS NOT NULL 
-                    AND o.HoraFin IS NOT NULL
-                    AND ('$horaInicio' < o.HoraFin AND '$horaFin' > o.HoraInicio)
+                  SELECT 1 
+                  FROM operaciones o_prestamo
+                  WHERE o_prestamo.IDEquipo = e.IDEquipo
+                    AND o_prestamo.Accion = 1 
+                    AND o_prestamo.Fecha = '$fecha'
+                    AND o_prestamo.HoraInicio IS NOT NULL 
+                    AND o_prestamo.HoraFin IS NOT NULL
+                    AND TIME('$horaInicio') < COALESCE(
+                        (
+                            SELECT MIN(o_dev.HoraInicio)
+                            FROM operaciones o_dev
+                            WHERE o_dev.IDEquipo = e.IDEquipo
+                              AND o_dev.Accion = 2 
+                              AND o_dev.Fecha = '$fecha'
+                              AND o_dev.IDOperaciones > o_prestamo.IDOperaciones
+                        ),
+                        TIME(o_prestamo.HoraFin)
+                    )
+                    AND TIME('$horaFin') > TIME(o_prestamo.HoraInicio)
               )
             ORDER BY e.Tipo ASC, e.IDEquipo ASC;
         ";
