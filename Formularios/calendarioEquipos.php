@@ -180,7 +180,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
                                 <h2 class="fw-bold text-dark mb-1">Calendario de Reserva de Equipos</h2>
                                 <h5 class="text-muted mb-0">Seleccione un día para consultar disponibilidad y reservar múltiples equipos</h5>
                             </div>
-                            <a href="disponibilidadEquipos.php" class="btn btn-outline-secondary fw-bold rounded-pill px-4 shadow-sm">
+                            <a href="/CeiLab2026/Formularios/listadoEquipos.php" class="btn btn-outline-secondary fw-bold rounded-pill px-4 shadow-sm">
                                 ← Ver Estado de Equipos
                             </a>
                         </div>
