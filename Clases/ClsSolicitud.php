@@ -25,26 +25,67 @@ class ClsSolicitud {
         
         return mysqli_query($link, $sql);
     }
-    //Método para listar solicitudes activas
-    public function listarSolicitudes() {
+    //Lista solicitudes aplicando filtros opcionales
+    public function listarSolicitudesFiltradas($idUsuario = '', $estado = '', $tipoEquipo = '') {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
         
-        $sql = "SELECT s.*, u.Nombre AS UsuarioNombre 
-                FROM solicitud s
-                JOIN usuario u ON s.IDUsuario = u.IDUsuario
-                WHERE s.activo = 1
-                ORDER BY s.Fecha DESC, s.IDSolicitud DESC";
-                
+        $sql = "SELECT s.*, u.Nombre AS NombreUsuario 
+                FROM solicitud_material s 
+                JOIN usuario u ON s.IDUsuario = u.IDUsuario 
+                WHERE s.activo = 1";
+        
+        if (!empty($idUsuario)) {
+            $idUsuario = mysqli_real_escape_string($link, $idUsuario);
+            $sql .= " AND s.IDUsuario = '$idUsuario'";
+        }
+        if (!empty($estado)) {
+            $estado = mysqli_real_escape_string($link, $estado);
+            $sql .= " AND s.Estado = '$estado'";
+        }
+        if (!empty($tipoEquipo)) {
+            $tipoEquipo = mysqli_real_escape_string($link, $tipoEquipo);
+            $sql .= " AND s.tipoEquipo = '$tipoEquipo'";
+        }
+        
+        $sql .= " ORDER BY s.Fecha DESC, s.IDSolicitud DESC";
+        
         $resultado = mysqli_query($link, $sql);
         $solicitudes = [];
-
         if ($resultado) {
             while ($row = mysqli_fetch_assoc($resultado)) {
                 $solicitudes[] = $row;
             }
         }
         return $solicitudes;
+    }
+    //Obtengo lista de usuarios que tienen solicitudes (para el filtro)
+    public function listarUsuariosConSolicitudes() {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        $sql = "SELECT DISTINCT u.IDUsuario, u.Nombre FROM usuario u JOIN solicitud_material s ON u.IDUsuario = s.IDUsuario WHERE s.activo = 1";
+        $resultado = mysqli_query($link, $sql);
+        $usuarios = [];
+        if ($resultado) {
+            while ($row = mysqli_fetch_assoc($resultado)) {
+                $usuarios[] = $row;
+            }
+        }
+        return $usuarios;
+    }
+    //Obtengo lista de tipos de equipos solicitados (para el filtro)
+    public function listarTiposEquiposSolicitados() {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        $sql = "SELECT DISTINCT tipoEquipo FROM solicitud_material WHERE activo = 1";
+        $resultado = mysqli_query($link, $sql);
+        $tipos = [];
+        if ($resultado) {
+            while ($row = mysqli_fetch_assoc($resultado)) {
+                $tipos[] = $row['tipoEquipo'];
+            }
+        }
+        return $tipos;
     }
 }
 ?>
