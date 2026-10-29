@@ -189,7 +189,7 @@ class ClsUsuarios {
         $link = $objConexion->conectar();
 
         // Usamos LEFT JOIN y unimos los campos del usuario, tomando el rol de mayor importancia con MIN()
-        $sql = "SELECT u.IDUsuario, u.nombre, u.cedula, u.email, u.direccion, u.observaciones, MIN(r.ROL) AS ROL 
+       $sql = "SELECT u.IDUsuario, u.nombre, u.cedula, u.email, u.direccion, u.observaciones, MIN(r.ROL) AS ROL 
                 FROM usuario u 
                 LEFT JOIN rol r ON u.IDUsuario = r.IDUsuario 
                 WHERE u.activo = 1";
@@ -213,8 +213,8 @@ class ClsUsuarios {
         }
 
         // Agrupamos estrictamente por el ID y los datos del usuario para que cada uno salga una sola vez
-        $sql .= " GROUP BY u.IDUsuario, u.nombre, u.cedula, u.email, u.direccion, u.observaciones";
-        $sql .= " ORDER BY u.IDUsuario DESC";
+        $sql .= " GROUP BY u.IDUsuario";
+        $sql .= " ORDER BY u.IDUsuario ASC";
         
         return mysqli_query($link, $sql);
     }
