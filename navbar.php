@@ -59,17 +59,17 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                     <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Equipos</a> 
                     <div class="dropdown-menu shadow border border-3 border-white rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink2"> 
                         <?php if ($esAdministrador || $esDot ): ?>
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/registrarEquipo.php">Registrar equipos</a> 
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/modEquipo.php">Modificar equipos</a>
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/borrarEquipo.php">Eliminar equipos</a>  
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/registrarEquipo.php">Registrar</a> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/modEquipo.php">Modificar</a>
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/borrarEquipo.php">Eliminar</a>  
                         <?php endif; ?>
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/listadoEquipos.php">Consultar equipos</a>
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/listadoEquipos.php">Consultar</a>
                         <?php if ($esAdministrador || $esDot || $esDocente ): ?>
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/calendarioEquipos.php">Reservar equipos</a>
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/calendarioEquipos.php">Reservar</a>
                         <?php endif; ?>
                         <?php if ($esAdministrador || $esDot ): ?>
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/gestionPrestamoEquipos.php">Prestamo equipos</a>
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/gestionDevolucionEquipos.php">Devolución equipos</a>
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/gestionPrestamoEquipos.php">Prestamo</a>
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/gestionDevolucionEquipos.php">Devolución</a>
                         <?php endif; ?>  
                     </div>                        
                 </li>
