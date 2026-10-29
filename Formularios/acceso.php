@@ -60,7 +60,7 @@
                     var miModal = new bootstrap.Modal(elementoModal, { focus: false });
                     miModal.show();
 
-                    // NUEVO: Quita el foco del botón interno antes de que el modal se oculte y active aria-hidden
+                    //Quita el foco del boton interno antes de que el modal se oculte y active el aria-hidden
                     elementoModal.addEventListener('hide.bs.modal', function () {
                         let elementoEnfocado = elementoModal.querySelector(':focus');
                         if (elementoEnfocado) {

@@ -1,6 +1,20 @@
 <?php
 require_once '../Clases/ClsLogin.php';
 ClsLogin::verificarSesion(); 
+
+// Verificación del usuario para que no ingrese por ruta del navegador
+$esAdministrador = isset($_SESSION['roles']) && in_array('1', $_SESSION['roles']);
+$esDot = isset($_SESSION['roles']) && in_array('2', $_SESSION['roles']);
+$esDocente = isset($_SESSION['roles']) && in_array('3', $_SESSION['roles']);
+$esEstudiante = isset($_SESSION['roles']) && in_array('4', $_SESSION['roles']);
+
+if (!$esAdministrador && !$esDot && !$esDocente && !$esEstudiante) {
+    $_SESSION['mensaje'] = "Acceso denegado. Acción no permitida para el rol detectado.";
+    $_SESSION['tipoAlerta'] = "danger";
+    header("Location: ../index.php");
+    exit();
+}
+
 require_once '../Clases/ClsEquipo.php';
 
 $objEquipo = new ClsEquipo();

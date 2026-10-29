@@ -72,6 +72,46 @@ require_once 'Clases/ClsLogin.php';
         <?php include 'footer.php'; ?> 
         <script src="assets/js/popper.min.js"></script>
         <script src="bootstrap/js/bootstrap.min.js"></script>
+
+        <?php 
+        // Capturar mensajes flash de la sesión
+        $mensajeIndex = $_SESSION['mensaje'] ?? '';
+        $tipoAlertaIndex = $_SESSION['tipoAlerta'] ?? 'danger';
+
+        if (!empty($mensajeIndex)): 
+            // Limpiar las variables para que el modal no vuelva a aparecer al recargar
+            unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
+            
+            $esWarning = ($tipoAlertaIndex === 'warning');
+            $claseTextoHeader = $esWarning ? 'text-dark' : 'text-white';
+            $claseBotonCierre = $esWarning ? '' : 'btn-close-white';
+        ?>
+        <!-- MODAL DE ACCESO DENEGADO / NOTIFICACIÓN EN INDEX -->
+        <div class="modal fade" id="modalNotificacionGlobal" tabindex="-1" aria-labelledby="modalNotificacionGlobalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <div class="modal-header bg-<?php echo $tipoAlertaIndex; ?> <?php echo $claseTextoHeader; ?> border-0 rounded-top-4">
+                        <h5 class="modal-title fw-bold" id="modalNotificacionGlobalLabel">Atención</h5>
+                        <button type="button" class="btn-close <?php echo $claseBotonCierre; ?>" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                        <p class="fs-5 mb-0"><?php echo htmlspecialchars($mensajeIndex); ?></p>
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center pb-4">
+                        <button type="button" class="btn btn-<?php echo $tipoAlertaIndex; ?> fw-bold rounded-pill px-4 <?php echo $esWarning ? 'text-dark' : 'text-white'; ?>" data-bs-dismiss="modal">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Mostrar el modal automáticamente apenas cargue el index
+            document.addEventListener("DOMContentLoaded", function() {
+                var modalNoti = new bootstrap.Modal(document.getElementById('modalNotificacionGlobal'));
+                modalNoti.show();
+            });
+        </script>
+        <?php endif; ?>
         
     </body>
 </html>
