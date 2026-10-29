@@ -29,16 +29,26 @@ $historialReservas = $objOperaciones->obtenerHistorialReservas();
     <link rel="stylesheet" href="../Estilos/blocks.css">
     <link href="../Estilos/style.css" rel="stylesheet">
     <link rel="icon" href="/CeiLab2026/assets/img/Ceibal_ico.png">
+    <link href="../Estilos/CSSImpresion.css" rel="stylesheet" type="text/css" media="print">
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
     <?php include '../navbar.php'; ?>
     <section class="hero-section flex-fill pb-5 pt-5">
     <div class="container my-4">
-        <div class="row mb-4 align-items-center">
-            <div class="bg-white p-3 mb-4 shadow-sm rounded text-center">
-                <h2 class="fw-bold text-dark">📋 Historial General de Reservas</h2>
-                
-                <p class="text-muted mb-0">Registro completo de todas las reservas realizadas en el sistema.</p>
+        <div class="row mb-4 align-items-center bg-white p-3 mb-4 shadow-sm rounded">
+            <div class="col-md-6 ">
+                <h2 class="fw-bold text-dark mb-0">📋 Historial General de Reservas</h2>
+                <p class="text-muted mb-0">Registro completo de reservas, salones, duración y recursos asociados.</p>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0 d-flex justify-content-md-end gap-2 flex-wrap">
+                <!-- Botón Volver al Inicio -->
+                <a href="../index.php" class="btn btn-outline-secondary fw-bold rounded-pill px-4 shadow-sm">
+                    ← Volver al Inicio
+                </a>
+                <!-- Botón Imprimir / PDF -->
+                <button type="button" onclick="window.print();" class="btn btn-danger fw-bold rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-2">
+                    📄 Imprimir Reporte (PDF)
+                </button>
             </div>
         </div>
 

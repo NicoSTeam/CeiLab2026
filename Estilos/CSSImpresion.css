@@ -1,0 +1,95 @@
+@media print {
+    /* Fuerza al navegador a imprimir con colores, fondos y opacidades exactas */
+    *, *:before, *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Oculta elementos de navegación y botones */
+    .print-hidden, 
+    .navbar, 
+    nav,
+    header,
+    footer,
+    .btn, 
+    button,
+    .no-print {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* Configuración general de la página */
+    body {
+        background-color: #ffffff !important;
+        color: #212529 !important;
+        font-size: 10pt;
+        margin: 0 !important;
+        padding: 15px !important;
+    }
+
+    .container, .container-fluid {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Tarjetas limpias pero con su estructura base */
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        background: transparent !important;
+    }
+
+    .table-responsive {
+        overflow: visible !important;
+    }
+
+    /* Cuadricula con bordes visibles */
+    table.table {
+        width: 100% !important;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        border-top: 1px solid #dee2e6 !important;
+        border-left: 1px solid #dee2e6 !important;
+        margin-top: 15px !important;
+    }
+
+    table.table th, 
+    table.table td {
+        border-right: 1px solid #dee2e6 !important;
+        border-bottom: 1px solid #dee2e6 !important;
+        border-top: none !important;
+        border-left: none !important;
+        padding: 8px 10px !important;
+        font-size: 9.5pt;
+        vertical-align: middle !important;
+    }
+
+    /* Cabecera de la tabla con el estilo light */
+    table.table thead th {
+        background-color: #f8f9fa !important;
+        color: #495057 !important;
+        font-weight: bold !important;
+        text-transform: uppercase;
+        font-size: 8.5pt;
+    }
+
+    td .d-flex {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 3px !important;
+    }
+
+    .badge {
+        padding: 4px 8px !important;
+        font-size: 8pt !important;
+        font-weight: 600 !important;
+    }
+    /* Fuerzo a que el doc tenga el fondo blanco */
+    html, body, .bg-light, .hero-section {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+    }
+}
