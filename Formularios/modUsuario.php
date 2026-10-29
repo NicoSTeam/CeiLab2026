@@ -2,7 +2,7 @@
 require_once '../Clases/ClsLogin.php';
 ClsLogin::verificarSesion();
 
-// Verificación del usuario para que no ingrese por ruta del navegador
+//Verificación del usuario para que no ingrese por ruta del navegador
 $esAdministrador = isset($_SESSION['roles']) && in_array('1', $_SESSION['roles']);
 $esDot = isset($_SESSION['roles']) && in_array('2', $_SESSION['roles']); //debo ver de que solo el admin pueda asignar rol admin
 
@@ -13,10 +13,34 @@ if (!$esAdministrador && !$esDot) {
     exit();
 }
 
+//Obtengo el ID del usuario que se va a modificar (por POST o GET)
+$idUsuarioAModificar = $_GET['id'] ?? $_POST['id_usuario'] ?? 0;
+$idUsuarioAModificar = (int)$idUsuarioAModificar;
+
+//Consulta si el usuario objetivo tiene el rol de Administrador ('1')
+$objConexion = new Conexion();
+$link = $objConexion->conectar();
+
+$sqlRolesObjetivo = "SELECT ROL FROM rol WHERE IDUsuario = $idUsuarioAModificar";
+$resRolesObjetivo = mysqli_query($link, $sqlRolesObjetivo);
+
+$usuarioObjetivoEsAdmin = false;
+if ($resRolesObjetivo) {
+    while ($fila = mysqli_fetch_assoc($resRolesObjetivo)) {
+        if ($fila['ROL'] === '1') {
+            $usuarioObjetivoEsAdmin = true;
+            break;
+        }
+    }
+}
+
+//Flag para bloquear si es DOT intentando modificar a un Admin
+$bloquearModificacion = ($esDot && !$esAdministrador && $usuarioObjetivoEsAdmin);
+
 require_once '../Clases/ClsUsuarios.php';
 $objUsuario = new ClsUsuarios();
 
-// Se envía el formulario por POST vía AJAX, procesamos la modificación
+//Envia el formulario por POST vía AJAX, procesa la modificación
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fidusuario'])) {
     echo $objUsuario->modificarUsuario();
     exit;
@@ -106,7 +130,7 @@ if ($idModificar) {
                         <div>
                             <h3 class="mb-3 text-dark fw-bold">Seleccione un usuario para modificar</h3> 
                             <?php
-                            // Captura todos los filtros enviados por GET
+                            //Toma todos los filtros enviados por GET
                             $nombreFiltro = $_GET['nombre'] ?? '';
                             $cedulaFiltro = $_GET['cedula'] ?? '';
                             $emailFiltro  = $_GET['email'] ?? '';
@@ -225,6 +249,7 @@ if ($idModificar) {
                                         <input type="text" class="form-control" name="fobservaciones" value="<?php echo htmlspecialchars($usuarioData['observaciones']); ?>">
                                     </div>
 
+                                    <?php if ($esAdministrador): ?> 
                                     <!-- Rol Principal -->
                                     <div class="mb-3">
                                         <label class="form-label text-muted small">Rol Principal</label>
@@ -248,6 +273,7 @@ if ($idModificar) {
                                             <option value="4" <?php echo (($rolesData[1] ?? '') == '4') ? 'selected' : ''; ?>>4 - Estudiante</option>
                                         </select>
                                     </div>
+                                    <?php endif; ?>
                                     <div class="mb-4">
                                         <label for="fcontrasenia" class="form-label ">Nueva Contraseña <small class="text-muted">(Opcional)</small></label>
                                         <input type="password" class="form-control rounded-3 shadow-sm" id="fcontrasenia" name="fcontrasenia" placeholder="Dejar en blanco para mantener la actual">
@@ -262,11 +288,43 @@ if ($idModificar) {
                 </div>
             <?php endif; ?>
         </section>
-
+        <?php if ($bloquearModificacion): ?>
+            <!-- MODAL DE BLOQUEO DIRECTO -->
+            <div class="modal fade show" id="modalRestriccion" tabindex="-1" aria-modal="true" role="dialog" style="display: block; background-color: rgba(0,0,0,0.5);">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content shadow-lg border-0 rounded-4">
+                        <div class="modal-header bg-danger text-white border-0 rounded-top-4">
+                            <h5 class="modal-title fw-bold">Acción No Permitida</h5>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                            <div class="mb-3">
+                                <span class="fs-1">🚫</span>
+                            </div>
+                            <p class="fs-5 text-dark mb-0">Un usuario DOT no tiene permisos para modificar o alterar los datos de una cuenta de Administrador.</p>
+                        </div>
+                        <div class="modal-footer border-0 justify-content-center pb-4">
+                            <a href="/CeiLab2026/Formularios/modUsuario.php" class="btn btn-danger fw-bold rounded-pill px-4">Volver al listado</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>                                    
         <?php include '../footer.php'; ?>
         <script src="../assets/js/popper.min.js"></script>
         <script src="../bootstrap/js/bootstrap.min.js"></script>
         <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. Mostrar el modal con sombreado automático de Bootstrap
+            var modalRestriccion = new bootstrap.Modal(document.getElementById('modalRestriccion'));
+            modalRestriccion.show();
+            
+            // 2. Deshabilitar clics y opacar el contenido de atrás por seguridad visual
+            let contenedor = document.getElementById('contenidoPrincipal');
+            if (contenedor) {
+                contenedor.style.pointerEvents = 'none';
+                contenedor.style.opacity = '0.3';
+            }
+        });
         // Script AJAX fetch para guardar sin recargar página y mostrar modal Bootstrap
         const formModificar = document.getElementById('formModificar');
         if (formModificar) {

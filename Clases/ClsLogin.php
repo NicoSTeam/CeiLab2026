@@ -3,7 +3,7 @@ require_once __DIR__ . '/../Persistencia/connect.php';
 
 class ClsLogin {
 
-    // Método para el inicio de sesión y devolver el modal de respuesta
+    //Método para el inicio de sesión y devolver el modal de respuesta
     public function iniciarSesion() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             try {
@@ -15,13 +15,12 @@ class ClsLogin {
 
                 $email = mysqli_real_escape_string($link, $email);
 
-                // Buscamos al usuario por su correo electrónico
-                $sql = "SELECT IDUsuario, nombre, contraseña FROM usuario WHERE email = '$email'";
+                //Busca al usuario por su correo electrónico y me aseguro de que este activo 
+                $sql = "SELECT IDUsuario, nombre, contraseña FROM usuario WHERE email = '$email' AND activo = 1";
                 $resultado = mysqli_query($link, $sql);
 
                 if ($resultado && $row = mysqli_fetch_assoc($resultado)) {
-                    // Verificamos la contraseña encriptada con password_verify
-                    //exit("Hash en BD: " . $row['contraseña'] . " | ¿Coincide?: " . (password_verify($contrasenia, $row['contraseña']) ? 'SÍ' : 'NO'));
+                    // Verifica la contraseña encriptada con password_verify
                     if (password_verify($contrasenia, $row['contraseña'])) {
                         
                         if (session_status() === PHP_SESSION_NONE) {
@@ -32,7 +31,7 @@ class ClsLogin {
                         $_SESSION['IDUsuario'] = $idUsuario;
                         $_SESSION['nombre'] = $row['nombre'];
 
-                        // Consultamos y guardamos todos los roles asignados al usuario en un array de sesión
+                        //Consulto y guardamos todos los roles asignados al usuario en un array de sesión
                         $sqlRoles = "SELECT ROL FROM rol WHERE IDUsuario = '$idUsuario'";
                         $resRoles = mysqli_query($link, $sqlRoles);
                         $rolesUsuario = [];
@@ -45,10 +44,10 @@ class ClsLogin {
                         $rememberMe = isset($_POST['rememberMe']) && ($_POST['rememberMe'] === 'on' || $_POST['rememberMe'] === 'true' || $_POST['rememberMe'] == '1');
 
                         if ($rememberMe) {
-                            // Guarda el email en una cookie por 30 días
+                            //Guarda el email en una cookie por 30 días
                             setcookie('remember_email', $email, time() + (86400 * 30), "/", "", false, true);
                         } else {
-                            // Si no está marcado, elimina la cookie si existía
+                            //Si no está marcado, elimina la cookie si existía
                             if (isset($_COOKIE['remember_email'])) {
                                 setcookie('remember_email', '', time() - 3600, "/");
                             }
@@ -74,7 +73,7 @@ class ClsLogin {
                     }
                 }
 
-                // Respuesta si las credenciales son incorrectas
+                //Respuesta si las credenciales son incorrectas
                 return '
                 <div class="modal fade" id="modalRespuesta" tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered">
@@ -94,7 +93,7 @@ class ClsLogin {
                 </div>';
 
             } catch (\Throwable $e) {
-                // Respuesta ante errores de conexión
+                //Respuesta ante errores de conexión
                 return '
                 <div class="modal fade" id="modalRespuesta" tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered">
@@ -117,7 +116,7 @@ class ClsLogin {
     }
 
     //Métodos de tipo estáticos para controlar el acceso.
-    //Verifica si hay una sesión activa; si no, redirige al formulario de acceso
+    //Verifica si hay una sesión activa, si no, redirige al formulario de acceso
     public static function verificarSesion() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -127,7 +126,6 @@ class ClsLogin {
             exit;
         }
     }
-
     //Comprueba si el usuario autenticado posee un rol en específico (ej: '1' para Administrador)
     public static function tieneRol($rolRequerido) {
         if (session_status() === PHP_SESSION_NONE) {
@@ -135,7 +133,6 @@ class ClsLogin {
         }
         return isset($_SESSION['roles']) && in_array($rolRequerido, $_SESSION['roles']);
     }
-
     //Destruye la sesión actual y redirige al acceso
     public static function cerrarSesion() {
         if (session_status() === PHP_SESSION_NONE) {
@@ -144,17 +141,16 @@ class ClsLogin {
         session_unset();
         session_destroy();
         
-        // Subimos un nivel desde Clases/ hacia la raíz donde está index.php
         header("Location: /CeiLab2026/index.php");
         exit;
         }
 }
-// Disparador para cerrar sesión mediante GET
+//Disparador para cerrar sesión mediante GET
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     ClsLogin::cerrarSesion();
     exit();
 }
-// Disparador automático para peticiones AJAX enviadas por POST
+//Disparador automático para peticiones AJAX enviadas por POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['femailSesion'])) {
     $objLogin = new ClsLogin();
     echo $objLogin->iniciarSesion();

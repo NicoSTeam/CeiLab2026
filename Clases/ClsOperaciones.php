@@ -8,7 +8,6 @@ class ClsOperaciones {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
         
-        // Se añade WHERE activo = 1 para excluir a los usuarios inactivos o dados de baja
         $sql = "SELECT IDUsuario, Nombre, email, COALESCE(Faltas, 0) AS Faltas 
                 FROM usuario 
                 WHERE activo = 1 
@@ -24,7 +23,7 @@ class ClsOperaciones {
         }
         return $usuarios;
     }
-    // Convierto una reserva existente en préstamo (accion = 1) 
+    //Convierto una reserva existente en préstamo (accion = 1) 
     public function convertirReservaEnPrestamo($idReserva, $idUsuarioOperador) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -83,7 +82,7 @@ class ClsOperaciones {
             return $this->generarModalRespuesta("Error", $e->getMessage(), "bg-danger text-white", "btn-danger");
         }
     }
-    // Registro un préstamo directo (sin reserva previa) guardando los horarios directamente en operaciones
+    //Registro un préstamo directo (sin reserva previa) guardando los horarios directamente en operaciones
     public function registrarPrestamoDirecto($idUsuarioCliente, $horaInicio, $horaFin, $arrayEquipos) {
         if (empty($arrayEquipos) || !is_array($arrayEquipos)) {
             return $this->generarModalRespuesta("Atención", "Debe seleccionar al menos un equipo para realizar el préstamo.", "bg-warning text-dark", "btn-warning");
@@ -128,19 +127,26 @@ class ClsOperaciones {
             return $this->generarModalRespuesta("Error", $e->getMessage(), "bg-danger text-white", "btn-danger");
         }
     }
-    //Obtener reservas del día actual
+    //Obtengo reservas del día actual
     public function obtenerReservasDelDia($fecha) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
         $fecha = mysqli_real_escape_string($link, $fecha);
 
-        //Consulta que trae la reserva, el usuario responsable y sus faltas
+        //Consulta  que solo trae reservas que tengan equipos asociados (si no hago esto termino viendo las reservas de salas)
         $sql = "
             SELECT r.IDReservas, r.Fecha, r.HoraInicio, r.HoraFin, 
                    u.IDUsuario, u.Nombre AS nombre_usuario, u.email, COALESCE(u.Faltas, 0) AS Faltas
             FROM reservas r
             JOIN usuario u ON r.IDUsuario = u.IDUsuario
-            WHERE r.Fecha = '$fecha' AND r.activo = 1
+            WHERE r.Fecha = '$fecha' 
+              AND r.activo = 1
+              AND EXISTS (
+                  SELECT 1 FROM tiene_equipos te 
+                  JOIN equipo e ON te.IDEquipo = e.IDEquipo 
+                  WHERE te.IDReservas = r.IDReservas 
+                    AND e.Tipo != 'Sala'
+              )
             ORDER BY r.HoraInicio ASC;
         ";
 
@@ -150,7 +156,7 @@ class ClsOperaciones {
         if ($resultado) {
             while ($row = mysqli_fetch_assoc($resultado)) {
                 $idReserva = $row['IDReservas'];
-                //Obtener equipos de la reserva
+                //Traigo equipos de la reserva
                 $sqlEq = "SELECT te.IDEquipo, e.Tipo FROM tiene_equipos te JOIN equipo e ON te.IDEquipo = e.IDEquipo WHERE te.IDReservas = $idReserva";
                 $resEq = mysqli_query($link, $sqlEq);
                 $equipos = [];
@@ -165,7 +171,7 @@ class ClsOperaciones {
         }
         return $reservas;
     }
-    // Helper privado para generar modales estandarizados
+    //Generador de modales estandarizados
     private function generarModalRespuesta($titulo, $mensaje, $claseHeader, $claseBoton, $recargar = false) {
         $onclick = $recargar ? 'onclick="location.reload();"' : '';
         return '
@@ -186,7 +192,7 @@ class ClsOperaciones {
             </div>
         </div>';
     }
-    // Verifica si un equipo se encuentra actualmente prestado (última acción = 1 sin devolución posterior)
+    //Verifica si un equipo se encuentra actualmente prestado (última acción = 1 sin devolución posterior)
     public function estaEquipoPrestado($idEquipo) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -204,12 +210,12 @@ class ClsOperaciones {
         }
         return false;
     }
-    // Obtener la lista de equipos que se encuentran actualmente prestados con su respectivo usuario responsable
+    //Obtengo la lista de equipos que se encuentran actualmente prestados con su respectivo usuario responsable
     public function obtenerEquiposPrestadosActualmente() {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
 
-        // Buscamos los equipos cuya última operación registrada sea un Préstamo (Accion = 1)
+        //Busca los equipos que su ultima operación registrada sea un Préstamo (Accion = 1)
         $sql = "
             SELECT o.IDOperaciones, o.IDEquipo, e.Tipo, e.Estado as EstadoEquipo, 
                    o.IDUsuario, u.Nombre AS NombreUsuario, u.email, o.Fecha, o.HoraInicio, o.HoraFin
@@ -235,8 +241,7 @@ class ClsOperaciones {
         }
         return $prestados;
     }
-
-    // Registrar la devolución de un equipo (Accion = 2) actualizando estado, disponibilidad y observaciones del equipo
+    //Registro la devolución de un equipo (Accion = 2) actualizando estado, disponibilidad y observaciones del equipo
     public function registrarDevolucion($idEquipo, $estadoDevolucion, $nuevoEstadoEquipo, $observacionesDevolucion, $idUsuarioResponsable, $aplicarFalta = false) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -250,12 +255,12 @@ class ClsOperaciones {
         $fechaHoy = date('Y-m-d');
         $horaActual = date('H:i:s');
 
-        // Validar que el equipo esté prestado
+        //Valida que el equipo esté prestado
         if (!$this->estaEquipoPrestado($idEquipo)) {
             return $this->generarModalRespuesta("Atención", "El equipo seleccionado no figura como prestado actualmente.", "bg-warning text-dark", "btn-warning");
         }
 
-        // Regla de negocio: Si está roto, NUNCA puede quedar en estado Disponible
+        //Si está roto, no puede quedar en estado Disponible
         if ($estadoDevolucion === 'roto' && $nuevoEstadoEquipo === 'Disponible') {
             return $this->generarModalRespuesta("Error de Validación", "Un equipo reportado como roto o dañado no puede quedar en estado Disponible.", "bg-danger text-white", "btn-danger");
         }
@@ -263,7 +268,7 @@ class ClsOperaciones {
         mysqli_begin_transaction($link);
 
         try {
-            // 1. Registrar la operación de Devolución (Accion = 2)
+            //1. Registra la operación de Devolución (Accion = 2)
             $obsFinal = "Devolución registrada. Condición: " . ucfirst($estadoDevolucion) . ". " . $observacionesDevolucion;
             $sqlOp = "INSERT INTO operaciones (Accion, Fecha, HoraInicio, HoraFin, Observaciones, IDUsuario, IDEquipo) 
                       VALUES (2, '$fechaHoy', '$horaActual', '$horaActual', '$obsFinal', $idUsuarioResponsable, '$idEquipo')";
@@ -272,10 +277,10 @@ class ClsOperaciones {
                 throw new Exception("Error al registrar la operación de devolución.");
             }
 
-            // 2. Actualizar el estado, la disponibilidad Y las observaciones en la tabla equipo
+            //2. Actualizo el estado, la disponibilidad Y las observaciones en la tabla equipo
             $disponibilidadEquipo = ($nuevoEstadoEquipo === 'Disponible') ? 1 : 0;
 
-            // Si el usuario no escribió observaciones, podemos mantener o limpiar, pero aseguramos registrar el texto ingresado
+            //Si el usuario no escribió observaciones, podemos mantener o limpiar, pero aseguramos registrar el texto ingresado
             $obsEquipoEscaped = !empty($observacionesDevolucion) ? $observacionesDevolucion : "Devolución en estado " . $estadoDevolucion;
             
             $sqlEquipo = "UPDATE equipo 
@@ -288,7 +293,7 @@ class ClsOperaciones {
                 throw new Exception("Error al actualizar el estado físico y observaciones del equipo.");
             }
 
-            // 3. Registrar falta si corresponde (Usando COALESCE para evitar problemas con NULL)
+            //3. Registro falta si corresponde (Usando COALESCE para evitar problemas con NULL)
             $textoFalta = "";
             if ($estadoDevolucion === 'roto' && $aplicarFalta) {
                 $sqlFalta = "UPDATE usuario SET Faltas = COALESCE(Faltas, 0) + 1 WHERE IDUsuario = $idUsuarioResponsable";
@@ -310,7 +315,7 @@ class ClsOperaciones {
             return $this->generarModalRespuesta("Error", $e->getMessage(), "bg-danger text-white", "btn-danger");
         }
     }
-    // Registrar que un equipo no fue devuelto, pasarlo a No Disponible y aplicar falta obligatoria
+    //Registro que un equipo no fue devuelto, se pasa a No Disponible y aplica falta obligatoria
     public function marcarEquipoNoDevuelto($idEquipo, $idUsuarioResponsable, $observaciones = '') {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -321,7 +326,7 @@ class ClsOperaciones {
         $fechaHoy = date('Y-m-d');
         $horaActual = date('H:i:s');
 
-        // Validar que el equipo esté prestado
+        //Valida que el equipo esté prestado
         if (!$this->estaEquipoPrestado($idEquipo)) {
             return $this->generarModalRespuesta("Atención", "El equipo seleccionado no figura como prestado actualmente.", "bg-warning text-dark", "btn-warning");
         }
@@ -329,7 +334,7 @@ class ClsOperaciones {
         mysqli_begin_transaction($link);
 
         try {
-            // 1. Registrar la operación de cierre por falta de devolución (Accion = 2 con nota aclaratoria)
+            //1. Registra la operación de cierre por falta de devolución (Accion = 2)
             $obsFinal = "Incidencia: Equipo no devuelto al cierre del día. " . ($observaciones ? $observaciones : "Sin observaciones.");
             $sqlOp = "INSERT INTO operaciones (Accion, Fecha, HoraInicio, HoraFin, Observaciones, IDUsuario, IDEquipo) 
                       VALUES (2, '$fechaHoy', '$horaActual', '$horaActual', '$obsFinal', $idUsuarioResponsable, '$idEquipo')";
@@ -338,7 +343,7 @@ class ClsOperaciones {
                 throw new Exception("Error al registrar la operación.");
             }
 
-            // 2. Actualizar el estado del equipo a NoDisponible y Disponibilidad = 0
+            //2. Actualiza el estado del equipo a NoDisponible y Disponibilidad = 0
             $sqlEquipo = "UPDATE equipo 
                           SET Estado = 'NoDisponible', 
                               Disponibilidad = 0, 
@@ -349,7 +354,7 @@ class ClsOperaciones {
                 throw new Exception("Error al actualizar el estado físico del equipo.");
             }
 
-            // 3. Aplicar sanción obligatoria de +1 falta al usuario (usando COALESCE por seguridad)
+            //3. Aplico falta de +1 al usuario (usando COALESCE por si traigo un valor null, que se vea como 0)
             $sqlFalta = "UPDATE usuario SET Faltas = COALESCE(Faltas, 0) + 1 WHERE IDUsuario = $idUsuarioResponsable";
             if (!mysqli_query($link, $sqlFalta)) {
                 throw new Exception("Error al registrar la falta en el historial del usuario.");
@@ -364,6 +369,7 @@ class ClsOperaciones {
             return $this->generarModalRespuesta("Error", $e->getMessage(), "bg-danger text-white", "btn-danger");
         }
     }
+    //Cancelo una reserva (baja lógica)
     public function cancelarReservaPorDot($idReserva) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();

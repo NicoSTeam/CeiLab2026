@@ -2,7 +2,7 @@
 require_once '../Clases/ClsLogin.php';
 ClsLogin::verificarSesion(); 
 
-// Verificación del usuario para que no ingrese por ruta del navegador
+//Verificación del usuario para que no ingrese por ruta del navegador
 $esAdministrador = isset($_SESSION['roles']) && in_array('1', $_SESSION['roles']);
 $esDot = isset($_SESSION['roles']) && in_array('2', $_SESSION['roles']);
 
@@ -20,7 +20,7 @@ $objEquipo = new ClsEquipo();
 $objSala = new ClsSala();
 $equipoEditando = null;
 
-// Procesar la modificación del equipo vía POST
+//Procesa la modificación del equipo POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'modificar') {
     $idEquipo = $_POST['idEquipo'] ?? '';
     $estado = $_POST['estado'] ?? '';
@@ -45,24 +45,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     exit();
 }
 
-// Recuperar mensaje flash de la sesión
+//Recuperar mensaje flash de la sesión
 $mensaje = $_SESSION['mensaje'] ?? '';
 $tipoAlerta = $_SESSION['tipoAlerta'] ?? 'success';
 unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
 
-// Si se pasa un ID por GET, cargamos los datos para editar
+//Si se pasa un ID por GET, carga los datos para editar
 if (isset($_GET['editar'])) {
     $equipoEditando = $objEquipo->obtenerEquipoPorId($_GET['editar']);
 }
 
-//$listaEquipos = $objEquipo->listarEquipos();
 $listaSalas = $objSala->listarSalasFiltradas();
 
-//Capturar los dos filtros enviados por GET
+//Captura los dos filtros enviados por GET
 $filtroTipo = $_GET['tipo'] ?? '';
 $filtroDisponibilidad = $_GET['disponibilidad'] ?? '';
 
-//Obtener la lista filtrada
+//Obtengo la lista filtrada
 $listaEquipos = $objEquipo->listarEquipos($filtroTipo, $filtroDisponibilidad);
 
 $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit de robótica", "Sensores Fisicoquímicos", "Impresora 3D", "Lápiz 3D", "Microscopio USB"];
@@ -87,7 +86,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
         <section class="hero-section flex-fill pb-5 pt-5">
             
             <?php if ($equipoEditando): ?>
-            <!-- Formulario de Edición (Se muestra solo si se seleccionó un equipo) -->
+            <!-- Formulario de Edición (Muestra solo si se seleccionó un equipo) -->
             <div class="container pb-4">
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
