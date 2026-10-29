@@ -188,12 +188,16 @@ class ClsUsuarios {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
 
-        
+        // Verificación de conexión
+        if (!$link) {
+            echo "<div class='alert alert-danger'>Error de conexión a la BD en LAMP: " . mysqli_connect_error() . "</div>";
+            return false;
+        }
+
         $sql = "SELECT IDUsuario, nombre, cedula, email, direccion, observaciones 
                 FROM usuario 
                 WHERE activo = 1";
 
-        // Aplicamos los filtros
         if (!empty($filtroNombre)) {
             $nombreEscaped = mysqli_real_escape_string($link, $filtroNombre);
             $sql .= " AND nombre LIKE '%$nombreEscaped%'";
@@ -206,8 +210,6 @@ class ClsUsuarios {
             $emailEscaped = mysqli_real_escape_string($link, $filtroEmail);
             $sql .= " AND email LIKE '%$emailEscaped%'";
         }
-        
-        // Si se filtra por rol, usamos una subconsulta que evita duplicados y errores
         if (!empty($filtroRol)) {
             $rolEscaped = mysqli_real_escape_string($link, $filtroRol);
             $sql .= " AND IDUsuario IN (SELECT IDUsuario FROM rol WHERE ROL = '$rolEscaped')";
@@ -215,7 +217,14 @@ class ClsUsuarios {
 
         $sql .= " ORDER BY IDUsuario ASC";
         
-        return mysqli_query($link, $sql);
+        $resultado = mysqli_query($link, $sql);
+
+        // SI HAY UN ERROR EN LAMP, LO MUESTRA EN PANTALLA
+        if (!$resultado) {
+            echo "<div class='alert alert-danger m-3'><strong>Error SQL en LAMP:</strong> " . mysqli_error($link) . "<br><strong>Consulta:</strong> $sql</div>";
+        }
+
+        return $resultado;
     }
     public function obtenerTelefonosPorUsuario($idUsuario) {
         $objConexion = new Conexion();
