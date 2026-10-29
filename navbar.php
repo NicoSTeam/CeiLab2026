@@ -80,7 +80,9 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                     <div class="dropdown-menu shadow border border-3 border-white rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink2"> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/solicitudEquipos.php">Solicitar equipos</a> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/consultarEstadoSolicitudEquipos.php">Consultar estado de las solicitudes</a>
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Actualizar estado de las solicitudes</a>  
+                        <?php if ($esAdministrador): ?>
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/actualizarEstadoSolicitudEquipo.php">Actualizar estado de las solicitudes</a>  
+                        <?php endif; ?>
                     </div>                        
                 </li>
                 <?php endif; ?>

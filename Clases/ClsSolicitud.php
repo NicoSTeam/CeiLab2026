@@ -87,5 +87,27 @@ class ClsSolicitud {
         }
         return $tipos;
     }
+    //Modifico la solicitud
+    public function actualizarSolicitud($idSolicitud, $tipoEquipo, $estado, $descripcion, $cantidad, $fecha) {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        
+        $idSolicitud = intval($idSolicitud);
+        $tipoEquipo = mysqli_real_escape_string($link, trim($tipoEquipo));
+        $estado = mysqli_real_escape_string($link, trim($estado));
+        $descripcion = mysqli_real_escape_string($link, trim($descripcion));
+        $cantidad = intval($cantidad);
+        $fecha = mysqli_real_escape_string($link, trim($fecha));
+
+        $sql = "UPDATE solicitud_material 
+                SET tipoEquipo = '$tipoEquipo', 
+                    Estado = '$estado', 
+                    Descripcion = '$descripcion', 
+                    Cantidad = $cantidad ,
+                    Fecha = '$fecha' 
+                WHERE IDSolicitud = $idSolicitud AND activo = 1";
+        
+        return mysqli_query($link, $sql);
+    }
 }
 ?>
