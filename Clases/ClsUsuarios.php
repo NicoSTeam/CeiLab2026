@@ -188,33 +188,32 @@ class ClsUsuarios {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
 
-        // Usamos LEFT JOIN y unimos los campos del usuario, tomando el rol de mayor importancia con MIN()
-       $sql = "SELECT u.IDUsuario, u.nombre, u.cedula, u.email, u.direccion, u.observaciones, MIN(r.ROL) AS ROL 
-                FROM usuario u 
-                LEFT JOIN rol r ON u.IDUsuario = r.IDUsuario 
-                WHERE u.activo = 1";
+        
+        $sql = "SELECT IDUsuario, nombre, cedula, email, direccion, observaciones 
+                FROM usuario 
+                WHERE activo = 1";
 
-        // Aplicamos los filtros 
+        // Aplicamos los filtros
         if (!empty($filtroNombre)) {
             $nombreEscaped = mysqli_real_escape_string($link, $filtroNombre);
-            $sql .= " AND u.nombre LIKE '%$nombreEscaped%'";
+            $sql .= " AND nombre LIKE '%$nombreEscaped%'";
         }
         if (!empty($filtroCedula)) {
             $cedulaEscaped = mysqli_real_escape_string($link, $filtroCedula);
-            $sql .= " AND u.cedula = '$cedulaEscaped'";
+            $sql .= " AND cedula = '$cedulaEscaped'";
         }
         if (!empty($filtroEmail)) {
             $emailEscaped = mysqli_real_escape_string($link, $filtroEmail);
-            $sql .= " AND u.email LIKE '%$emailEscaped%'";
+            $sql .= " AND email LIKE '%$emailEscaped%'";
         }
+        
+        // Si se filtra por rol, usamos una subconsulta que evita duplicados y errores
         if (!empty($filtroRol)) {
             $rolEscaped = mysqli_real_escape_string($link, $filtroRol);
-            $sql .= " AND r.ROL = '$rolEscaped'";
+            $sql .= " AND IDUsuario IN (SELECT IDUsuario FROM rol WHERE ROL = '$rolEscaped')";
         }
 
-        // Agrupamos estrictamente por el ID y los datos del usuario para que cada uno salga una sola vez
-        $sql .= " GROUP BY u.IDUsuario";
-        $sql .= " ORDER BY u.IDUsuario ASC";
+        $sql .= " ORDER BY IDUsuario ASC";
         
         return mysqli_query($link, $sql);
     }
