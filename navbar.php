@@ -86,14 +86,16 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                     </div>                        
                 </li>
                 <?php endif; ?>
+                <?php if ($esAdministrador || $esDot || $esDocente || $esEstudiante ): ?>
                 <li class="nav-item dropdown"> 
                     <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink3" role="button" data-bs-toggle="dropdown" aria-expanded="false">Registros</a> 
                     <div class="dropdown-menu shadow border border-3 border-white rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink3"> 
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Reservas</a> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/historialReservas.php">Reservas</a> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Prestamos</a> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/EnProgreso.php">Devoluciones</a> 
                     </div>                        
                 </li> 
+                <?php endif; ?>
                 <!-- SECCIÓN DE AUTENTICACIÓN -->
                 <?php if ($estaLogueado): ?>
                     <li class="nav-item px-lg-2 py-lg-2">

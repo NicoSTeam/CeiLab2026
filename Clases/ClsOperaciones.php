@@ -382,5 +382,42 @@ class ClsOperaciones {
             return $this->generarModalRespuesta("Error", "No se pudo cancelar la reserva en este momento.", "bg-danger text-white", "btn-danger");
         }
     }
+    public function obtenerHistorialReservas() {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+
+        //Consulta para traer todas las reservas del sistema con su usuario responsable
+        $sql = "
+            SELECT r.IDReservas, r.Fecha, r.HoraInicio, r.HoraFin, r.IDSalon, r.cantHoras, r.activo,
+                   u.IDUsuario, u.Nombre AS nombre_usuario, u.email
+            FROM reservas r
+            JOIN usuario u ON r.IDUsuario = u.IDUsuario
+            ORDER BY IDReservas ASC, r.HoraInicio ASC;
+        ";
+
+        $resultado = mysqli_query($link, $sql);
+        $historial = [];
+
+        if ($resultado) {
+            while ($row = mysqli_fetch_assoc($resultado)) {
+                $idReserva = $row['IDReservas'];
+                
+                //Obtengo los equipos vinculados a cada reserva
+                $sqlEq = "SELECT te.IDEquipo, e.Tipo FROM tiene_equipos te JOIN equipo e ON te.IDEquipo = e.IDEquipo WHERE te.IDReservas = $idReserva";
+                $resEq = mysqli_query($link, $sqlEq);
+                $equipos = [];
+                
+                if ($resEq) {
+                    while ($eqRow = mysqli_fetch_assoc($resEq)) {
+                        $equipos[] = $eqRow;
+                    }
+                }
+                
+                $row['equipos'] = $equipos;
+                $historial[] = $row;
+            }
+        }
+        return $historial;
+    }
 }
 ?>
