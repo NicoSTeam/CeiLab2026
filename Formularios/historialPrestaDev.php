@@ -114,10 +114,10 @@ $historialPrestamos = $objOperaciones->obtenerHistorialPrestamoDev($cedulaFiltro
                                     $textoAccion = '⚠️ No Devuelto';
                                 } elseif ($row['Accion'] == '1') {
                                     $badgeClass = 'bg-success text-white';
-                                    $textoAccion = 'Préstamo (1)';
+                                    $textoAccion = 'Préstamo';
                                 } else {
                                     $badgeClass = 'bg-primary text-white';
-                                    $textoAccion = 'Devolución (2)';
+                                    $textoAccion = 'Devolución';
                                 }
                             ?>
                                 <tr>

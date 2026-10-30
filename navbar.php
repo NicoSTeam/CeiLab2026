@@ -96,9 +96,13 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/historialPrestaDev.php">Prestamos y Devoluciones del sistema</a>
                         <?php endif; ?> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/historialPrestaDevPersonal.php">Prestamos y Devoluciones</a> 
-                    </div>                        
-                </li> 
+                    </div>
                 <?php endif; ?>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-lg-3 py-lg-2 fw-bold text-dark rounded-3" href="/CeiLab2026/Formularios/contacto.php" id="navbarDropdownMenuLink3" role="button" >Contacto</a>
+                </li> 
+                
                 <!-- SECCIÓN DE AUTENTICACIÓN -->
                 <?php if ($estaLogueado): ?>
                     <li class="nav-item px-lg-2 py-lg-2">
