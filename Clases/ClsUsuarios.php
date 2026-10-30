@@ -29,6 +29,27 @@ class ClsUsuarios {
                 $observaciones = mysqli_real_escape_string($link, trim($observaciones));
                 $rol = mysqli_real_escape_string($link, trim($rol));
 
+                //Verifica que tenga 8 caracteres y sean solo numeros
+                if (strlen($cedula) !== 8 || !ctype_digit($cedula)) {
+                    return '
+                    <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content shadow border-0">
+                                <div class="modal-header bg-warning text-dark">
+                                    <h5 class="modal-title fw-bold">Atención</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center py-4">
+                                    <p class="fs-5 text-dark mb-0">La cédula debe contener exactamente 8 dígitos numéricos (sin puntos ni guiones).</p>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-warning px-4 fw-bold text-dark" data-bs-dismiss="modal">Entendido</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
+                }
+
                 if ($this->verificarMail($email)) {
                         return '
                         <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
@@ -188,15 +209,10 @@ class ClsUsuarios {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
 
-        // Verificación de conexión
-        if (!$link) {
-            echo "<div class='alert alert-danger'>Error de conexión a la BD en LAMP: " . mysqli_connect_error() . "</div>";
-            return false;
-        }
-
-        $sql = "SELECT IDUsuario, nombre, cedula, email, direccion, observaciones 
-                FROM usuario 
-                WHERE activo = 1";
+        $sql = "SELECT u.IDUsuario, u.nombre, u.cedula, u.email, u.direccion, u.observaciones, MIN(r.ROL) AS ROL
+                 FROM usuario u 
+                LEFT JOIN rol r ON u.IDUsuario = r.IDUsuario 
+                WHERE u.activo = 1";
 
         if (!empty($filtroNombre)) {
             $nombreEscaped = mysqli_real_escape_string($link, $filtroNombre);
@@ -212,19 +228,14 @@ class ClsUsuarios {
         }
         if (!empty($filtroRol)) {
             $rolEscaped = mysqli_real_escape_string($link, $filtroRol);
-            $sql .= " AND IDUsuario IN (SELECT IDUsuario FROM rol WHERE ROL = '$rolEscaped')";
+            $sql .= " AND r.ROL = '$rolEscaped'";
         }
 
-        $sql .= " ORDER BY IDUsuario ASC";
-        
-        $resultado = mysqli_query($link, $sql);
+        // Agrupamos estrictamente por el ID y los datos del usuario para que cada uno salga una sola vez
+        $sql .= " GROUP BY u.IDUsuario, u.nombre, u.cedula, u.email, u.direccion, u.observaciones";
+        $sql .= " ORDER BY u.IDUsuario ASC";
 
-        // SI HAY UN ERROR EN LAMP, LO MUESTRA EN PANTALLA
-        if (!$resultado) {
-            echo "<div class='alert alert-danger m-3'><strong>Error SQL en LAMP:</strong> " . mysqli_error($link) . "<br><strong>Consulta:</strong> $sql</div>";
-        }
-
-        return $resultado;
+        return mysqli_query($link, $sql);
     }
     public function obtenerTelefonosPorUsuario($idUsuario) {
         $objConexion = new Conexion();
@@ -278,6 +289,27 @@ class ClsUsuarios {
                 $direccion = mysqli_real_escape_string($link, trim($direccion));
                 $observaciones = mysqli_real_escape_string($link, trim($observaciones));
 
+                //Verifica que tenga 8 caracteres y sean solo numeros
+                if (strlen($cedula) !== 8 || !ctype_digit($cedula)) {
+                    return '
+                    <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content shadow border-0">
+                                <div class="modal-header bg-warning text-dark">
+                                    <h5 class="modal-title fw-bold">Atención</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center py-4">
+                                    <p class="fs-5 text-dark mb-0">La cédula debe contener exactamente 8 dígitos numéricos (sin puntos ni guiones).</p>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-warning px-4 fw-bold text-dark" data-bs-dismiss="modal">Entendido</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
+                }
+
                 if ($this->verificarMail($email, $idUsuario)) {
                         return '
                         <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
@@ -297,7 +329,7 @@ class ClsUsuarios {
                             </div>
                         </div>';
                     }
-                if ($this->verificarCedula($cedula)) {
+                if ($this->verificarCedula($cedula, $idUsuario)) {
                         return '
                         <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
@@ -525,6 +557,7 @@ class ClsUsuarios {
         return false;
     }
     public function verificarCedula($cedula, $idUsuarioActual = null) {
+        
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
 
@@ -532,7 +565,7 @@ class ClsUsuarios {
 
         $sql = "SELECT COUNT(*) as total FROM usuario WHERE cedula = '$cedulaEscaped' AND activo = 1";
 
-        // Si se pasa un ID, se excluye al usuario actual (ideal para cuando estás editando su perfil)
+        //Si se pasa un ID, se excluye al usuario actual 
         if (!empty($idUsuarioActual)) {
             $idEscaped = mysqli_real_escape_string($link, trim($idUsuarioActual));
             $sql .= " AND IDUsuario != '$idEscaped'"; 
@@ -540,7 +573,7 @@ class ClsUsuarios {
 
         $resultado = mysqli_query($link, $sql);
         if ($resultado && $row = mysqli_fetch_assoc($resultado)) {
-            return ($row['total'] > 0); // Devuelve true si la cédula ya existe en otro usuario activo
+            return ($row['total'] > 0); //Devuelve true si la cedula ya existe en otro usuario activo
         }
 
         return false;
