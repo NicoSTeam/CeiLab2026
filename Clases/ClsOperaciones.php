@@ -419,5 +419,47 @@ class ClsOperaciones {
         }
         return $historial;
     }
+    //Método para listar el historial de prestamos y devoluciones
+    public function obtenerHistorialPrestamoDev($filtroCedula = '', $filtroAccion = '', $filtroIDUsuario = '') {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+
+        //Consulta que trae historial de prestamos y dev, trae los usuarios resp. de las operaciones y deja solo la IDOperaciones mas grande para que no repita etiqueta de no devuelto 
+        $sql = "SELECT o.IDOperaciones, o.Accion, o.Fecha, o.HoraInicio, o.HoraFin, o.Observaciones, 
+                       u.nombre AS NombreUsuario, u.cedula AS CedulaUsuario, o.IDEquipo,
+                       e.Disponibilidad AS EquipoDisponibilidad, e.Observaciones AS ObsEquipo,
+                       ultimo_mov.MaxID
+                FROM operaciones o 
+                INNER JOIN usuario u ON o.IDUsuario = u.IDUsuario 
+                LEFT JOIN equipo e ON o.IDEquipo = e.IDEquipo 
+                LEFT JOIN (
+                    SELECT IDEquipo, MAX(IDOperaciones) as MaxID 
+                    FROM operaciones 
+                    GROUP BY IDEquipo
+                ) ultimo_mov ON o.IDEquipo = ultimo_mov.IDEquipo
+                WHERE 1=1";
+
+        //Filtra por cedula del usuario
+        if (!empty($filtroCedula)) {
+            $cedulaEscaped = mysqli_real_escape_string($link, $filtroCedula);
+            $sql .= " AND u.cedula = '$cedulaEscaped'";
+        }
+
+        //Filtra por tipo de accion (presta o dev)
+        if (!empty($filtroAccion)) {
+            $accionEscaped = mysqli_real_escape_string($link, $filtroAccion);
+            $sql .= " AND o.Accion = '$accionEscaped'";
+        }
+
+        //Filtra por ID de usuario así puedo usar la funcion para obtener los registros de el usuario logeado
+        if (!empty($filtroIDUsuario)) {
+            $idUsuarioEscaped = mysqli_real_escape_string($link, $filtroIDUsuario);
+            $sql .= " AND o.IDUsuario = '$idUsuarioEscaped'";
+        }
+
+        $sql .= " ORDER BY o.IDOperaciones ASC";
+
+        return mysqli_query($link, $sql);
+    }
 }
 ?>
