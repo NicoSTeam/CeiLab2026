@@ -2,10 +2,15 @@
 require_once '../Clases/ClsLogin.php';
 ClsLogin::verificarSesion(); 
 
-// Obtener el ID del usuario actual desde la sesión
+//Obtengo el ID del usuario actual desde la sesión
 $idUsuarioActual = $_SESSION['IDUsuario'] ?? $_SESSION['id_usuario'] ?? '';
+// Verificación del usuario para que no ingrese por ruta del navegador
+$esAdministrador = isset($_SESSION['roles']) && in_array('1', $_SESSION['roles']);
+$esDot = isset($_SESSION['roles']) && in_array('2', $_SESSION['roles']);
 
-if (empty($idUsuarioActual)) {
+if (!$esAdministrador && !$esDot) {
+    $_SESSION['mensaje'] = "Acceso denegado. Acción no permitida para el rol detectado.";
+    $_SESSION['tipoAlerta'] = "danger";
     header("Location: ../index.php");
     exit();
 }

@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Verificamos si el usuario actual tiene rol
+//Verifica si el usuario actual tiene rol
 $esAdministrador = isset($_SESSION['roles']) && in_array('1', $_SESSION['roles']);
 $esDot = isset($_SESSION['roles']) && in_array('2', $_SESSION['roles']);
 $esDocente = isset($_SESSION['roles']) && in_array('3', $_SESSION['roles']);
@@ -91,6 +91,7 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                     <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink3" role="button" data-bs-toggle="dropdown" aria-expanded="false">Registros</a> 
                     <div class="dropdown-menu shadow border border-3 border-white rounded-3 p-2" aria-labelledby="navbarDropdownMenuLink3">
                         <?php if ($esAdministrador || $esDot ): ?> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/stockEquipos.php">Stock de Equipos</a>    
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/historialReservas.php">Reservas</a> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/historialPrestaDev.php">Prestamos y Devoluciones del sistema</a>
                         <?php endif; ?> 
