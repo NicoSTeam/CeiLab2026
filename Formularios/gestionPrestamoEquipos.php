@@ -223,14 +223,38 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
 
                                             <div class="mb-2">
                                                 <label class="form-label small fw-bold text-secondary mb-1">2. Seleccionar Solicitante:</label>
+                                                <?php
+                                                // Diccionario de roles del sistema 
+                                                $Roles = [
+                                                    1 => 'Administrador',
+                                                    2 => 'Responsable Ceilab',
+                                                    3 => 'Docente',
+                                                    4 => 'Estudiante'
+                                                ];
+                                                ?>
+
                                                 <select class="form-select form-select-sm rounded-3 shadow-sm" name="id_usuario_destino" id="selectUsuarioDestino" required>
                                                     <option value="">Seleccione usuario...</option>
                                                     <?php foreach ($listaUsuarios as $usr): 
                                                         $faltasUsuario = (int)($usr['Faltas'] ?? 0);
                                                         $etiquetaFaltas = $faltasUsuario > 0 ? " — (⚠️ Faltas: {$faltasUsuario})" : " — (Sin faltas)";
+                                                        
+                                                        // Convertimos los números de rol en sus nombres correspondientes
+                                                        $textoRoles = "Sin rol";
+                                                        if (!empty($usr['Roles'])) {
+                                                            $arrayIdsRoles = explode(',', $usr['Roles']);
+                                                            $nombresAMostrar = [];
+                                                            foreach ($arrayIdsRoles as $idRol) {
+                                                                $idRol = trim($idRol);
+                                                                // Si el ID existe en el diccionario, usa el nombre; si no, muestra "Rol X"
+                                                                $nombresAMostrar[] = $Roles[$idRol] ?? "Rol {$idRol}";
+                                                            }
+                                                            $textoRoles = implode(', ', $nombresAMostrar);
+                                                        }
+                                                        $rolUsuario = " — [Rol: {$textoRoles}]";
                                                     ?>
                                                         <option value="<?php echo $usr['IDUsuario']; ?>" data-faltas="<?php echo $faltasUsuario; ?>">
-                                                            <?php echo htmlspecialchars($usr['Nombre']) . ' (' . htmlspecialchars($usr['email']) . ')' . $etiquetaFaltas; ?>
+                                                            <?php echo htmlspecialchars($usr['Nombre']) . $rolUsuario . $etiquetaFaltas; ?>
                                                         </option>
                                                     <?php endforeach; ?>
                                                 </select>
@@ -273,7 +297,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                                                             </div>
                                                                             <div class="form-check">
                                                                                 <?php if (!$estaPrestado): ?>
-                                                                                    <input class="form-check-input" type="checkbox" name="equipos[]" value="<?php echo htmlspecialchars($eq['IDEquipo']); ?>">
+                                                                                    <input class="form-check-input bg-light border-2 border-primary shadow-sm" type="checkbox" name="equipos[]" value="<?php echo htmlspecialchars($eq['IDEquipo']); ?>">
                                                                                 <?php else: ?>
                                                                                     <span class="badge bg-secondary text-white small px-2 py-1" style="font-size: 0.7rem;">En uso</span>
                                                                                 <?php endif; ?>

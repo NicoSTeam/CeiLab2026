@@ -108,7 +108,7 @@ ClsLogin::verificarSesion();
                             <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
                                 <div class="row g-0 align-items-center">
                                     <div class="col-md-2 text-center mb-3 mb-md-0">
-                                        <img src="/CeiLab2026/assets/img/pablo.png" class="rounded-circle shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Foto de Integrante">
+                                        <img src="/CeiLab2026/assets/img/pablo.jpeg" class="rounded-circle shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Foto de Integrante">
                                     </div>
                                     <div class="col-md-10 ps-md-3">
                                         <h4 class="fw-bold text-dark mb-1">Pablo Buydid</h4>

@@ -8,10 +8,13 @@ class ClsOperaciones {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
         
-        $sql = "SELECT IDUsuario, Nombre, email, COALESCE(Faltas, 0) AS Faltas 
-                FROM usuario 
-                WHERE activo = 1 
-                ORDER BY Nombre ASC";
+        $sql = "SELECT u.IDUsuario, u.Nombre, COALESCE(u.Faltas, 0) AS Faltas,
+                       GROUP_CONCAT(ur.ROL SEPARATOR ', ') AS Roles
+                FROM usuario u 
+                LEFT JOIN rol ur ON u.IDUsuario = ur.IDUsuario
+                WHERE u.activo = 1 
+                GROUP BY u.IDUsuario, u.Nombre, u.Faltas
+                ORDER BY u.Nombre ASC";
                 
         $resultado = mysqli_query($link, $sql);
         $usuarios = [];
@@ -117,6 +120,7 @@ class ClsOperaciones {
                 if (!mysqli_query($link, $sqlOp)) {
                     throw new Exception("Error al registrar la operación de préstamo para el equipo $idEquipoEscaped.");
                 }
+                
             }
 
             mysqli_commit($link);
