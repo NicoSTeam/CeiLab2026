@@ -109,13 +109,20 @@ $historialPrestamos = $objOperaciones->obtenerHistorialPrestamoDev($cedulaFiltro
                                 }
 
                                 //Defino estilos de la etiqueta
-                                if ($esNoDevuelto) {
+                                if ($esIncidenciaDot) {
+                                    //1.rojo: Incidencia grave marcada por el DOT (No devuelto al cierre)
                                     $badgeClass = 'bg-danger text-white';
-                                    $textoAccion = '⚠️ No Devuelto';
+                                    $textoAccion = '🚨 No Devuelto';
+                                } elseif ($esPrestamoPendiente) {
+                                    //2. Naranja: El prestamo que esta activo actualmente en curso
+                                    $badgeClass = 'bg-warning text-dark fw-bold';
+                                    $textoAccion = '⏳ Préstamo Activo';
                                 } elseif ($row['Accion'] == '1') {
+                                    //3.Verde: prestamo ya finalizado correctamente
                                     $badgeClass = 'bg-success text-white';
                                     $textoAccion = 'Préstamo';
                                 } else {
+                                    //4.Azul: Devolucion registrada con exito
                                     $badgeClass = 'bg-primary text-white';
                                     $textoAccion = 'Devolución';
                                 }

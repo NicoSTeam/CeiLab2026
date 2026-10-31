@@ -7,8 +7,10 @@ $idUsuarioActual = $_SESSION['IDUsuario'] ?? $_SESSION['id_usuario'] ?? '';
 // Verificación del usuario para que no ingrese por ruta del navegador
 $esAdministrador = isset($_SESSION['roles']) && in_array('1', $_SESSION['roles']);
 $esDot = isset($_SESSION['roles']) && in_array('2', $_SESSION['roles']);
+$esDocente = isset($_SESSION['roles']) && in_array('3', $_SESSION['roles']);
+$esEstudiante = isset($_SESSION['roles']) && in_array('4', $_SESSION['roles']);
 
-if (!$esAdministrador && !$esDot) {
+if (!$esAdministrador && !$esDot && !$esDocente && !$esEstudiante) {
     $_SESSION['mensaje'] = "Acceso denegado. Acción no permitida para el rol detectado.";
     $_SESSION['tipoAlerta'] = "danger";
     header("Location: ../index.php");
@@ -87,13 +89,20 @@ $historialPrestamos = $objOperaciones->obtenerHistorialPrestamoDev('', '', $idUs
                                 }
 
                                 //Defino estilos de la etiqueta
-                                if ($esNoDevuelto) {
+                                if ($esIncidenciaDot) {
+                                    //1.rojo: Incidencia grave marcada por el DOT (No devuelto al cierre)
                                     $badgeClass = 'bg-danger text-white';
-                                    $textoAccion = '⚠️ No Devuelto';
+                                    $textoAccion = '🚨 No Devuelto';
+                                } elseif ($esPrestamoPendiente) {
+                                    //2. Naranja: El prestamo que esta activo actualmente en curso
+                                    $badgeClass = 'bg-warning text-dark fw-bold';
+                                    $textoAccion = '⏳ Préstamo Activo';
                                 } elseif ($row['Accion'] == '1') {
+                                    //3.Verde: prestamo ya finalizado correctamente
                                     $badgeClass = 'bg-success text-white';
                                     $textoAccion = 'Préstamo';
                                 } else {
+                                    //4.Azul: Devolucion registrada con exito
                                     $badgeClass = 'bg-primary text-white';
                                     $textoAccion = 'Devolución';
                                 }
