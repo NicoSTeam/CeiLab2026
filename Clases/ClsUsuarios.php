@@ -578,5 +578,26 @@ class ClsUsuarios {
 
         return false;
     }
+    public function listarUsuariosInactivos() {
+    $objConexion = new Conexion();
+    $link = $objConexion->conectar();
+    
+    // Usando la columna 'activo' detectada en tu base de datos (0 = inactivo / dado de baja)
+    $sql = "SELECT * FROM usuario WHERE activo = 0 ORDER BY Nombre ASC";
+    return mysqli_query($link, $sql);
+}
+    public function reactivarUsuario($idUsuario) {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        $idUsuario = (int)$idUsuario;
+
+        $sql = "UPDATE usuario SET activo = 1 WHERE IDUsuario = $idUsuario";
+        
+        if (mysqli_query($link, $sql)) {
+            return true;
+        }
+        return false;
+    }
+
 }
 ?>

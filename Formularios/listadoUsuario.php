@@ -13,6 +13,15 @@ if (!$esAdministrador && !$esDot) {
     exit();
 }
 
+require_once '../Clases/ClsUsuarios.php';
+$objUsuario = new ClsUsuarios();
+
+//Captura peticion AJAX para reactivar usuario
+if (isset($_POST['accion']) && $_POST['accion'] === 'reactivar_usuario') {
+    $idUsuario = $_POST['idUsuario'] ?? 0;
+    $objUsuario->reactivarUsuario($idUsuario); 
+    exit; 
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -93,7 +102,8 @@ if (!$esAdministrador && !$esDot) {
                     </div>                 
                 </div>
             </div> 
-        
+
+            <!-- lista de usuarios activos -->
             <div class="container pb-5 pt-3 rounded shadow-sm col-md-10 col-xl-9" style="background-color: #adbfdc;">
                 <div class="row">
                     <div>
@@ -160,10 +170,175 @@ if (!$esAdministrador && !$esDot) {
                     </div>
                 </div>
             </div>
+
+            <!-- lista de usuarios dados de baja -->
+            <?php if ($esAdministrador): ?>
+            <div class="container pb-4 pt-3 rounded shadow-sm col-md-10 col-xl-9 mt-4" style="background-color: #adbfdc;">
+                <div class="bg-white border border-danger rounded p-3 shadow-sm">
+                    <div class="row">
+                        <div class="col-12">
+                            
+                            <!-- Encabezado con el boton de control por JS -->
+                            <div class="d-flex justify-content-between align-items-center bg-danger bg-opacity-10 p-3 rounded mb-3">
+                                <div>
+                                    <h5 class="mb-0 text-danger fw-bold">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Usuarios Dados de Baja / Inactivos
+                                    </h5>
+                                    <small class="text-muted">Sección restringida para gestión de cuentas inactivas y reactivación.</small>
+                                </div>
+                                <button class="btn btn-danger btn-sm fw-bold px-3 shadow-sm" type="button" id="btnToggleInactivos">
+                                    Mostrar / Ocultar Inactivos
+                                </button>
+                            </div>
+
+                            <!-- Contenedor controlado por JavaScript (inicia oculto) -->
+                            <div id="contenedorInactivosBody" style="display: none;">
+                                <?php
+                                $resultadoInactivos = $objUsuario->listarUsuariosInactivos(); 
+
+                                if ($resultadoInactivos && mysqli_num_rows($resultadoInactivos) > 0) {
+                                ?>
+                                    <div class="table-responsive bg-light p-3 shadow-sm rounded border">
+                                        <table class="table table-striped table-hover align-middle mb-0">
+                                            <thead class="table-secondary">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Nombre</th>
+                                                    <th>Cédula</th>
+                                                    <th>Email</th>
+                                                    <th>Dirección</th>
+                                                    <th>Teléfonos</th>
+                                                    <th>Rol</th>
+                                                    <th>Observaciones</th>
+                                                    <th class="text-center">Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php while ($rowInactivos = mysqli_fetch_assoc($resultadoInactivos)) { 
+                                                    $telefonosArr = $objUsuario->obtenerTelefonosPorUsuario($rowInactivos['IDUsuario']);
+                                                    $textoTelefonos = !empty($telefonosArr) ? implode(', ', $telefonosArr) : 'Sin teléfonos';
+                                                    $rolArr = $objUsuario->obtenerRolesPorUsuario($rowInactivos['IDUsuario']);
+                                                    $textorol = !empty($rolArr) ? implode(', ', $rolArr) : 'Sin rol asignado';
+                                                ?>
+                                                    <tr>
+                                                        <td><?php echo htmlspecialchars($rowInactivos['IDUsuario']); ?></td>
+                                                        <td><?php echo htmlspecialchars($rowInactivos['Nombre'] ?? ''); ?></td>
+                                                        <td><?php echo htmlspecialchars($rowInactivos['cedula'] ?? ''); ?></td>
+                                                        <td><?php echo htmlspecialchars($rowInactivos['Email'] ?? ''); ?></td>
+                                                        <td><?php echo htmlspecialchars($rowInactivos['Direccion'] ?? ''); ?></td>
+                                                        <td><?php echo htmlspecialchars($textoTelefonos); ?></td>
+                                                        <td>
+                                                            <span class="badge bg-secondary">
+                                                                <?php echo htmlspecialchars($textorol); ?>
+                                                            </span>
+                                                        </td>
+                                                        <td><?php echo htmlspecialchars($rowInactivos['Observaciones'] ?? ''); ?></td>
+                                                        <td class="text-center">
+                                                            <button type="button" class="btn btn-success btn-sm fw-bold px-3 btn-reactivar shadow-sm" 
+                                                                    data-id="<?php echo $rowInactivos['IDUsuario']; ?>" 
+                                                                    data-nombre="<?php echo htmlspecialchars($rowInactivos['Nombre'] ?? ''); ?>">
+                                                                🔄 Reactivar
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                <?php 
+                                } else {
+                                    echo "<div class='alert alert-info text-center bg-light border mb-0 shadow-sm'>No hay usuarios dados de baja actualmente.</div>";
+                                }
+                                ?>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
         </section>
-        
+      
         <?php include '../footer.php'; ?>
         <script src="../assets/js/popper.min.js"></script>
         <script src="../bootstrap/js/bootstrap.min.js"></script>
+        <script>
+        //boton de reactivar
+        document.addEventListener('DOMContentLoaded', function () {
+
+            //1. Control del botón desplegable por JavaScript para evitar conflictos en el navbar
+            const btnToggle = document.getElementById('btnToggleInactivos');
+            const contenedorInactivos = document.getElementById('contenedorInactivosBody');
+
+            if (btnToggle && contenedorInactivos) {
+                btnToggle.addEventListener('click', function () {
+                    if (contenedorInactivos.style.display === 'none' || contenedorInactivos.style.display === '') {
+                        contenedorInactivos.style.display = 'block';
+                    } else {
+                        contenedorInactivos.style.display = 'none';
+                    }
+                });
+            }
+
+            //2. Lógica del boton de reactivar usuario
+            document.addEventListener('click', function (e) {
+                const btnReactivar = e.target.closest('.btn-reactivar');
+                if (!btnReactivar) return;
+
+                const idUsuario = btnReactivar.getAttribute('data-id');
+                const nombreUsuario = btnReactivar.getAttribute('data-nombre');
+                const contenedorModal = document.getElementById('contenedorModal');
+
+                if (!contenedorModal) return;
+
+                contenedorModal.innerHTML = `
+                    <div class="modal fade" id="modalReactivar" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content shadow border-0">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title fw-bold">🔄 Confirmar Reactivación</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center py-4">
+                                    <p class="fs-5 text-dark mb-1">¿Desea reactivar al usuario <b>${nombreUsuario}</b>?</p>
+                                    <p class="text-muted small mb-0">El usuario recuperará su acceso al sistema.</p>
+                                </div>
+                                <div class="modal-footer justify-content-center bg-light">
+                                    <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" id="btnEjecutarReactivacion" class="btn btn-success px-4 fw-bold shadow-sm" data-id="${idUsuario}">Sí, Reactivar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const modalEl = document.getElementById('modalReactivar');
+                const myModal = new bootstrap.Modal(modalEl);
+                myModal.show();
+
+                const btnEjecutarReactivacion = document.getElementById('btnEjecutarReactivacion');
+                if (btnEjecutarReactivacion) {
+                    btnEjecutarReactivacion.addEventListener('click', function () {
+                        const idUsr = this.getAttribute('data-id');
+                        myModal.hide();
+
+                        const formData = new FormData();
+                        formData.append('accion', 'reactivar_usuario');
+                        formData.append('idUsuario', idUsr);
+
+                        fetch('/CeiLab2026/Formularios/listadoUsuario.php', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => {
+                            location.reload();
+                        })
+                        .catch(error => console.error('Error:', error));
+                    });
+                }
+            });
+
+        });
+        </script>
     </body>
 </html>
