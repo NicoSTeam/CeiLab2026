@@ -19,7 +19,16 @@ $objEquipo = new ClsEquipo();
 $mensaje = '';
 $tipoAlerta = 'success';
 
-//Procesar la baja lógica vía POST
+//Procesa reactivar un equipo
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'reactivar_equipo') {
+    $idEquipo = $_POST['idEquipo'] ?? 0;
+    if (!empty($idEquipo)) {
+        $objEquipo->reactivarEquipo($idEquipo);
+    }
+    exit; 
+}
+
+//Procesa la baja lógica vía POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'eliminar') {
     $idEquipo = $_POST['idEquipo'] ?? '';
 
@@ -53,6 +62,7 @@ $filtroDisponibilidad = $_GET['disponibilidad'] ?? '';
 $listaEquipos = $objEquipo->listarEquipos($filtroTipo, $filtroDisponibilidad);
 
 $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit de robótica", "Sensores Fisicoquímicos", "Impresora 3D", "Lápiz 3D", "Microscopio USB"];
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -162,7 +172,82 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                     </div>
                 </div>
             </div>
+
+            <!-- lista de equipos dados de baja -->
+            <div class="container pb-4 pt-3 rounded shadow-sm col-md-10 col-xl-9 mt-4" style="background-color: #adbfdc;">
+                <div class="bg-white border border-danger rounded p-3 shadow-sm">
+                    <div class="row">
+                        <div class="col-12">
+                            
+                            <!-- Encabezado con el botón de control seguro -->
+                            <div class="d-flex justify-content-between align-items-center bg-danger bg-opacity-10 p-3 rounded mb-3">
+                                <div>
+                                    <h5 class="mb-0 text-danger fw-bold">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Equipos Dados de Baja / Inactivos
+                                    </h5>
+                                    <small class="text-muted">Sección restringida para gestión de equipos inactivos y su reactivación.</small>
+                                </div>
+                                <button class="btn btn-danger btn-sm fw-bold px-3 shadow-sm" type="button" id="btnToggleEquiposInactivos">
+                                    Mostrar / Ocultar Inactivos
+                                </button>
+                            </div>
+
+                            <!-- Contenedor controlado por JavaScript (inicialmente oculto) -->
+                            <div id="contenedorEquiposInactivosBody" style="display: none;">
+                                <?php
+                                $resultadoEquiposInactivos = $objEquipo->listarEquiposInactivos(); 
+
+                                if ($resultadoEquiposInactivos && mysqli_num_rows($resultadoEquiposInactivos) > 0) {
+                                ?>
+                                    <div class="table-responsive bg-light p-3 shadow-sm rounded border">
+                                        <table class="table table-striped table-hover align-middle mb-0">
+                                            <thead class="table-secondary">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Tipo</th>
+                                                    <th>Estado</th>
+                                                    <th>Sala</th>
+                                                    <th>Observaciones</th>
+                                                    <th class="text-center">Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php while ($rowEqInactivo = mysqli_fetch_assoc($resultadoEquiposInactivos)) { ?>
+                                                    <tr>
+                                                        <td><?php echo htmlspecialchars($rowEqInactivo['IDEquipo']); ?></td>
+                                                        <td><?php echo htmlspecialchars($rowEqInactivo['Tipo'] ?? ''); ?></td>
+                                                        <td>
+                                                            <span class="badge bg-danger">Inactivo</span>
+                                                        </td>
+                                                        <td><?php echo htmlspecialchars($rowEqInactivo['IDSala_ceilab'] ?? ''); ?></td>
+                                                        <td><?php echo htmlspecialchars($rowEqInactivo['Observaciones'] ?? ''); ?></td>
+                                                        <td class="text-center">
+                                                            <button type="button" class="btn btn-success btn-sm fw-bold px-3 btn-reactivar-equipo shadow-sm" 
+                                                                    data-id="<?php echo $rowEqInactivo['IDEquipo']; ?>" 
+                                                                    data-tipo="<?php echo htmlspecialchars($rowEqInactivo['Tipo'] ?? ''); ?>">
+                                                                🔄 Reactivar
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                <?php 
+                                } else {
+                                    echo "<div class='alert alert-info text-center bg-light border mb-0 shadow-sm'>No hay equipos dados de baja actualmente.</div>";
+                                }
+                                ?>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
+
+        <!-- CONTENEDOR PARA MODALES -->
+        <div id="contenedorModal"></div>
 
         <!-- MODAL DE CONFIRMACIÓN DE BAJA -->
         <div class="modal fade" id="modalConfirmarBaja" tabindex="-1" aria-labelledby="modalConfirmarBajaLabel" aria-hidden="true">
@@ -220,7 +305,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
         <script src="../bootstrap/js/bootstrap.min.js"></script>
         
         <script>
-            // Script para inyectar dinámicamente el ID del equipo en el modal de confirmación
+            //Script para inyectar dinámicamente el ID del equipo en el modal de confirmación
             var modalConfirmarBaja = document.getElementById('modalConfirmarBaja');
             if (modalConfirmarBaja) {
                 modalConfirmarBaja.addEventListener('show.bs.modal', function (event) {
@@ -231,11 +316,91 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                 });
             }
 
-            // Script para mostrar el modal de notificación si hay un mensaje flash
+            //Script para mostrar el modal de notificación si hay un mensaje flash
             <?php if (!empty($mensaje)): ?>
                 var modalNoti = new bootstrap.Modal(document.getElementById('modalNotificacion'));
                 modalNoti.show();
             <?php endif; ?>
+
+            document.addEventListener('DOMContentLoaded', function () {
+
+                // 1. Control seguro del botón desplegable para equipos inactivos
+                const btnToggleEq = document.getElementById('btnToggleEquiposInactivos');
+                const contenedorEqInactivos = document.getElementById('contenedorEquiposInactivosBody');
+
+                if (btnToggleEq && contenedorEqInactivos) {
+                    btnToggleEq.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        if (contenedorEqInactivos.style.display === 'none' || contenedorEqInactivos.style.display === '') {
+                            contenedorEqInactivos.style.display = 'block';
+                        } else {
+                            contenedorEqInactivos.style.display = 'none';
+                        }
+                    });
+                }
+
+                // 2. Lógica segura del botón de reactivar equipo
+                document.addEventListener('click', function (e) {
+                    const btnReactivarEq = e.target.closest('.btn-reactivar-equipo');
+                    if (!btnReactivarEq) return;
+
+                    const idEquipo = btnReactivarEq.getAttribute('data-id');
+                    const tipoEquipo = btnReactivarEq.getAttribute('data-nombre') || 'Equipo';
+                    const contenedorModal = document.getElementById('contenedorModal');
+
+                    if (!contenedorModal) {
+                        console.error('Error: No se encontró el elemento #contenedorModal en el HTML.');
+                        return;
+                    }
+
+                    contenedorModal.innerHTML = `
+                        <div class="modal fade" id="modalReactivarEquipo" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content shadow border-0">
+                                    <div class="modal-header bg-success text-white">
+                                        <h5 class="modal-title fw-bold">🔄 Confirmar Reactivación de Equipo</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-center py-4">
+                                        <p class="fs-5 text-dark mb-1">¿Desea reactivar este equipo (ID: ${idEquipo})?</p>
+                                        <p class="text-muted small mb-0">El equipo volverá a estar disponible en el inventario activo.</p>
+                                    </div>
+                                    <div class="modal-footer justify-content-center bg-light">
+                                        <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
+                                        <button type="button" id="btnEjecutarReactivacionEquipo" class="btn btn-success px-4 fw-bold shadow-sm" data-id="${idEquipo}">Sí, Reactivar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    const modalEl = document.getElementById('modalReactivarEquipo');
+                    const myModal = new bootstrap.Modal(modalEl);
+                    myModal.show();
+
+                    const btnEjecutarReactivacionEquipo = document.getElementById('btnEjecutarReactivacionEquipo');
+                    if (btnEjecutarReactivacionEquipo) {
+                        btnEjecutarReactivacionEquipo.addEventListener('click', function () {
+                            const idEq = this.getAttribute('data-id');
+                            myModal.hide();
+
+                            const formData = new FormData();
+                            formData.append('accion', 'reactivar_equipo');
+                            formData.append('idEquipo', idEq);
+
+                            fetch('', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => {
+                                location.reload();
+                            })
+                            .catch(error => console.error('Error en fetch:', error));
+                        });
+                    }
+                });
+
+            });
         </script>
     </body>
 </html>

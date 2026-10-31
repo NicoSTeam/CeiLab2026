@@ -26,6 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     $idSala = $_POST['idSala'] ?? '';
     $observaciones = $_POST['observaciones'] ?? '';
 
+    if ($tipo === 'OTRO') {
+        $tipo = trim($_POST['nuevoTipoEquipo'] ?? '');
+    }
+
     if (!empty($estado) && !empty($tipo) && !empty($idSala)) {
         // Ya no enviamos disponibilidad manualmente, se calcula en la clase
         if ($objEquipo->registrarEquipo($estado, $observaciones, $tipo, $idSala)) {
@@ -81,7 +85,7 @@ $listaSalas = $objSala->listarSalasFiltradas();
                                     <!-- Selector de Tipo de Equipo -->
                                     <div class="col-md-6">
                                         <label for="tipo" class="form-label fw-bold text-dark">Tipo de Equipo</label>
-                                        <select class="form-select rounded-3 shadow-sm" id="tipo" name="tipo" required>
+                                        <select class="form-select rounded-3 shadow-sm" id="tipo" name="tipo" required onchange="verificarNuevoTipo(this)">
                                             <option value="" disabled selected>Seleccione un tipo...</option>
                                             <option value="Dron">Dron</option>
                                             <option value="Ceibalita">Ceibalita</option>
@@ -92,7 +96,14 @@ $listaSalas = $objSala->listarSalasFiltradas();
                                             <option value="Impresora 3D">Impresora 3D</option>
                                             <option value="Lápiz 3D">Lápiz 3D</option>
                                             <option value="Microscopio USB">Microscopio USB</option>
+                                            <option value="OTRO">Otro ...</option>
                                         </select>
+                                    </div>
+
+                                    <!-- Campo dinámico si selecciona OTRO -->
+                                    <div class="col-md-6" id="divNuevoTipo" style="display: none;">
+                                        <label for="nuevoTipoEquipo" class="form-label fw-bold text-dark">Especifique el nuevo tipo de equipo</label>
+                                        <input type="text" class="form-control rounded-3 shadow-sm" id="nuevoTipoEquipo" name="nuevoTipoEquipo" placeholder="Ej: Cable HDMI">
                                     </div>
 
                                     <!-- Selector de Estado del Equipo -->
@@ -173,6 +184,19 @@ $listaSalas = $objSala->listarSalasFiltradas();
                 var modalNoti = new bootstrap.Modal(document.getElementById('modalNotificacion'));
                 modalNoti.show();
             <?php endif; ?>
+            function verificarNuevoTipo(selectElement) {
+                const divNuevoTipo = document.getElementById('divNuevoTipo');
+                const inputNuevoTipo = document.getElementById('nuevoTipoEquipo');
+
+                if (selectElement.value === 'OTRO') {
+                    divNuevoTipo.style.display = 'block'; // Muestra el input
+                    inputNuevoTipo.required = true;       // Lo hace obligatorio
+                } else {
+                    divNuevoTipo.style.display = 'none';  // Lo oculta
+                    inputNuevoTipo.required = false;      // Le quita la obligatoriedad
+                    inputNuevoTipo.value = '';            // Limpia el texto por si acaso
+                }
+            }
         </script>
     </body>
 </html>

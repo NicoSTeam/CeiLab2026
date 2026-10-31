@@ -3,7 +3,7 @@ require_once __DIR__ . '/../Persistencia/connect.php';
 
 class ClsEquipo {
 
-    // Método para registrar un nuevo equipo
+    //Método para registrar un nuevo equipo
     public function registrarEquipo($estado, $observaciones, $tipo, $idSala) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -24,7 +24,7 @@ class ClsEquipo {
             return false;
         }
     }
-    // Método para listar equipos activos filtrando por tipo y disponibilidad
+    //Método para listar equipos activos filtrando por tipo y disponibilidad
     public function listarEquipos($filtroTipo = '', $filtroDisponibilidad = '') {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -53,7 +53,7 @@ class ClsEquipo {
         }
         return $equipos;
     }
-    // Método para obtener equipo por su ID
+    //Método para obtener equipo por su ID
     public function obtenerEquipoPorId($idEquipo) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -67,7 +67,7 @@ class ClsEquipo {
         }
         return null;
     }
-    // Método para modificar un equipo
+    //Método para modificar un equipo
     public function modificarEquipo($idEquipo, $estado, $observaciones, $tipo, $idSala) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -93,7 +93,7 @@ class ClsEquipo {
             return false;
         }
     }
-    // Método para realizar la baja lógica de un equipo 
+    //Método para realizar la baja lógica de un equipo 
     public function eliminarEquipo($idEquipo) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -107,7 +107,7 @@ class ClsEquipo {
             return false;
         }
     }
-    // Método para listar un equipo por disponibilidad en un rango horario determinado
+    //Método para listar un equipo por disponibilidad en un rango horario determinado
     public function listarEquiposDisponibles($fecha, $horaInicio, $horaFin, $tipo = '') {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -169,7 +169,7 @@ class ClsEquipo {
         }
         return $equipos;
     }
-    // Método para obtener los tipos de equipos para el selector
+    //Método para obtener los tipos de equipos para el selector
     public function obtenerTiposEquipos() {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -184,6 +184,24 @@ class ClsEquipo {
             }
         }
         return $tipos;
+    }
+    //Lista equipos inactivos para poder reactivar
+    public function listarEquiposInactivos() {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        
+        $sql = "SELECT * FROM equipo WHERE activo = 0 ORDER BY IDEquipo DESC";
+        return mysqli_query($link, $sql);
+    }
+    //Reactivo el equipo 
+    public function reactivarEquipo($idEquipo) {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        $idEquipo = (int)$idEquipo;
+
+        //Cambia el estado a activo 
+        $sql = "UPDATE equipo SET activo = 1 WHERE IDEquipo = $idEquipo";
+        return mysqli_query($link, $sql);
     }
 }
 ?>
