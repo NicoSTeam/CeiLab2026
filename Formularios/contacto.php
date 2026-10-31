@@ -122,7 +122,7 @@ ClsLogin::verificarSesion();
                             </div>
                         </div>
 
-                        <!-- Integrante 5 -->
+                        <!-- Integrante 5 
                         <div class="col-12">
                             <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
                                 <div class="row g-0 align-items-center">
@@ -138,7 +138,7 @@ ClsLogin::verificarSesion();
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
 
                     </div>  
                 </div>
