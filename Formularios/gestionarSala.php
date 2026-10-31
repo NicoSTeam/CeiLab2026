@@ -69,6 +69,9 @@ if (isset($_GET['eliminar'])) {
     } elseif ($resultadoEliminar === "foreign_key") {
         $_SESSION['mensaje'] = "No se puede eliminar la sala porque tiene equipos asociados.";
         $_SESSION['tipoAlerta'] = "warning";
+    } elseif ($resultadoEliminar === "tiene_reservas") {
+        $_SESSION['mensaje'] = "No se puede eliminar la sala porque tiene reservas registradas.";
+        $_SESSION['tipoAlerta'] = "warning";
     } else {
         $_SESSION['mensaje'] = "No se pudo eliminar la sala.";
         $_SESSION['tipoAlerta'] = "danger";

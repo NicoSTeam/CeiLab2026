@@ -57,6 +57,16 @@ class ClsSala {
             }
         }
 
+        //Verificar si hay reservas asociadas a esta sala
+        $sqlCheckReservas = "SELECT COUNT(*) as total FROM reservas WHERE IDSalon = '$idSalon'"; 
+        $resCheckReservas = mysqli_query($link, $sqlCheckReservas);
+        if ($resCheckReservas) {
+            $rowRes = mysqli_fetch_assoc($resCheckReservas);
+            if ($rowRes['total'] > 0) {
+                return "tiene_reservas"; // Tiene reservas asociadas
+            }
+        }
+
         try {
             $sql = "DELETE FROM sala_ceilab WHERE IDSalon = '$idSalon'";
             return mysqli_query($link, $sql);
@@ -132,6 +142,18 @@ class ClsSala {
             }
         }
         return $salas;
+    }
+    public function tieneReservas($idSala) {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        $idSala = (int)$idSala;
+
+        // Consultamos si existe al menos una reserva vinculada a esta sala
+        $sql = "SELECT COUNT(*) as total FROM reserva WHERE IDSala = $idSala";
+        $resultado = mysqli_query($link, $sql);
+        $row = mysqli_fetch_assoc($resultado);
+
+        return ($row['total'] > 0); // Retorna true si tiene reservas, false si está limpia
     }
 }    
 ?>
