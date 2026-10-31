@@ -334,7 +334,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
     <script src="../bootstrap/js/bootstrap.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // 1. CONVERTIR RESERVA EXISTENTE
+        //1. CONVERTIR RESERVA EXISTENTE
         document.addEventListener('click', function (e) {
             const btn = e.target.closest('.btn-convertir');
             if (!btn) return;
@@ -393,7 +393,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
             }
         });
 
-        // 2. CANCELAR RESERVA EXISTENTE (CONTROL DE FALTAS)
+        //2. CANCELA RESERVA EXISTENTE (CONTROL DE FALTAS)
         document.addEventListener('click', function (e) {
             const btnCancel = e.target.closest('.btn-cancelar-reserva');
             if (!btnCancel) return;
@@ -454,7 +454,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
             }
         });
 
-        // 3. ALERTA DINÁMICA DE FALTAS (> 5) EN PRÉSTAMO DIRECTO
+        //3. ALERTA DE FALTAS (> 5) EN PRESTAMO DIRECTO
         document.addEventListener('change', function (e) {
             if (e.target && e.target.id === 'selectUsuarioDestino') {
                 const selectedOption = e.target.options[e.target.selectedIndex];

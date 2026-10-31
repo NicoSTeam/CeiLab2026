@@ -97,9 +97,15 @@ class ClsOperaciones {
         $idUsuarioCliente = (int)$idUsuarioCliente;
         $horaInicio = mysqli_real_escape_string($link, trim($horaInicio));
         $horaFin = mysqli_real_escape_string($link, trim($horaFin));
+        $fechaActual = date('Y-m-d');
+        $horaActual = date('H:i:s');
 
         if ($horaInicio >= $horaFin) {
             return $this->generarModalRespuesta("Error de Horario", "El horario de inicio debe ser menor al horario de fin.", "bg-danger text-white", "btn-danger");
+        }
+
+        if ($fechaActual === date('Y-m-d') && $horaInicio < $horaActual) {
+            return $this->generarModalRespuesta("Horario Inválido", "No se puede registrar un préstamo en un horario que ya pasó.", "bg-danger text-white", "btn-danger");
         }
 
         foreach ($arrayEquipos as $idEquipo) {
@@ -111,20 +117,74 @@ class ClsOperaciones {
         mysqli_begin_transaction($link);
 
         try {
-            //Inserto directamente en operaciones con su hora de inicio y fin
+            $primerIdOperacion = null;
+            $detallesEquipos = [];
+
+            // Inserto directamente en operaciones con su hora de inicio y fin
             foreach ($arrayEquipos as $idEquipo) {
                 $idEquipoEscaped = mysqli_real_escape_string($link, trim($idEquipo));
 
                 $sqlOp = "INSERT INTO operaciones (Accion, Fecha, HoraInicio, HoraFin, Observaciones, IDUsuario, IDEquipo) 
                           VALUES (1, '$fechaHoy', '$horaInicio', '$horaFin', 'Préstamo directo sin reserva previa', $idUsuarioCliente, '$idEquipoEscaped')";
+                
                 if (!mysqli_query($link, $sqlOp)) {
                     throw new Exception("Error al registrar la operación de préstamo para el equipo $idEquipoEscaped.");
                 }
-                
+
+                // Capturamos el ID de la primera operación registrada como referencia principal
+                if ($primerIdOperacion === null) {
+                    $primerIdOperacion = mysqli_insert_id($link);
+                }
+
+                // Consultamos el tipo del equipo para armar el listado visual del modal
+                $resEq = mysqli_query($link, "SELECT Tipo, IDEquipo FROM equipo WHERE IDEquipo = '$idEquipoEscaped'");
+                if ($rowEq = mysqli_fetch_assoc($resEq)) {
+                    $detallesEquipos[] = $rowEq;
+                } else {
+                    $detallesEquipos[] = ['Tipo' => 'Equipo', 'IDEquipo' => $idEquipoEscaped];
+                }
             }
 
             mysqli_commit($link);
-            return $this->generarModalRespuesta("¡Préstamo Directo Exitoso!", "El préstamo se ha registrado correctamente.", "bg-success text-white", "btn-success", true);
+
+            // Construimos el listado visual de los equipos para el modal
+            $htmlDetalleEquipos = '
+            <div class="text-center mb-3">
+                <span class="badge bg-success bg-opacity-25 text-success fs-6 px-3 py-2 rounded-pill fw-bold">
+                    💻 Referencia Préstamo ID: #' . $primerIdOperacion . '
+                </span>
+            </div>
+            <p class="text-dark fw-semibold mb-2">Equipos entregados en esta operación:</p>
+            <ul class="list-group list-group-flush small border rounded-3 overflow-hidden mb-3 text-start">';
+            
+            foreach ($detallesEquipos as $eq) {
+                $htmlDetalleEquipos .= '<li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span class="fw-bold text-primary">' . htmlspecialchars($eq['Tipo']) . '</span>
+                    <span class="badge bg-secondary">ID: ' . htmlspecialchars($eq['IDEquipo']) . '</span>
+                </li>';
+            }
+            $htmlDetalleEquipos .= '</ul>';
+
+            // Retornamos el HTML del modal verde de éxito con recarga automática al aceptar
+            return '
+            <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content shadow border-0">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title fw-bold">✅ ¡Préstamo Directo Exitoso!</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body py-4">
+                            ' . $htmlDetalleEquipos . '
+                        </div>
+                        <div class="modal-footer justify-content-center bg-light">
+                            <button type="button" class="btn btn-success px-4 fw-bold shadow-sm" data-bs-dismiss="modal" onclick="location.reload();">
+                                Aceptar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>';
 
         } catch (Exception $e) {
             mysqli_rollback($link);
