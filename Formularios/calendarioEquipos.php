@@ -461,7 +461,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
                                                                                     <span class="text-muted" style="font-size: 0.75rem;"><?php echo htmlspecialchars($eq['Observaciones'] ?? 'Sin observaciones'); ?></span>
                                                                                 </div>
                                                                                 <div class="form-check fs-5">
-                                                                                    <input class="form-check-input" type="checkbox" name="equipos[]" value="<?php echo htmlspecialchars($eq['IDEquipo']); ?>" id="eq_<?php echo $eq['IDEquipo']; ?>">
+                                                                                    <input class="form-check-input bg-light border-2 border-primary shadow-sm" type="checkbox" name="equipos[]" value="<?php echo htmlspecialchars($eq['IDEquipo']); ?>" id="eq_<?php echo $eq['IDEquipo']; ?>">
                                                                                 </div>
                                                                             </div>
                                                                         </div>

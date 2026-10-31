@@ -15,7 +15,7 @@ if (!$esAdministrador && !$esDot) {
 
 require_once '../Clases/ClsUsuarios.php';
 
-// Si la petición viene por POST vía fetch, procesamos y devolvemos solo el modal
+//Si la petición viene por POST vía fetch, procesa y devuelve solo el modal
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $objUsuario = new ClsUsuarios();
     echo $objUsuario->registrarUsuario();
