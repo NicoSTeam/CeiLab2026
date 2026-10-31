@@ -15,7 +15,9 @@ class ClsUsuarios {
                 $observaciones = $_POST['fobservaciones'] ?? '';
                 $rol = $_POST['frol'] ?? '';
                 $contrasenia = password_hash($_POST['fcontrasenia'] ?? '', PASSWORD_DEFAULT);
-                $telefonos = $_POST['ftelefonos'] ?? []; 
+                $telefonos = $_POST['ftelefonos'] ?? [];
+                $fechaCreacion = date('Y-m-d');
+                $creadorID = $_SESSION['IDUsuario'] ?? 0; // Asegúrate de que esta variable de sesión coincida con la de tu login 
 
                 // Instanciamos la clase Conexion para obtener el link
                 $objConexion = new Conexion();
@@ -28,6 +30,8 @@ class ClsUsuarios {
                 $direccion = mysqli_real_escape_string($link, trim($direccion));
                 $observaciones = mysqli_real_escape_string($link, trim($observaciones));
                 $rol = mysqli_real_escape_string($link, trim($rol));
+                $fechaCreacion = mysqli_real_escape_string($link, trim($fechaCreacion));
+                $creadorID = (int)$creadorID;
 
                 //Verifica que tenga 8 caracteres y sean solo numeros
                 if (strlen($cedula) !== 8 || !ctype_digit($cedula)) {
@@ -90,8 +94,8 @@ class ClsUsuarios {
                     }
 
                 //SQL de inserción
-                $sql = "INSERT INTO usuario (nombre, cedula, email, direccion, observaciones, contraseña) 
-                        VALUES ('$nombre', '$cedula', '$email', '$direccion', '$observaciones', '$contrasenia')";
+                $sql = "INSERT INTO usuario (nombre, cedula, email, direccion, observaciones, contraseña, Fecha_creacion, Creador_IDUsuario) 
+                        VALUES ('$nombre', '$cedula', '$email', '$direccion', '$observaciones', '$contrasenia', '$fechaCreacion', $creadorID)";
 
                 // Ejecutamos la consulta
                 $resultadoUsuario = $objConexion->ejecutarSQL($sql);
@@ -579,13 +583,13 @@ class ClsUsuarios {
         return false;
     }
     public function listarUsuariosInactivos() {
-    $objConexion = new Conexion();
-    $link = $objConexion->conectar();
-    
-    // Usando la columna 'activo' detectada en tu base de datos (0 = inactivo / dado de baja)
-    $sql = "SELECT * FROM usuario WHERE activo = 0 ORDER BY Nombre ASC";
-    return mysqli_query($link, $sql);
-}
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
+        
+        //Toma los usuarios inactivos
+        $sql = "SELECT * FROM usuario WHERE activo = 0 ORDER BY Nombre ASC";
+        return mysqli_query($link, $sql);
+    }
     public function reactivarUsuario($idUsuario) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
