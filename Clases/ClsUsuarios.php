@@ -602,6 +602,17 @@ class ClsUsuarios {
         }
         return false;
     }
+    public function listarUsuariosConDetallesCreacion() {
+        $objConexion = new Conexion();
+        $link = $objConexion->conectar();
 
+        $sql = "SELECT u.IDUsuario, u.nombre, u.cedula, u.email, u.Fecha_creacion, 
+                    c.nombre AS NombreCreador 
+                FROM usuario u 
+                LEFT JOIN usuario c ON u.Creador_IDUsuario = c.IDUsuario 
+                ORDER BY u.IDUsuario ASC";
+                
+        return mysqli_query($link, $sql);
+    }
 }
 ?>

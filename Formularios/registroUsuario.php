@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="row justify-content-center mb-4"> 
                     <div class="col-md-9 col-xl-8">
                         <div class="bg-white p-4 shadow rounded text-center">
-                            <h3 class="fw-bold h2 mb-0 text-primary">Registro de usuarios</h3>
+                            <h3 class="fw-bold h2 mb-0 text-primary">Registro de Usuarios</h3>
                         </div>
                     </div> 
                 </div>

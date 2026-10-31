@@ -48,7 +48,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'reactivar_usuario') {
                 <div class="row justify-content-center">
                     <div class="col-md-9 col-xl-8">
                         <div class="bg-white p-4 shadow-sm rounded text-center">
-                            <h3 class="fw-bold h2 mb-1 text-primary">Listado de usuarios</h3>
+                            <h3 class="fw-bold h2 mb-1 text-primary">Listado de Usuarios</h3>
                             <p class="fw-light text-secondary mb-0">Consulte y filtre los usuarios registrados en el sistema CeiLab.</p> 
                         </div>
                     </div>
