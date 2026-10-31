@@ -186,22 +186,26 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                     <h5 class="fw-bold text-dark mb-3"> Préstamo Directo (Sin Reserva)</h5>
                                     
                                     <!-- Paso 1: selecciono horario -->
-                                    <form method="GET" action="gestionPrestamoEquipos.php" class="mb-3">
-                                        <label class="form-label small fw-bold text-muted mb-1">1. Definir Franja Horaria:</label>
+                                    <form method="GET" action="gestionPrestamoEquipos.php" class="mb-3" id="formFiltroHorario">
+                                        <label class="form-label small fw-bold text-muted mb-1">Definir Franja Horaria:</label>
                                         <div class="row g-2 mb-2">
                                             <div class="col-6">
-                                                <select class="form-select form-select-sm rounded-3 shadow-sm" name="hora_inicio" required>
+                                                <select class="form-select form-select-sm rounded-3 shadow-sm" name="hora_inicio" id="hora_inicio" required>
                                                     <option value="">Inicio...</option>
                                                     <?php for ($h = 7; $h <= 22; $h++): $val = sprintf("%02d:00:00", $h); ?>
-                                                        <option value="<?php echo $val; ?>" <?php echo ($horaInicioDir === $val) ? 'selected' : ''; ?>><?php echo sprintf("%02d:00", $h); ?></option>
+                                                        <option value="<?php echo $val; ?>" <?php echo ($horaInicioDir === $val) ? 'selected' : ''; ?>>
+                                                            <?php echo sprintf("%02d:00", $h); ?>
+                                                        </option>
                                                     <?php endfor; ?>
                                                 </select>
                                             </div>
                                             <div class="col-6">
-                                                <select class="form-select form-select-sm rounded-3 shadow-sm" name="hora_fin" required>
+                                                <select class="form-select form-select-sm rounded-3 shadow-sm" name="hora_fin" id="hora_fin" required>
                                                     <option value="">Fin...</option>
                                                     <?php for ($h = 8; $h <= 23; $h++): $val = sprintf("%02d:00:00", $h); ?>
-                                                        <option value="<?php echo $val; ?>" <?php echo ($horaFinDir === $val) ? 'selected' : ''; ?>><?php echo sprintf("%02d:00", $h); ?></option>
+                                                        <option value="<?php echo $val; ?>" <?php echo ($horaFinDir === $val) ? 'selected' : ''; ?>>
+                                                            <?php echo sprintf("%02d:00", $h); ?>
+                                                        </option>
                                                     <?php endfor; ?>
                                                 </select>
                                             </div>
@@ -522,6 +526,55 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
             .catch(error => console.error('Error:', error));
         });
 
+        // 5. VALIDACIÓN DE HORARIO EN EL FILTRO (Horarios pasados o rangos invertidos)
+        document.addEventListener('submit', function (e) {
+            const formFiltro = e.target.closest('#formFiltroHorario');
+            if (!formFiltro) return;
+
+            const valInicio = document.getElementById('hora_inicio').value;
+            const valFin = document.getElementById('hora_fin').value;
+
+            if (!valInicio || !valFin) return;
+
+            const horaInicioNum = parseInt(valInicio.split(':')[0], 10);
+            const horaFinNum = parseInt(valFin.split(':')[0], 10);
+            const horaActualNum = new Date().getHours();
+
+            let mensajeError = "";
+
+            if (horaInicioNum < horaActualNum) {
+                mensajeError = "No se puede realizar o consultar un préstamo en un horario que ya pasó.";
+            } else if (horaFinNum <= horaInicioNum) {
+                mensajeError = "La hora de fin debe ser mayor a la hora de inicio.";
+            }
+
+            if (mensajeError !== "") {
+                e.preventDefault(); // Detiene la consulta
+
+                document.getElementById('contenedorModal').innerHTML = `
+                    <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content shadow border-0">
+                                <div class="modal-header bg-warning text-dark">
+                                    <h5 class="modal-title fw-bold">⚠️ Horario Inválido</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center py-4">
+                                    <p class="fs-5 text-dark mb-0">${mensajeError}</p>
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn bg-warning text-dark px-4 fw-bold shadow-sm" data-bs-dismiss="modal">Entendido</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                var modalEl = document.getElementById('modalRespuesta');
+                var myModal = new bootstrap.Modal(modalEl);
+                myModal.show();
+            }
+        });
     });
     </script>
 </body>

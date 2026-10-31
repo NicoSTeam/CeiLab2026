@@ -97,15 +97,9 @@ class ClsOperaciones {
         $idUsuarioCliente = (int)$idUsuarioCliente;
         $horaInicio = mysqli_real_escape_string($link, trim($horaInicio));
         $horaFin = mysqli_real_escape_string($link, trim($horaFin));
-        $fechaActual = date('Y-m-d');
-        $horaActual = date('H:i:s');
 
         if ($horaInicio >= $horaFin) {
             return $this->generarModalRespuesta("Error de Horario", "El horario de inicio debe ser menor al horario de fin.", "bg-danger text-white", "btn-danger");
-        }
-
-        if ($fechaActual === date('Y-m-d') && $horaInicio < $horaActual) {
-            return $this->generarModalRespuesta("Horario Inválido", "No se puede registrar un préstamo en un horario que ya pasó.", "bg-danger text-white", "btn-danger");
         }
 
         foreach ($arrayEquipos as $idEquipo) {
