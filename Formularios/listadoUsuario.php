@@ -257,6 +257,8 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'reactivar_usuario') {
                 </div>
             </div>
             <?php endif; ?>
+            <!-- Contenedor donde se inyectará el modal de respuesta final vía Fetch -->
+            <div id="contenedorModal"></div>
         </section>
       
         <?php include '../footer.php'; ?>
