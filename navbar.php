@@ -98,7 +98,7 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/historialReservas.php">Reservas</a> 
                         <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/historialPrestaDev.php">Prestamos y Devoluciones del sistema</a>
                         <?php endif; ?> 
-                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/historialPrestaDevPersonal.php">Prestamos y Devoluciones</a> 
+                        <a class="dropdown-item fw-semibold rounded-2 py-2" href="/CeiLab2026/Formularios/historialPrestaDevPersonal.php">Mis Prestamos y Devoluciones</a> 
                     </div>
                 <?php endif; ?>
                 </li>

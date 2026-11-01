@@ -66,6 +66,7 @@ unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
         <link rel="stylesheet" href="../Estilos/blocks.css">
         <link href="../Estilos/style.css" rel="stylesheet">
         <link rel="icon" href="/CeiLab2026/assets/img/Ceibal_ico.png">
+        <link href="../Estilos/CSSImpresion.css" rel="stylesheet" type="text/css" media="print">
     </head>
     <body class="d-flex flex-column min-vh-100 bg-light">
         
@@ -78,11 +79,24 @@ unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
                         
                         <!-- LISTADO Y FILTROS -->
                         <div class="card shadow-lg border-0 rounded-4 p-4 mb-5 bg-white bg-opacity-95">
-                            <h2 class="text-center fw-bold text-dark mb-4">Gestión y Actualización de Solicitudes</h2>
-
+                            <div class="row mb-4 align-items-center bg-white p-3 shadow-sm rounded">
+                                <div class="col-md-6">
+                                    <h2 class="fw-bold text-dark mb-0">Gestión y Actualización de Solicitudes</h2>
+                                </div>
+                                <div class="col-md-6 text-md-end mt-3 mt-md-0 d-flex justify-content-md-end gap-2 flex-wrap">
+                                    <!-- Botón Volver al Inicio -->
+                                    <a href="../index.php" class="btn btn-outline-secondary fw-bold rounded-pill px-4 shadow-sm">
+                                        ← Volver al Inicio
+                                    </a>
+                                    <!-- Botón Imprimir / PDF -->
+                                    <button type="button" onclick="window.print();" class="btn btn-danger fw-bold rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-2">
+                                        📄 Imprimir Reporte (PDF)
+                                    </button>
+                                </div>
+                            </div>
                             <!-- Formulario de Filtros -->
-                            <form method="GET" action="actualizarEstadoSolicitudEquipo.php" class="row g-3 mb-4 bg-light p-3 rounded-3 border">
-                                <div class="col-md-4">
+                            <form method="GET" action="actualizarEstadoSolicitudEquipo.php" class="d-print-none row g-3 mb-4 bg-light p-3 rounded-3 border">
+                                <div class=" col-md-4">
                                     <label for="filtro_usuario" class="form-label fw-bold text-dark small">Filtrar por Usuario</label>
                                     <select class="form-select form-select-sm rounded-3 shadow-sm" id="filtro_usuario" name="filtro_usuario">
                                         <option value="">Todos los usuarios</option>
@@ -94,7 +108,7 @@ unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
                                     </select>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class=" col-md-3">
                                     <label for="filtro_estado" class="form-label fw-bold text-dark small">Filtrar por Estado</label>
                                     <select class="form-select form-select-sm rounded-3 shadow-sm" id="filtro_estado" name="filtro_estado">
                                         <option value="">Todos los estados</option>
@@ -105,7 +119,7 @@ unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
                                     </select>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class=" col-md-3">
                                     <label for="filtro_tipo" class="form-label fw-bold text-dark small">Filtrar por Tipo</label>
                                     <select class="form-select form-select-sm rounded-3 shadow-sm" id="filtro_tipo" name="filtro_tipo">
                                         <option value="">Todos los tipos</option>
