@@ -68,7 +68,7 @@
                         }
                     });
 
-                    // Limpia el DOM al cerrar completamente el modal
+                    //Limpia el DOM al cerrar completamente el modal
                     elementoModal.addEventListener('hidden.bs.modal', function () {
                         contenedor.innerHTML = '';
                     });

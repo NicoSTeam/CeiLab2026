@@ -92,4 +92,53 @@
         background: #ffffff !important;
         background-color: #ffffff !important;
     }
+    
+    /* CSS para las métricas de stock de equipos */
+    .print-metrics-row {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 8px !important;
+        margin-bottom: 12px !important;
+    }
+    .print-metric-col {
+        flex: 1 !important;
+        width: auto !important;
+    }
+    .print-metric-card {
+        border: 1px solid #ced4da !important;
+        box-shadow: none !important;
+        background-color: #ffffff !important;
+        padding: 6px 8px !important;
+        border-radius: 4px !important;
+    }
+    /* Forzar al contenido interno para que se alinee y no se separe */
+    .print-metric-card .d-flex {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    /* Reduce el tamaño de las etiquetas superiores */
+    .print-metric-card span {
+        font-size: 6.5pt !important;
+        line-height: 1 !important;
+    }
+
+    /* Achica los números de las métricas */
+    .print-metric-card h3 {
+        font-size: 11pt !important;
+        margin-top: 2px !important;
+        margin-bottom: 0 !important;
+        line-height: 1.1 !important;
+    }
+
+    /* Ajusta el tamaño del icono y  lo muestra compacto al lado */
+    .print-metric-card .fs-2 {
+        font-size: 14pt !important;
+        display: block !important;
+        visibility: visible !important;
+        margin-left: 4px !important;
+        opacity: 0.7 !important;
+    }
 }

@@ -2,8 +2,9 @@
 require_once '../Clases/ClsLogin.php';
 ClsLogin::verificarSesion(); 
 
-//Obtengo el ID del usuario actual desde la sesión
+//Obtengo el ID del usuario actual desde la sesion
 $idUsuarioActual = $_SESSION['IDUsuario'] ?? $_SESSION['id_usuario'] ?? '';
+
 // Verificación del usuario para que no ingrese por ruta del navegador
 $esAdministrador = isset($_SESSION['roles']) && in_array('1', $_SESSION['roles']);
 $esDot = isset($_SESSION['roles']) && in_array('2', $_SESSION['roles']);
@@ -57,7 +58,7 @@ $historialPrestamos = $objOperaciones->obtenerHistorialPrestamoDev('', '', $idUs
             </div>
         </div>
 
-        <!-- Contenedor de la Tabla -->
+        <!-- Contenedor de la tabla -->
         <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
             <?php if ($historialPrestamos && mysqli_num_rows($historialPrestamos) > 0): ?>
                 <div class="table-responsive">

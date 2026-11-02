@@ -192,7 +192,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                 </button>
                             </div>
 
-                            <!-- Contenedor controlado por JavaScript (inicialmente oculto) -->
+                            <!-- Contenedor controlado por JavaScript inicia oculto -->
                             <div id="contenedorEquiposInactivosBody" style="display: none;">
                                 <?php
                                 $resultadoEquiposInactivos = $objEquipo->listarEquiposInactivos(); 
@@ -316,7 +316,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                 });
             }
 
-            //Script para mostrar el modal de notificación si hay un mensaje flash
+            //Script para mostrar el modal de notificación si hay un mensaje 
             <?php if (!empty($mensaje)): ?>
                 var modalNoti = new bootstrap.Modal(document.getElementById('modalNotificacion'));
                 modalNoti.show();
@@ -324,7 +324,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                // 1. Control seguro del botón desplegable para equipos inactivos
+                //1.Control seguro del btn desplegable para equipos inactivos
                 const btnToggleEq = document.getElementById('btnToggleEquiposInactivos');
                 const contenedorEqInactivos = document.getElementById('contenedorEquiposInactivosBody');
 
@@ -339,7 +339,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                     });
                 }
 
-                // 2. Lógica segura del botón de reactivar equipo
+                //2.Lógica segura del btn de reactivar equipo
                 document.addEventListener('click', function (e) {
                     const btnReactivarEq = e.target.closest('.btn-reactivar-equipo');
                     if (!btnReactivarEq) return;

@@ -18,7 +18,7 @@ require_once '../Clases/ClsSala.php';
 $objSala = new ClsSala();
 $salaEditando = null;
 
-// Procesar el formulario (Registrar o Modificar)
+//Procesa el formulario (registrar o modificar)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     $accion = $_POST['accion'];
     $idSalon = $_POST['idSalon'] ?? '';
@@ -53,12 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
             $_SESSION['tipoAlerta'] = "warning";
         }
     }
-    // Redirigir para limpiar el POST y evitar reenvíos al recargar
+    //Redirigir para limpiar el POST y evitar reenvíos al recargar
     header("Location: gestionarSala.php");
     exit();
 }
 
-// Procesar eliminación si se solicita vía GET
+//Procesar eliminación si se solicita vía GET
 if (isset($_GET['eliminar'])) {
     $idEliminar = $_GET['eliminar'];
     $resultadoEliminar = $objSala->eliminarSala($idEliminar);
@@ -77,17 +77,17 @@ if (isset($_GET['eliminar'])) {
         $_SESSION['tipoAlerta'] = "danger";
     }
     
-    // Redirigir para limpiar el parámetro ?eliminar de la URL
+    //Redirigir para limpiar 
     header("Location: gestionarSala.php");
     exit();
 }
 
-// Recuperar mensaje flash de la sesión (si existe) y limpiarlo inmediatamente
+//Recupera mensaje flash de la sesión (si existe) y limpia inmediatamente
 $mensaje = $_SESSION['mensaje'] ?? '';
 $tipoAlerta = $_SESSION['tipoAlerta'] ?? 'success';
 unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
 
-// Si se solicita editar, cargamos los datos de la sala
+// Si se solicita editar, carga los datos de la sala
 if (isset($_GET['editar'])) {
     $salaEditando = $objSala->obtenerSalaPorId($_GET['editar']);
 }
@@ -118,13 +118,13 @@ $listaSalas = $objSala->listarSalas();
                 <div class="row justify-content-center">
                     <div class="col-lg-10">
                         
-                        <!-- Tarjeta del Formulario -->
+                        <!-- Tarjeta del formulario -->
                         <div class="card shadow-lg border-0 rounded-4 p-4 mb-5 bg-white bg-opacity-95">
                             <h2 class="text-center fw-bold text-dark mb-4">
                                 <?php echo $salaEditando ? 'Modificar Sala: ' . htmlspecialchars($salaEditando['IDSalon']) : 'Gestión de Salas CeiLab'; ?>
                             </h2>
 
-                            <!-- Formulario para Registrar / Modificar Sala -->
+                            <!-- Formulario para registrar / modificar sala -->
                             <form action="gestionarSala.php" method="POST" class="needs-validation" novalidate>
                                 <input type="hidden" name="accion" value="<?php echo $salaEditando ? 'modificar' : 'registrar'; ?>">
                                 <?php if ($salaEditando): ?>
@@ -163,7 +163,7 @@ $listaSalas = $objSala->listarSalas();
                 </div>
             </div>
 
-            <!-- Sección de Listado -->
+            <!-- Sección de listado -->
             <div class="container pb-5 pt-3 rounded shadow-sm col-md-10 col-xl-9" style="background-color: #adbfdc;">
                 <div class="row">
                     <div>
@@ -268,7 +268,7 @@ $listaSalas = $objSala->listarSalas();
         <script src="../bootstrap/js/bootstrap.min.js"></script>
         
         <script>
-            // Configuración del modal de confirmación de eliminación
+            //Configuracion del modal de confirmacion de eliminacion
             var modalEliminar = document.getElementById('modalEliminar');
             if (modalEliminar) {
                 modalEliminar.addEventListener('show.bs.modal', function (event) {
@@ -283,7 +283,7 @@ $listaSalas = $objSala->listarSalas();
                 });
             }
 
-            // Desplega automáticamente el modal de notificación cuando haya un mensaje de respuesta
+            //Despliega automaticamente el modal de notificacion cuando haya un mensaje de respuesta
             <?php if (!empty($mensaje)): ?>
                 var modalNoti = new bootstrap.Modal(document.getElementById('modalNotificacion'));
                 modalNoti.show();

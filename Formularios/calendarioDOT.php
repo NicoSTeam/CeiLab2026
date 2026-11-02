@@ -19,7 +19,7 @@ if (!$esAdministrador && !$esDot) {
 require_once '../Clases/ClsCalendarioDOT.php';
 $objCalendarioDOT = new ClsCalendarioDOT();
 
-// Capturar el ID del usuario actualmente autenticado en la sesión
+//Captura ID del usuario actualmente logeado en la sesión
 $idUsuario = $_SESSION['IDUsuario'] ?? null;
 
 //PROCESA Y AGREGA NUEVO HORARIO
@@ -57,17 +57,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     exit();
 }
 
-// Datos de fecha actual del sistema
+//Datos de fecha actual del sistema
 $anioActual = date('Y');
 $mesActual = date('m');
 $diaActual = date('j');
 
-// Captura año, mes y día desde la URL
+//Captura año, mes y día desde la URL
 $anio = isset($_GET['anio']) ? (int)$_GET['anio'] : (int)$anioActual;
 $mes = isset($_GET['mes']) ? (int)$_GET['mes'] : (int)$mesActual;
 $diaSeleccionado = isset($_GET['dia']) ? (int)$_GET['dia'] : null;
 
-// Valida límites de meses y años
+//Valida limites de meses y años
 if ($mes < 1) { $mes = 12; $anio--; } 
 elseif ($mes > 12) { $mes = 1; $anio++; }
 
@@ -85,7 +85,7 @@ $mesesEspañol = [
 $nombreMes = $mesesEspañol[$mes] ?? '';
 $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $mes, $diaSeleccionado) : '';
 
-// Consulta los horarios registrados en la Base de Datos para el mes en pantalla
+//Consulta los horarios registrados en la BD para el mes en pantalla
 $horariosMesBD = $objCalendarioDOT->obtenerHorariosMes($anio, $mes);
 ?>
 <!DOCTYPE html>
@@ -122,12 +122,12 @@ $horariosMesBD = $objCalendarioDOT->obtenerHorariosMes($anio, $mes);
                             </div>
 
                             <div class="row g-4">
-                                <!--  Calendario Principal -->
+                                <!--  Calendario principal -->
                                 <div class="<?php echo $diaSeleccionado ? 'col-lg-7' : 'col-lg-12'; ?>">
                                     <div class="border rounded-4 p-4 shadow-sm h-100" style="background-color: #adbfdc !important;">
                                         <div class="bg-white rounded-4 p-3 shadow-sm h-100 d-flex flex-column justify-content-between">
                                             
-                                            <!-- Cabecera del Mes con la Nav -->
+                                            <!-- Cabecera del mes con la nav -->
                                             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                                                 <h4 class="fw-bold text-dark mb-0 fs-5">
                                                     <?php echo "$nombreMes $anio"; ?>
@@ -215,7 +215,7 @@ $horariosMesBD = $objCalendarioDOT->obtenerHorariosMes($anio, $mes);
                                     </div>
                                 </div>
 
-                                <!-- Panel de Gestión para el Día Seleccionado -->
+                                <!-- Panel de gestion para el día seleccionado -->
                                 <?php if ($diaSeleccionado): ?>
                                 <div class="col-lg-5">
                                     <div class="border rounded-4 p-4 shadow-sm h-100 bg-white d-flex flex-column justify-content-between">
@@ -227,7 +227,7 @@ $horariosMesBD = $objCalendarioDOT->obtenerHorariosMes($anio, $mes);
                                                 <a href="calendarioDOT.php?anio=<?php echo $anio; ?>&mes=<?php echo $mes; ?>" class="btn-close" aria-label="Cerrar"></a>
                                             </div>
                                             
-                                            <!-- Lista Horarios en la BD para este día -->
+                                            <!-- Lista horarios en la BD para este día -->
                                             <h6 class="text-muted fw-bold small mb-2">Horarios asignados:</h6>
                                             <div class="list-group mb-4 overflow-auto" style="max-height: 200px;">
                                                 <?php 
@@ -262,7 +262,7 @@ $horariosMesBD = $objCalendarioDOT->obtenerHorariosMes($anio, $mes);
                                                 <?php endif; ?>
                                             </div>
 
-                                            <!-- Formulario para Agregar Nuevo Horario -->
+                                            <!-- Formulario para agregar nuevo horario -->
                                             <form action="calendarioDOT.php" method="POST" class="border-top pt-3">
                                                 <input type="hidden" name="accion" value="agregar_horario">
                                                 <input type="hidden" name="anio" value="<?php echo $anio; ?>">

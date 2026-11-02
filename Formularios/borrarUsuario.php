@@ -15,7 +15,7 @@ if (!$esAdministrador) {
 require_once '../Clases/ClsUsuarios.php';
 $objUsuario = new ClsUsuarios();
 
-// Si la petición viene por POST vía AJAX para eliminar, procesamos y devolvemos solo el modal de respuesta
+//Si la petición viene por POST vía AJAX para eliminar, procesa y devuelve el modal de respuesta
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fidusuario'])) {
     echo $objUsuario->eliminarUsuario($_POST['fidusuario']);
     exit; 
@@ -160,7 +160,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'reactivar_usuario') {
                 </div>
             </div>
 
-            <!-- Contenedor donde se inyectará el modal de respuesta final vía Fetch -->
+            <!-- Contenedor donde se inyectará el modal de respuesta final -->
         <div id="contenedorModal"></div>
 
         <!-- lista de usuarios dados de baja -->
@@ -183,7 +183,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'reactivar_usuario') {
                                 </button>
                             </div>
 
-                            <!-- Contenedor controlado por JavaScript (inicia oculto) -->
+                            <!-- Contenedor controlado por JavaScript inicia oculto -->
                             <div id="contenedorInactivosBody" style="display: none;">
                                 <?php
                                 $resultadoInactivos = $objUsuario->listarUsuariosInactivos(); 
@@ -279,7 +279,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'reactivar_usuario') {
         let idUsuarioAEliminar = null;
         const modalConfirmar = document.getElementById('modalConfirmar');
 
-        // Al hacer clic en Eliminar, capturamos el ID y nombre para mostrarlos en el modal de confirmación
+        //Al hacer clic en Eliminar, toma el ID y nombre para mostrarlos en el modal de confirmación
         modalConfirmar.addEventListener('show.bs.modal', function (event) {
             let button = event.relatedTarget;
             idUsuarioAEliminar = button.getAttribute('data-id');
@@ -287,7 +287,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'reactivar_usuario') {
             document.getElementById('nombreUsuarioEliminar').textContent = nombreUsuario;
         });
 
-        // Al confirmar en el modal, enviamos la petición fetch de forma asíncrona
+        //Al confirmar en el modal, envia la petición fetch de forma asíncrona
         document.getElementById('btnConfirmarEliminacion').addEventListener('click', function() {
             let modalConfirmarInstance = bootstrap.Modal.getInstance(modalConfirmar);
             modalConfirmarInstance.hide();
@@ -312,7 +312,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'reactivar_usuario') {
         });
         </script>
          <script>
-        //boton de reactivar
+        //btn de reactivar
         document.addEventListener('DOMContentLoaded', function () {
 
             //1. Control del botón desplegable por JavaScript para evitar conflictos en el navbar

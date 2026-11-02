@@ -17,7 +17,7 @@ if (!$esAdministrador && !$esDot) {
 $idUsuarioAModificar = $_GET['id'] ?? $_POST['id_usuario'] ?? 0;
 $idUsuarioAModificar = (int)$idUsuarioAModificar;
 
-//Consulta si el usuario objetivo tiene el rol de Administrador ('1')
+//Consulta si el usuario objetivo tiene el rol de Admin
 $objConexion = new Conexion();
 $link = $objConexion->conectar();
 
@@ -40,7 +40,7 @@ $bloquearModificacion = ($esDot && !$esAdministrador && $usuarioObjetivoEsAdmin)
 require_once '../Clases/ClsUsuarios.php';
 $objUsuario = new ClsUsuarios();
 
-//Envia el formulario por POST vía AJAX, procesa la modificación
+//Envia el formulario por POST vía AJAX, procesa la modificacion
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fidusuario'])) {
     echo $objUsuario->modificarUsuario();
     exit;
@@ -130,7 +130,7 @@ if ($idModificar) {
                         <div>
                             <h3 class="mb-3 text-dark fw-bold">Seleccione un usuario para modificar</h3> 
                             <?php
-                            //Toma todos los filtros enviados por GET
+                            //Toma los filtros enviados por GET
                             $nombreFiltro = $_GET['nombre'] ?? '';
                             $cedulaFiltro = $_GET['cedula'] ?? '';
                             $emailFiltro  = $_GET['email'] ?? '';
@@ -214,7 +214,7 @@ if ($idModificar) {
                                         <input type="text" class="form-control" name="fnombre" value="<?php echo htmlspecialchars($usuarioData['nombre']); ?>" required>
                                     </div>
 
-                                    <!-- Cédula -->
+                                    <!-- Cedula -->
                                     <div class="mb-3">
                                         <label class="form-label text-muted small">Cédula</label>
                                         <input type="number" class="form-control" name="fcedula" value="<?php echo htmlspecialchars($usuarioData['cedula']); ?>" required>
@@ -232,7 +232,7 @@ if ($idModificar) {
                                         <input type="text" class="form-control" name="fdireccion" value="<?php echo htmlspecialchars($usuarioData['direccion']); ?>">
                                     </div>
 
-                                    <!-- Teléfonos (carga hasta 2 campos basados en los registros previos) -->
+                                    <!-- Telefonos (carga hasta 2 campos basados en los registros previos) -->
                                     <div class="mb-3">
                                         <label class="form-label text-muted small">Teléfonos</label>
                                         <div class="input-group mb-2">
@@ -314,18 +314,18 @@ if ($idModificar) {
         <script src="../bootstrap/js/bootstrap.min.js"></script>
         <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // 1. Mostrar el modal con sombreado automático de Bootstrap
+            //1. Mostrar el modal con sombreado automatico de Bootstrap
             var modalRestriccion = new bootstrap.Modal(document.getElementById('modalRestriccion'));
             modalRestriccion.show();
             
-            // 2. Deshabilitar clics y opacar el contenido de atrás por seguridad visual
+            //2. Deshabilitar clics y opacar el contenido de atras por seguridad visual
             let contenedor = document.getElementById('contenidoPrincipal');
             if (contenedor) {
                 contenedor.style.pointerEvents = 'none';
                 contenedor.style.opacity = '0.3';
             }
         });
-        // Script AJAX fetch para guardar sin recargar página y mostrar modal Bootstrap
+        //Script AJAX fetch para guardar sin recargar pagina y mostrar modal Bootstrap
         const formModificar = document.getElementById('formModificar');
         if (formModificar) {
             formModificar.addEventListener('submit', function(e) {

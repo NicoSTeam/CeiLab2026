@@ -178,7 +178,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'reactivar_usuario') {
                     <div class="row">
                         <div class="col-12">
                             
-                            <!-- Encabezado con el boton de control por JS -->
+                            <!-- Encabezado con el btn de control por JS -->
                             <div class="d-flex justify-content-between align-items-center bg-danger bg-opacity-10 p-3 rounded mb-3">
                                 <div>
                                     <h5 class="mb-0 text-danger fw-bold">
@@ -191,7 +191,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'reactivar_usuario') {
                                 </button>
                             </div>
 
-                            <!-- Contenedor controlado por JavaScript (inicia oculto) -->
+                            <!-- Contenedor controlado por JavaScript inicia oculto -->
                             <div id="contenedorInactivosBody" style="display: none;">
                                 <?php
                                 $resultadoInactivos = $objUsuario->listarUsuariosInactivos(); 
@@ -257,7 +257,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'reactivar_usuario') {
                 </div>
             </div>
             <?php endif; ?>
-            <!-- Contenedor donde se inyectará el modal de respuesta final vía Fetch -->
+            <!-- Contenedor donde se inyectara el modal de respuesta final via Fetch -->
             <div id="contenedorModal"></div>
         </section>
       
@@ -268,7 +268,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'reactivar_usuario') {
         //boton de reactivar
         document.addEventListener('DOMContentLoaded', function () {
 
-            //1. Control del botón desplegable por JavaScript para evitar conflictos en el navbar
+            //1. Control del boton desplegable por JavaScript para evitar conflictos en el navbar
             const btnToggle = document.getElementById('btnToggleInactivos');
             const contenedorInactivos = document.getElementById('contenedorInactivosBody');
 

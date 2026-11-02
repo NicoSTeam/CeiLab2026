@@ -47,11 +47,11 @@ $resultadoUsuarios = $objUsuario->listarUsuariosConDetallesCreacion();
                                 
                                 <!-- Contenedor de los botones al costado -->
                                 <div class="d-flex justify-content-md-end gap-2 flex-wrap">
-                                    <!-- Botón Volver al Inicio -->
+                                    <!-- Boton volver al inicio -->
                                     <a href="../index.php" class="btn btn-outline-secondary fw-bold rounded-pill px-4 shadow-sm">
                                         ← Volver al Inicio
                                     </a>
-                                    <!-- Botón Imprimir / PDF -->
+                                    <!-- Boton imprimir / PDF -->
                                     <button type="button" onclick="window.print();" class="btn btn-danger fw-bold rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-2">
                                         📄 Imprimir Reporte (PDF)
                                     </button>

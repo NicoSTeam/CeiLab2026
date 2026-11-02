@@ -114,9 +114,8 @@ class ClsLogin {
             }
         }
     }
-
     //Métodos de tipo estáticos para controlar el acceso.
-    //Verifica si hay una sesión activa, si no, redirige al formulario de acceso
+    //Verifica si hay una sesión activa y si no, redirige al formulario de acceso
     public static function verificarSesion() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -126,7 +125,7 @@ class ClsLogin {
             exit;
         }
     }
-    //Comprueba si el usuario autenticado posee un rol en específico (ej: '1' para Administrador)
+    //Comprueba si el usuario autenticado posee un rol en específico (ej: '1' si es Admin)
     public static function tieneRol($rolRequerido) {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -143,8 +142,9 @@ class ClsLogin {
         
         header("Location: /CeiLab2026/index.php");
         exit;
-        }
+    }
 }
+
 //Disparador para cerrar sesión mediante GET
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     ClsLogin::cerrarSesion();

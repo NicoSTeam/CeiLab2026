@@ -39,7 +39,7 @@ ClsLogin::verificarSesion();
                     </div>  
                 </div>
 
-                <!-- Sección de Integrantes -->
+                <!-- Sección de integrantes -->
                 <div class="d-block pb-5 ps-4 pe-4 pt-5 shadow rounded-4" style="background-color: #adbfdc;"> 
                     <div class="pt-3 pb-3">
                         <h2 class="fw-bold h1 mb-1 text-dark">Integrantes:</h2>

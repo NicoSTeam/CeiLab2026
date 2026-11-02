@@ -44,12 +44,12 @@
 .bg-warning {
     background-color: #ee8802 !important;
     border-color: #000000 !important;
-    color: #f0f0f0 !important; /* Texto oscuro para mantener alta legibilidad */
+    color: #f0f0f0 !important; /* Texto oscuro para mantener legibilidad */
 }
 .btn-warning {
     background-color: #ff8800 !important;
     border-color: #000000 !important;
-    color: #e3e4e5 !important; /* Texto oscuro para mantener alta legibilidad */
+    color: #e3e4e5 !important; /* Texto oscuro para mantener legibilidad */
 }
 /* Efecto hover para botones de advertencia */
 .btn-warning:hover, 

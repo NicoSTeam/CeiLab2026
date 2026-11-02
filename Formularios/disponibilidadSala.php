@@ -18,7 +18,7 @@ require_once '../Clases/ClsSala.php';
 
 $objSala = new ClsSala();
 
-//Toma los filtros de búsqueda
+//Toma los filtros de busqueda
 $idSalonFiltro = $_GET['idSalon'] ?? '';
 $disponibilidadFiltro = $_GET['disponibilidad'] ?? '';
 
@@ -56,7 +56,7 @@ $listaSalas = $objSala->listarSalasFiltradas($idSalonFiltro, $disponibilidadFilt
                 </div>
             </div>
 
-            <!-- Formulario de Búsqueda y Filtro -->
+            <!-- Formulario de busqueda y filtro -->
             <div class="container pb-5"> 
                 <div class="row">
                     <div class="col-md-9 col-xl-8 ms-auto me-auto">
@@ -90,7 +90,7 @@ $listaSalas = $objSala->listarSalasFiltradas($idSalonFiltro, $disponibilidadFilt
                 </div>
             </div> 
         
-            <!-- Contenedor de Resultados -->
+            <!-- Contenedor de resultados -->
             <div class="container pb-5 pt-3 rounded shadow-sm col-md-10 col-xl-9" style="background-color: #adbfdc;">
                 <div class="row">
                     <div>

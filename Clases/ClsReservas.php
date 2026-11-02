@@ -3,6 +3,7 @@ require_once __DIR__ . '/../Persistencia/connect.php';
 
 class ClsReservas {
 
+    //Método para la disponibilidad en un horario especifico
     public function verificarDisponibilidadSala($idSalon, $fecha, $horaInicio, $horaFin) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -25,10 +26,11 @@ class ClsReservas {
 
         return false;
     }
+    //Registro de reserva de sala
     public function registrarReservaSala() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             try {
-                // Recuperamos el ID del usuario logueado en sesión
+                //Recupero el ID del usuario logueado en sesión
                 $idUsuario = $_SESSION['IDUsuario'] ?? $_SESSION['id_usuario'] ?? 1; 
 
                 $idSalon = $_POST['idsala'] ?? '';
@@ -36,7 +38,7 @@ class ClsReservas {
                 $horaInicio = $_POST['hora_inicio'] ?? '';
                 $horaFin = $_POST['hora_fin'] ?? '';
                 
-                // Calculamos cantidad de horas 
+                //Calcula cantidad de horas 
                 $cantHoras = (strtotime($horaFin) - strtotime($horaInicio)) / 3600;
                 if ($cantHoras <= 0) $cantHoras = 1;
 
@@ -134,6 +136,7 @@ class ClsReservas {
             }
         }
     }
+    //Consulto las reservas registradas en la Base de Datos para todo el mes
     public function obtenerReservasMes($idSalon, $anio, $mes) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -160,6 +163,7 @@ class ClsReservas {
         }
         return $reservasPorDia;
     }
+    //Baja lógica de la reserva (en el caso del admin puede borrar cualquier reserva, e resto puede eliminar su propia reserva)
     public function eliminarReserva($idReserva, $idUsuarioActual, $rolesUsuario) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -258,6 +262,7 @@ class ClsReservas {
             </div>
         </div>';
     }
+    //Reserva de equipos en un horario determinado
     public function registrarReservaEquipos($idUsuario, $fecha, $horaInicio, $horaFin, $arrayEquipos) {
         if (empty($arrayEquipos) || !is_array($arrayEquipos)) {
             return '
@@ -287,26 +292,26 @@ class ClsReservas {
         $inicioEscaped = mysqli_real_escape_string($link, trim($horaInicio));
         $finEscaped = mysqli_real_escape_string($link, trim($horaFin));
 
-        // Obtener el IDSala_ceilab del primer equipo seleccionado para cumplir con el NOT NULL de la BD
+        //Obtengo el IDSala_ceilab del primer equipo seleccionado para cumplir con el NOT NULL de la BD en sala
         $primerEquipo = mysqli_real_escape_string($link, trim($arrayEquipos[0]));
         $sqlSalonEq = "SELECT IDSala_ceilab FROM equipo WHERE IDEquipo = '$primerEquipo' LIMIT 1";
         $resSalonEq = mysqli_query($link, $sqlSalonEq);
-        $idSalon = 1; // Valor por defecto de respaldo
+        $idSalon = 1; //Valor por defecto de respaldo
         if ($resSalonEq && $rowSalon = mysqli_fetch_assoc($resSalonEq)) {
             $idSalon = $rowSalon['IDSala_ceilab'] ?? 1;
         }
 
-        // Calcular cantidad de horas
+        //Calcula cantidad de horas
         $timestampInicio = strtotime($horaInicio);
         $timestampFin = strtotime($horaFin);
         $canthoras = ($timestampFin - $timestampInicio) / 3600;
 
-        //Inserto la cabecera en la tabla reservas usando la misma conexión ($link)
+        //Inserto la cabecera en la tabla reservas, usa la misma conexión ($link)
         $sqlReserva = "INSERT INTO reservas (CantHoras, IDSalon, IDUsuario, Fecha, HoraInicio, HoraFin, activo) 
                        VALUES ('$canthoras', '$idSalon', '$idUsuarioEscaped', '$fechaEscaped', '$inicioEscaped', '$finEscaped', 1)";
 
         if (mysqli_query($link, $sqlReserva)) {
-            //Tomamos el ID generado en esta misma conexión
+            //Toma el ID generado en esta misma conexión
             $idReservaGenerado = mysqli_insert_id($link);
 
             //Inserto cada equipo seleccionado en la tabla tiene_equipos con el ID real
@@ -353,6 +358,7 @@ class ClsReservas {
             </div>';
         }
     }
+    //Consulto las reservas de equipos registradas en la Base de Datos para todo el mes
     public function obtenerReservasEquiposMes($anio, $mes) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -385,6 +391,7 @@ class ClsReservas {
 
         return $reservasPorDia;
     }
+    //Elimina a un equipo de la reserva
     public function eliminarEquipoDeReserva($idReserva, $idEquipo, $idUsuarioSesion, $rolesSesion) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -392,7 +399,7 @@ class ClsReservas {
         $idReserva = (int)$idReserva;
         $idEquipo = mysqli_real_escape_string($link, trim($idEquipo));
 
-        //Eliminar únicamente el equipo de la tabla tiene_equipos
+        //Elimina únicamente el equipo de la tabla tiene_equipos
         $sqlDelete = "DELETE FROM tiene_equipos WHERE IDReservas = $idReserva AND IDEquipo = '$idEquipo'";
         if (mysqli_query($link, $sqlDelete)) {
             
@@ -401,7 +408,7 @@ class ClsReservas {
             $resCheck = mysqli_query($link, $sqlCheck);
             $rowCheck = mysqli_fetch_assoc($resCheck);
 
-            // Si ya no quedan equipos asociados, elimino la cabecera de la reserva
+            //Si ya no quedan equipos, elimino la reserva general
             if ($rowCheck['total'] == 0) {
                 $sqlDelReserva = "UPDATE reservas SET activo = 0 WHERE IDReservas = $idReserva";
                 mysqli_query($link, $sqlDelReserva);
@@ -444,6 +451,7 @@ class ClsReservas {
             </div>';
         }
     }
+    //Agrega a un equipo de la reserva
     public function agregarEquiposAReserva($idReserva, $arrayEquipos) {
         if (empty($arrayEquipos) || !is_array($arrayEquipos)) {
             return '
@@ -473,7 +481,7 @@ class ClsReservas {
         foreach ($arrayEquipos as $idEquipo) {
             $idEquipoEscaped = mysqli_real_escape_string($link, trim($idEquipo));
             
-            // Verifico que no esté ya agregado para evitar duplicar
+            //Verifico que no este ya agregado para evitar duplicar
             $sqlCheck = "SELECT 1 FROM tiene_equipos WHERE IDReservas = $idReserva AND IDEquipo = '$idEquipoEscaped'";
             $resCheck = mysqli_query($link, $sqlCheck);
             
@@ -519,7 +527,7 @@ class ClsReservas {
         $horaInicio = $datosRes['HoraInicio'];
         $horaFin = $datosRes['HoraFin'];
 
-        // Busco equipos activos, libres, que no estén asignados a esta reserva, ni ocupados por otras reservas, ni prestados en ese horario
+        //Busco equipos activos, libres, que no estén asignados a esta reserva, ni ocupados por otras reservas, ni prestados en ese horario
         $sql = "
             SELECT e.IDEquipo, e.Estado, e.Observaciones, e.Tipo, e.IDSala_ceilab, e.Disponibilidad 
             FROM equipo e

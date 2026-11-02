@@ -10,9 +10,6 @@ $esDocente = isset($_SESSION['roles']) && in_array('3', $_SESSION['roles']);
 $esEstudiante = isset($_SESSION['roles']) && in_array('4', $_SESSION['roles']);
 $estaLogueado = isset($_SESSION['IDUsuario']);
 ?>
-<style>
-    
-</style>
 <nav class="navbar navbar-expand-lg navbar-light py-lg-2 text-uppercase shadow" style="background-color: #adbfdc; border-bottom: 3px solid rgba(0, 0, 0, 0.15);"> 
     <div class="container">    
         <picture>
@@ -28,7 +25,6 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
         
         <div class="collapse navbar-collapse" id="navbarNavDropdown-3"> 
             <ul class="mb-2 mb-lg-0 ms-auto navbar-nav align-items-lg-center gap-1"> 
-                <!-- MÓDULO RESTRINGIDO: Solo visible para Administradores -->
                 <?php if ($esAdministrador || $esDot): ?>
                     <li class="nav-item dropdown"> 
                     <a class="nav-link px-lg-3 py-lg-2 dropdown-toggle fw-bold text-dark rounded-3" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Usuarios</a> 
@@ -106,7 +102,7 @@ $estaLogueado = isset($_SESSION['IDUsuario']);
                     <a class="nav-link px-lg-3 py-lg-2 fw-bold text-dark rounded-3" href="/CeiLab2026/Formularios/contacto.php" id="navbarDropdownMenuLink3" role="button" >Contacto</a>
                 </li> 
                 
-                <!-- SECCIÓN DE AUTENTICACIÓN -->
+                <!-- SECCIÓN DE AUTENTICACION -->
                 <?php if ($estaLogueado): ?>
                     <li class="nav-item px-lg-2 py-lg-2">
                         <span class="nav-link fw-bold text-dark ms-2 rounded-3 bg-white bg-opacity-50 px-3 py-2 shadow-sm">Hola, <?php echo htmlspecialchars($_SESSION['nombre']); ?></span>

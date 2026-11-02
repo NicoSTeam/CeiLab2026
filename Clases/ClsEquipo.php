@@ -16,7 +16,7 @@ class ClsEquipo {
         $disponibilidad = ($estado === 'Disponible') ? 1 : 0;
 
         try {
-            // Se incluye activo = 1 por defecto al registrar
+            //Se incluye activo = 1 por defecto al registrar, en la base de datos también lo hace
             $sql = "INSERT INTO equipo (Estado, Observaciones, Tipo, IDSala_ceilab, Disponibilidad, activo) 
                     VALUES ('$estado', '$observaciones', '$tipo', '$idSala', '$disponibilidad', 1)";
             return mysqli_query($link, $sql);
@@ -185,7 +185,7 @@ class ClsEquipo {
         }
         return $tipos;
     }
-    //Lista equipos inactivos para poder reactivar
+    //Lista equipos inactivos
     public function listarEquiposInactivos() {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();

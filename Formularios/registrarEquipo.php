@@ -19,7 +19,7 @@ require_once '../Clases/ClsSala.php';
 $objEquipo = new ClsEquipo();
 $objSala = new ClsSala();
 
-// Procesar el formulario de registro
+//Procesa el formulario de registro
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'registrar') {
     $estado = $_POST['estado'] ?? '';
     $tipo = $_POST['tipo'] ?? '';
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     }
 
     if (!empty($estado) && !empty($tipo) && !empty($idSala)) {
-        // Ya no enviamos disponibilidad manualmente, se calcula en la clase
+
         if ($objEquipo->registrarEquipo($estado, $observaciones, $tipo, $idSala)) {
             $_SESSION['mensaje'] = "¡Equipo registrado exitosamente!";
             $_SESSION['tipoAlerta'] = "success";
@@ -82,7 +82,7 @@ $listaSalas = $objSala->listarSalasFiltradas();
                                 <input type="hidden" name="accion" value="registrar">
 
                                 <div class="row g-3">
-                                    <!-- Selector de Tipo de Equipo -->
+                                    <!-- Selector de tipo de equipo -->
                                     <div class="col-md-6">
                                         <label for="tipo" class="form-label fw-bold text-dark">Tipo de Equipo</label>
                                         <select class="form-select rounded-3 shadow-sm" id="tipo" name="tipo" required onchange="verificarNuevoTipo(this)">
@@ -100,13 +100,13 @@ $listaSalas = $objSala->listarSalasFiltradas();
                                         </select>
                                     </div>
 
-                                    <!-- Campo dinámico si selecciona OTRO -->
+                                    <!-- Campo dinamico si selecciona OTRO -->
                                     <div class="col-md-6" id="divNuevoTipo" style="display: none;">
                                         <label for="nuevoTipoEquipo" class="form-label fw-bold text-dark">Especifique el nuevo tipo de equipo</label>
                                         <input type="text" class="form-control rounded-3 shadow-sm" id="nuevoTipoEquipo" name="nuevoTipoEquipo" placeholder="Ej: Cable HDMI">
                                     </div>
 
-                                    <!-- Selector de Estado del Equipo -->
+                                    <!-- Selector de estado del equipo -->
                                     <div class="col-md-6">
                                         <label for="estado" class="form-label fw-bold text-dark">Estado</label>
                                         <select class="form-select rounded-3 shadow-sm" id="estado" name="estado" required>
@@ -117,7 +117,7 @@ $listaSalas = $objSala->listarSalasFiltradas();
                                         </select>
                                     </div>
 
-                                    <!-- Sala Asignada -->
+                                    <!-- Sala asignada -->
                                     <div class="col-md-6">
                                         <label for="idSala" class="form-label fw-bold text-dark">Sala Asignada</label>
                                         <select class="form-select rounded-3 shadow-sm" id="idSala" name="idSala" required>
@@ -148,7 +148,7 @@ $listaSalas = $objSala->listarSalasFiltradas();
             </div>
         </section>
 
-        <!-- MODAL DE NOTIFICACIÓN DE RESPUESTA -->
+        <!-- MODAL DE NOTIFICACION DE RESPUESTA -->
         <?php if (!empty($mensaje)): 
             $esWarning = ($tipoAlerta === 'warning');
             $claseTextoHeader = $esWarning ? 'text-dark' : 'text-white';
@@ -190,11 +190,11 @@ $listaSalas = $objSala->listarSalasFiltradas();
 
                 if (selectElement.value === 'OTRO') {
                     divNuevoTipo.style.display = 'block'; // Muestra el input
-                    inputNuevoTipo.required = true;       // Lo hace obligatorio
+                    inputNuevoTipo.required = true;       // lo hace obligatorio
                 } else {
-                    divNuevoTipo.style.display = 'none';  // Lo oculta
-                    inputNuevoTipo.required = false;      // Le quita la obligatoriedad
-                    inputNuevoTipo.value = '';            // Limpia el texto por si acaso
+                    divNuevoTipo.style.display = 'none';  // lo oculta
+                    inputNuevoTipo.required = false;      // le quita lo obligatorio
+                    inputNuevoTipo.value = '';            // limpia el texto por si acaso
                 }
             }
         </script>

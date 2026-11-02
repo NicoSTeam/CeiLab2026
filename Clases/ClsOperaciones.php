@@ -63,6 +63,7 @@ class ClsOperaciones {
         mysqli_begin_transaction($link);
 
         try {
+            //Hago el préstamo
             while ($eq = mysqli_fetch_assoc($resEq)) {
                 $idEquipo = $eq['IDEquipo'];
                 $sqlOp = "INSERT INTO operaciones (Accion, Fecha, HoraInicio, HoraFin, Observaciones, IDUsuario, IDEquipo) 
@@ -71,7 +72,7 @@ class ClsOperaciones {
                     throw new Exception("Error al registrar el préstamo del equipo $idEquipo.");
                 }
             }
-
+            //Doy la baja lógica a la reserva
             $sqlBajaReserva = "UPDATE reservas SET activo = 0 WHERE IDReservas = $idReserva";
             if (!mysqli_query($link, $sqlBajaReserva)) {
                 throw new Exception("Error al dar de baja la reserva.");
@@ -85,7 +86,7 @@ class ClsOperaciones {
             return $this->generarModalRespuesta("Error", $e->getMessage(), "bg-danger text-white", "btn-danger");
         }
     }
-    //Registro un préstamo directo (sin reserva previa) guardando los horarios directamente en operaciones
+    //Registro un préstamo directo (sin reserva previa) guardando en operaciones
     public function registrarPrestamoDirecto($idUsuarioCliente, $horaInicio, $horaFin, $arrayEquipos) {
         if (empty($arrayEquipos) || !is_array($arrayEquipos)) {
             return $this->generarModalRespuesta("Atención", "Debe seleccionar al menos un equipo para realizar el préstamo.", "bg-warning text-dark", "btn-warning");
@@ -114,7 +115,7 @@ class ClsOperaciones {
             $primerIdOperacion = null;
             $detallesEquipos = [];
 
-            // Inserto directamente en operaciones con su hora de inicio y fin
+            //Inserto directamente en operaciones con su hora de inicio y fin
             foreach ($arrayEquipos as $idEquipo) {
                 $idEquipoEscaped = mysqli_real_escape_string($link, trim($idEquipo));
 
@@ -125,12 +126,12 @@ class ClsOperaciones {
                     throw new Exception("Error al registrar la operación de préstamo para el equipo $idEquipoEscaped.");
                 }
 
-                // Capturamos el ID de la primera operación registrada como referencia principal
+                //Captura el ID de la primera operacion registrada como referencia principal
                 if ($primerIdOperacion === null) {
                     $primerIdOperacion = mysqli_insert_id($link);
                 }
 
-                // Consultamos el tipo del equipo para armar el listado visual del modal
+                //Consulta el tipo del equipo para armar el listado visual del modal
                 $resEq = mysqli_query($link, "SELECT Tipo, IDEquipo FROM equipo WHERE IDEquipo = '$idEquipoEscaped'");
                 if ($rowEq = mysqli_fetch_assoc($resEq)) {
                     $detallesEquipos[] = $rowEq;
@@ -141,7 +142,7 @@ class ClsOperaciones {
 
             mysqli_commit($link);
 
-            // Construimos el listado visual de los equipos para el modal
+            //Crea el listado de los equipos para el modal
             $htmlDetalleEquipos = '
             <div class="text-center mb-3">
                 <span class="badge bg-success bg-opacity-25 text-success fs-6 px-3 py-2 rounded-pill fw-bold">
@@ -159,7 +160,7 @@ class ClsOperaciones {
             }
             $htmlDetalleEquipos .= '</ul>';
 
-            // Retornamos el HTML del modal verde de éxito con recarga automática al aceptar
+            //Retorna el HTML del modal de éxito 
             return '
             <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -191,7 +192,7 @@ class ClsOperaciones {
         $link = $objConexion->conectar();
         $fecha = mysqli_real_escape_string($link, $fecha);
 
-        //Consulta  que solo trae reservas que tengan equipos asociados (si no hago esto termino viendo las reservas de salas)
+        //Consulta que trae reservas que tengan equipos asociados (si no hago esto termino viendo las reservas de salas)
         $sql = "
             SELECT r.IDReservas, r.Fecha, r.HoraInicio, r.HoraFin, 
                    u.IDUsuario, u.Nombre AS nombre_usuario, u.email, COALESCE(u.Faltas, 0) AS Faltas
@@ -261,7 +262,7 @@ class ClsOperaciones {
 
         if ($resultado && mysqli_num_rows($resultado) > 0) {
             $row = mysqli_fetch_assoc($resultado);
-            // Si la última operación es Préstamo (1), está prestado actualmente
+            //Si la última operación es Préstamo (1), está prestado actualmente
             if ((int)$row['Accion'] === 1) {
                 return true;
             }
@@ -482,7 +483,7 @@ class ClsOperaciones {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
 
-        //Consulta que trae historial de prestamos y dev, trae los usuarios resp. de las operaciones y deja solo la IDOperaciones mas grande para que no repita etiqueta de no devuelto 
+        //Consulta que trae historial de prestamos y dev, trae los usuarios resp. de las operaciones  
         $sql = "SELECT o.IDOperaciones, o.Accion, o.Fecha, o.HoraInicio, o.HoraFin, o.Observaciones, 
                        u.nombre AS NombreUsuario, u.cedula AS CedulaUsuario, o.IDEquipo,
                        e.Disponibilidad AS EquipoDisponibilidad, e.Observaciones AS ObsEquipo,

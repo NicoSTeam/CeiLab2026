@@ -15,7 +15,7 @@ if (!$esAdministrador && !$esDot) {
 
 require_once '../Clases/ClsUsuarios.php';
 
-//Si la petición viene por POST vía fetch, procesa y devuelve solo el modal
+//Si la peticion viene por POST via fetch, procesa y devuelve solo el modal
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $objUsuario = new ClsUsuarios();
     echo $objUsuario->registrarUsuario();
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </head>
     <body class="d-flex flex-column min-vh-100 bg-light">
         
-        <!-- Barra de navegación -->
+        <!-- Barra nav -->
         <?php include '../navbar.php'; ?> 
 
         <section class="hero-section flex-fill pb-5 pt-5">
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     </div>
                                 </div>
 
-                                <!-- Cédula -->
+                                <!-- Ci -->
                                 <div class="mb-3">
                                     <div class="input-group">
                                         <span class="bg-light input-group-text" id="addon-wrapping1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em">
@@ -155,7 +155,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         </span>
                                         <select class="form-select" aria-label="Rol de Usuario" aria-describedby="addon-rol" name="frol" required>
                                             <option value="" selected disabled>Seleccione un rol...</option>
+                                            <?php if ($esAdministrador): ?>
                                             <option value="1">1 - Administrador</option>
+                                            <?php endif; ?>
                                             <option value="2">2 - Responsable-CeiLab</option>
                                             <option value="3">3 - Docente</option>
                                             <option value="4">4 - Estudiante</option>

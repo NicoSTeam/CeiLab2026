@@ -74,19 +74,19 @@ require_once 'Clases/ClsLogin.php';
         <script src="bootstrap/js/bootstrap.min.js"></script>
 
         <?php 
-        // Capturar mensajes flash de la sesión
+        // Captura mensajes flash de la sesion
         $mensajeIndex = $_SESSION['mensaje'] ?? '';
         $tipoAlertaIndex = $_SESSION['tipoAlerta'] ?? 'danger';
 
         if (!empty($mensajeIndex)): 
-            // Limpiar las variables para que el modal no vuelva a aparecer al recargar
+            //Limpiar las variables para que el modal no vuelva a aparecer al recargar
             unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
             
             $esWarning = ($tipoAlertaIndex === 'warning');
             $claseTextoHeader = $esWarning ? 'text-dark' : 'text-white';
             $claseBotonCierre = $esWarning ? '' : 'btn-close-white';
         ?>
-        <!-- MODAL DE ACCESO DENEGADO / NOTIFICACIÓN EN INDEX -->
+        <!-- MODAL DE ACCESO DENEGADO / NOTIFICACION AL INDEX -->
         <div class="modal fade" id="modalNotificacionGlobal" tabindex="-1" aria-labelledby="modalNotificacionGlobalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow-lg rounded-4">
@@ -105,7 +105,7 @@ require_once 'Clases/ClsLogin.php';
         </div>
 
         <script>
-            // Mostrar el modal automáticamente apenas cargue el index
+            //Mostrar el modal automaticamente apenas cargue el index
             document.addEventListener("DOMContentLoaded", function() {
                 var modalNoti = new bootstrap.Modal(document.getElementById('modalNotificacionGlobal'));
                 modalNoti.show();

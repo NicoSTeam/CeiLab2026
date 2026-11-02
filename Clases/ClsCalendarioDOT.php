@@ -3,7 +3,7 @@ require_once __DIR__ . '/../Persistencia/connect.php';
 
 class ClsCalendarioDOT {
 
-    //Registrar un nuevo horario de disponibilidad del DOT. 
+    //Registro un nuevo horario de disponibilidad del DOT. 
     public function registrarHorario($idUsuario, $fecha, $horaInicio, $horaFin, $descripcion) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -23,8 +23,7 @@ class ClsCalendarioDOT {
 
         return true;
     }
-    
-    //Obtener todos los horarios registrados para un mes y año determinados.
+    //Obtengo todos los horarios registrados para un mes y año determinados.
     public function obtenerHorariosMes($anio, $mes) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -56,7 +55,7 @@ class ClsCalendarioDOT {
 
         return $horarios;
     }
-    //Eliminar un horario registrado mediante su idDot.
+    //Elimina un horario registrado mediante su idDot.
     public function eliminarHorario($idDot) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();

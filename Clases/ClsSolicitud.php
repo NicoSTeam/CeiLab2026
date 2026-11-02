@@ -9,7 +9,7 @@ class ClsSolicitud {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
         
-        //Si eligió otro, guardamos el texto personalizado ingresado de lo contrario lo que seleccione
+        //Si eligio otro, guarda el texto personalizado ingresado de lo contrario lo que seleccione
         $tipoFinal = ($tipoEquipo === 'OTRO') ? trim($nuevoTipo) : trim($tipoEquipo);
         
         $tipoFinalClean = mysqli_real_escape_string($link, $tipoFinal);

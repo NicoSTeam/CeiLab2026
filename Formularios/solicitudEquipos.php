@@ -16,7 +16,7 @@ if (!$esAdministrador && !$esDot) {
 require_once '../Clases/ClsSolicitud.php';
 $objSolicitud = new ClsSolicitud();
 
-//Procesar el formulario de solicitud
+//Procesa el formulario de solicitud
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'registrar') {
     $tipoEquipo  = $_POST['tipoEquipo'] ?? '';
     $nuevoTipo   = $_POST['nuevoTipo'] ?? '';
@@ -76,7 +76,7 @@ unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
                                 <input type="hidden" name="accion" value="registrar">
 
                                 <div class="row g-3">
-                                    <!-- Selector de Tipo de Equipo -->
+                                    <!-- Selector de tipo de equipo -->
                                     <div class="col-md-6">
                                         <label for="tipoEquipo" class="form-label fw-bold text-dark">Tipo de Equipo</label>
                                         <select class="form-select rounded-3 shadow-sm" id="tipoEquipo" name="tipoEquipo" required onchange="verificarNuevoTipo(this)">
@@ -94,7 +94,7 @@ unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
                                         </select>
                                     </div>
 
-                                    <!-- Campo dinámico si selecciona OTRO -->
+                                    <!-- Campo dinamico si selecciona OTRO -->
                                     <div class="col-md-6 d-none" id="divNuevoTipo">
                                         <label for="nuevoTipo" class="form-label fw-bold text-dark">Especifique el Nuevo Tipo</label>
                                         <input type="text" class="form-control rounded-3 shadow-sm" id="nuevoTipo" name="nuevoTipo" placeholder="Ej. Lentes RV">
@@ -112,7 +112,7 @@ unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
                                         <input type="date" class="form-control rounded-3 shadow-sm" id="fecha" name="fecha" value="<?php echo date('Y-m-d'); ?>" readonly>
                                     </div>
 
-                                    <!-- Descripción -->
+                                    <!-- Descripcion -->
                                     <div class="col-12">
                                         <label for="descripcion" class="form-label fw-bold text-dark">Descripción o Motivo</label>
                                         <textarea class="form-control rounded-3 shadow-sm" id="descripcion" name="descripcion" rows="3" placeholder="Detalle el motivo de la solicitud..." required></textarea>
@@ -130,7 +130,7 @@ unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
             </div>
         </section>
 
-        <!-- MODAL DE NOTIFICACIÓN DE RESPUESTA -->
+        <!-- MODAL DE NOTIFICACION DE RESPUESTA -->
         <?php if (!empty($mensaje)): 
             $esWarning = ($tipoAlerta === 'warning');
             $claseTextoHeader = $esWarning ? 'text-dark' : 'text-white';

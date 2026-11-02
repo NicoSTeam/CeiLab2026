@@ -24,11 +24,11 @@ $objSala = new ClsSala();
 $objReserva = new ClsReservas();
 $idSala = $_GET['idsala'] ?? '';
 
-// Recupera ID y Roles de la sesión actual
+//Recupera ID y Roles de la sesión actual
 $idUsuarioSesion = $_SESSION['IDUsuario'] ?? $_SESSION['id_usuario'] ?? null;
 $rolesSesion = $_SESSION['Roles'] ?? $_SESSION['roles'] ?? [];
 
-// Comprobación de roles
+//Comprobación de roles
 $esAdminOResponsable = false;
 if (is_array($rolesSesion)) {
     foreach ($rolesSesion as $r) {
@@ -52,7 +52,7 @@ if (is_array($rolesSesion)) {
     }
 }
 
-// Procesamiento de peticiones POST (Crear o Eliminar reserva)
+//Procesamiento de peticiones POST (Crear o Eliminar reserva)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['accion']) && $_POST['accion'] === 'eliminar_reserva') {
         $idReservaDel = $_POST['idReserva'] ?? 0;
@@ -69,17 +69,17 @@ if (empty($idSala)) {
     exit();
 }
 
-// Datos de fecha actual del sistema
+//Datos de fecha actual del sistema
 $anioActual = date('Y');
 $mesActual = date('m');
 $diaActual = date('j');
 
-// Obtengo año y mes desde la URL, o uso los actuales por defecto
+//Obtengo año y mes desde la URL, o uso los actuales por defecto
 $anio = isset($_GET['anio']) ? (int)$_GET['anio'] : (int)$anioActual;
 $mes = isset($_GET['mes']) ? (int)$_GET['mes'] : (int)$mesActual;
 $diaSeleccionado = isset($_GET['dia']) ? (int)$_GET['dia'] : null;
 
-// Límites de meses y años
+//Límites de meses y años
 if ($mes < 1) {
     $mes = 12;
     $anio--;
@@ -88,7 +88,7 @@ if ($mes < 1) {
     $anio++;
 }
 
-// Calculo mes anterior
+//Calculo mes anterior
 $mesAnterior = $mes - 1;
 $anioAnterior = $anio;
 if ($mesAnterior < 1) {
@@ -96,7 +96,7 @@ if ($mesAnterior < 1) {
     $anioAnterior = $anio - 1;
 }
 
-// Calculo mes siguiente
+//Calculo mes siguiente
 $mesSiguiente = $mes + 1;
 $anioSiguiente = $anio;
 if ($mesSiguiente > 12) {
@@ -112,7 +112,7 @@ $mesesEspañol = [
 $nombreMes = $mesesEspañol[$mes] ?? '';
 $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $mes, $diaSeleccionado) : '';
 
-// Consulto las reservas registradas en la Base de Datos para todo el mes
+//Consulto las reservas registradas en la BD para todo el mes
 $reservasMesBD = $objReserva->obtenerReservasMes($idSala, $anio, $mes);
 ?>
 <!DOCTYPE html>
@@ -149,12 +149,12 @@ $reservasMesBD = $objReserva->obtenerReservasMes($idSala, $anio, $mes);
                             </div>
 
                             <div class="row g-4">
-                                <!-- Columna del Calendario Principal -->
+                                <!-- Columna del calendario principal -->
                                 <div class="<?php echo $diaSeleccionado ? 'col-lg-7' : 'col-lg-12'; ?>">
                                     <div class="border rounded-4 p-4 shadow-sm h-100" style="background-color: #adbfdc !important;">
                                         <div class="bg-white rounded-4 p-3 shadow-sm h-100 d-flex flex-column justify-content-between">
                                             
-                                            <!-- Cabecera del Mes con la Nav -->
+                                            <!-- Cabecera del mes con la nav -->
                                             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                                                 <h4 class="fw-bold text-dark mb-0 fs-5">
                                                     <?php echo "$nombreMes $anio"; ?>
@@ -172,7 +172,7 @@ $reservasMesBD = $objReserva->obtenerReservasMes($idSala, $anio, $mes);
                                                 </div>
                                             </div>
 
-                                            <!-- Días del Mes -->
+                                            <!-- Días del mes -->
                                             <div class="table-responsive">
                                                 <table class="table table-bordered text-center align-middle mb-0 small">
                                                     <thead class="table-dark">
@@ -199,7 +199,7 @@ $reservasMesBD = $objReserva->obtenerReservasMes($idSala, $anio, $mes);
                                                             $fechaIteracion = sprintf("%04d-%02d-%02d", $anio, $mes, $dia);
                                                             $tieneReservasGuardadas = !empty($reservasMesBD[$fechaIteracion]);
                                                             
-                                                            // Valida si el día ya pasó
+                                                            //Valida si el día ya pasó
                                                             $esPasado = ($fechaIteracion < date('Y-m-d'));
                                                             
                                                             if ($esSeleccionado) {
@@ -248,7 +248,7 @@ $reservasMesBD = $objReserva->obtenerReservasMes($idSala, $anio, $mes);
                                     </div>
                                 </div>
 
-                                <!-- Panel Lateral para el Día Seleccionado -->
+                                <!-- Panel lateral para el día seleccionado -->
                                 <?php if ($diaSeleccionado): ?>
                                 <div class="col-lg-5">
                                     <div class="border rounded-4 p-4 shadow-sm h-100 bg-white d-flex flex-column justify-content-between">
@@ -263,7 +263,7 @@ $reservasMesBD = $objReserva->obtenerReservasMes($idSala, $anio, $mes);
                                             <!-- Contenedor para inyectar modales dinámicos -->
                                             <div id="contenedorModal"></div>
 
-                                            <!-- Lista de Reservas Existentes para este día -->
+                                            <!-- Lista de reservas existentes para este día -->
                                             <h6 class="text-muted fw-bold small mb-2">Reservas Registradas:</h6>
                                             <div class="list-group mb-4 overflow-auto" style="max-height: 180px;">
                                                 <?php 
@@ -279,7 +279,7 @@ $reservasMesBD = $objReserva->obtenerReservasMes($idSala, $anio, $mes);
                                                         <div class="d-flex align-items-center gap-2">
                                                             <span class="badge bg-danger bg-opacity-75 text-white">Ocupado</span>
                                                             
-                                                            <!-- El botón se muestra si es Administrador, si es DOT o si fue quien hizo la res -->
+                                                            <!-- El botón se muestra si es Admin, si es DOT o si fue quien hizo la res -->
                                                             <?php if ($esAdminOResponsable || $esDuenio): ?>
                                                                 <button type="button" class="btn btn-outline-danger btn-sm border-0 fw-bold px-2 btn-eliminar-reserva" data-id="<?php echo $res['IDReservas']; ?>" title="Cancelar reserva">
                                                                     ✕
@@ -307,7 +307,7 @@ $reservasMesBD = $objReserva->obtenerReservasMes($idSala, $anio, $mes);
                                                     Esta fecha ya ha pasado. No es posible realizar nuevas reservas.
                                                 </div>
                                             <?php else: ?>
-                                                <!-- Formulario para Registrar Nueva Reserva (Solo para hoy y fechas futuras) -->
+                                                <!-- Formulario para registrar nueva reserva (solo para hoy y fechas futuras) -->
                                                 <form id="formReserva" class="border-top pt-3">
                                                     <input type="hidden" name="idsala" value="<?php echo htmlspecialchars($idSala); ?>">
                                                     <input type="hidden" name="fecha" value="<?php echo $fechaSeleccionadaKey; ?>">
@@ -410,7 +410,7 @@ $reservasMesBD = $objReserva->obtenerReservasMes($idSala, $anio, $mes);
                                         });
                                     }
 
-                                    //Eventos para el botón de eliminar reserva (la cruz)
+                                    //Evento para el botón de eliminar reserva
                                     document.addEventListener('click', function (e) {
                                         const boton = e.target.closest('.btn-eliminar-reserva');
                                         if (!boton) return;
@@ -443,13 +443,13 @@ $reservasMesBD = $objReserva->obtenerReservasMes($idSala, $anio, $mes);
                                         var modalConfirmar = new bootstrap.Modal(modalConfirmarEl);
                                         modalConfirmar.show();
 
-                                        //Al hacer clic en "Sí, cancelar" dentro del modal
+                                        //Al hacer clic en "si, cancelar" dentro del modal
                                         const btnConfirmar = document.getElementById('btnConfirmarBorrar');
                                         if (btnConfirmar) {
                                             btnConfirmar.addEventListener('click', function () {
                                                 const id = this.getAttribute('data-id');
                                                 
-                                                // Oculta el modal de confirmación
+                                                //Oculta el modal de confirmación
                                                 modalConfirmar.hide();
 
                                                 const formData = new FormData();

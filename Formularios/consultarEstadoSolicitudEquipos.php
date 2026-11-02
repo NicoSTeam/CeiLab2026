@@ -54,7 +54,7 @@ $listaSolicitudes = $objSolicitud->listarSolicitudesFiltradas($filtroUsuario, $f
                         <div class="card shadow-lg border-0 rounded-4 p-4 mb-5 bg-white bg-opacity-95">
                             <h2 class="text-center fw-bold text-dark mb-4">Listado y Estado de Solicitudes</h2>
 
-                            <!-- Formulario de Filtros -->
+                            <!-- Formulario de filtros -->
                             <form method="GET" action="consultarEstadoSolicitudEquipos.php" class="row g-3 mb-4 bg-light p-3 rounded-3 border">
                                 <div class="col-md-4">
                                     <label for="filtro_usuario" class="form-label fw-bold text-dark small">Filtrar por Usuario</label>
@@ -96,7 +96,7 @@ $listaSolicitudes = $objSolicitud->listarSolicitudesFiltradas($filtroUsuario, $f
                                 </div>
                             </form>
 
-                            <!-- Tabla de Resultados -->
+                            <!-- Tabla de resultados -->
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
                                     <thead class="table-dark">
@@ -128,7 +128,7 @@ $listaSolicitudes = $objSolicitud->listarSolicitudesFiltradas($filtroUsuario, $f
                                                     </td>
                                                     <td><?php echo htmlspecialchars($sol['Fecha']); ?></td>
                                                     <td class="text-center">
-                                                        <!-- Botón que activa el modal flotante con los datos de la fila -->
+                                                        <!-- Boton que activa el modal flotante con los datos de la fila -->
                                                         <button type="button" class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-3"
                                                                 data-bs-toggle="modal" 
                                                                 data-bs-target="#modalDetalle"
@@ -210,7 +210,7 @@ $listaSolicitudes = $objSolicitud->listarSolicitudesFiltradas($filtroUsuario, $f
         <script src="../bootstrap/js/bootstrap.min.js"></script>
         
         <script>
-            //Script para inyectar dinámicamente los datos de la fila seleccionada dentro del modal flotante
+            //Script para inyectar dinamicamente los datos de la fila seleccionada dentro del modal flotante
             var modalDetalle = document.getElementById('modalDetalle');
             modalDetalle.addEventListener('show.bs.modal', function (event) {
                 var button = event.relatedTarget;
@@ -225,7 +225,7 @@ $listaSolicitudes = $objSolicitud->listarSolicitudesFiltradas($filtroUsuario, $f
                 var fecha = button.getAttribute('data-fecha');
                 var descripcion = button.getAttribute('data-descripcion');
                 
-                // Asigna los valores a los elementos del modal
+                //Asigna los valores a los elementos del modal
                 document.getElementById('detIdTitulo').textContent = '#' + id;
                 document.getElementById('detIDSolicitud').textContent = id;
                 document.getElementById('detTipoEquipo').textContent = tipo;
@@ -234,7 +234,7 @@ $listaSolicitudes = $objSolicitud->listarSolicitudesFiltradas($filtroUsuario, $f
                 document.getElementById('detFecha').textContent = fecha;
                 document.getElementById('detDescripcion').textContent = descripcion;
                 
-                // Estiliza la etiqueta del estado dinámicamente
+                //Estiliza etiqueta del estado dinamicamente
                 var spanEstado = document.getElementById('detEstado');
                 spanEstado.textContent = estado;
                 spanEstado.className = 'badge ';

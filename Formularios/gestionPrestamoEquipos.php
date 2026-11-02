@@ -22,7 +22,7 @@ require_once '../Clases/ClsEquipo.php';
 $objOperaciones = new ClsOperaciones();
 $objEquipo = new ClsEquipo();
 
-//Recuperar ID y Roles de la sesión actual
+//Recuperar ID y roles de la sesión actual
 $idUsuarioSesion = $_SESSION['IDUsuario'] ?? $_SESSION['id_usuario'] ?? null;
 $rolesSesion = $_SESSION['Roles'] ?? $_SESSION['roles'] ?? [];
 
@@ -51,7 +51,7 @@ if (is_array($rolesSesion)) {
 
 $fechaHoy = date('Y-m-d');
 
-//Parámetros para préstamo directo
+//Parametros para prestamo directo
 $horaInicioDir = $_GET['hora_inicio'] ?? $_POST['hora_inicio'] ?? '';
 $horaFinDir = $_GET['hora_fin'] ?? $_POST['hora_fin'] ?? '';
 $tipoFiltroDir = $_GET['tipo_equipo'] ?? '';
@@ -101,7 +101,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                     
                     <div class="card shadow-lg border-0 rounded-4 p-4 mb-5 bg-white bg-opacity-95">
                         
-                        <!-- Contenedor para inyectar modales dinámicos -->
+                        <!-- Contenedor para inyectar modales dinamicos -->
                         <div id="contenedorModal"></div>
 
                         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
@@ -115,7 +115,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                         </div>
 
                         <div class="row g-4">
-                            <!-- Columna Izquierda: Reservas Programadas para Hoy -->
+                            <!-- Columna izquierda: reservas rogramadas para hoy -->
                             <div class="col-lg-6">
                                 <div class="border-0 rounded-4 p-3 shadow-sm h-100 bg-light">
                                     <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2 ">
@@ -180,7 +180,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                 </div>
                             </div>
 
-                            <!-- Columna derecha: préstamo directo sin reserva previa -->
+                            <!-- Columna derecha: prestamo directo sin reserva previa -->
                             <div class="col-lg-6">
                                 <div class="border rounded-4 p-3 shadow-sm h-100 bg-white">
                                     <h5 class="fw-bold text-dark mb-3"> Préstamo Directo (Sin Reserva)</h5>
@@ -228,7 +228,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                             <div class="mb-2">
                                                 <label class="form-label small fw-bold text-secondary mb-1">2. Seleccionar Solicitante:</label>
                                                 <?php
-                                                // Diccionario de roles del sistema 
+                                                //Diccionario de roles del sistema 
                                                 $Roles = [
                                                     1 => 'Administrador',
                                                     2 => 'Responsable Ceilab',
@@ -243,14 +243,14 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                                         $faltasUsuario = (int)($usr['Faltas'] ?? 0);
                                                         $etiquetaFaltas = $faltasUsuario > 0 ? " — (⚠️ Faltas: {$faltasUsuario})" : " — (Sin faltas)";
                                                         
-                                                        // Convertimos los números de rol en sus nombres correspondientes
+                                                        //Convierte los num de rol en sus nombres correspondientes
                                                         $textoRoles = "Sin rol";
                                                         if (!empty($usr['Roles'])) {
                                                             $arrayIdsRoles = explode(',', $usr['Roles']);
                                                             $nombresAMostrar = [];
                                                             foreach ($arrayIdsRoles as $idRol) {
                                                                 $idRol = trim($idRol);
-                                                                // Si el ID existe en el diccionario, usa el nombre; si no, muestra "Rol X"
+                                                                //Si el ID existe en el diccionario, usa el nombre, si no, muestra "Rol X"
                                                                 $nombresAMostrar[] = $Roles[$idRol] ?? "Rol {$idRol}";
                                                             }
                                                             $textoRoles = implode(', ', $nombresAMostrar);
@@ -263,7 +263,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                                     <?php endforeach; ?>
                                                 </select>
                                                 
-                                                <!-- Alerta dinámica si supera las 5 faltas -->
+                                                <!-- Alerta dinamica si supera las 5 faltas -->
                                                 <div id="alertaUsuarioRiesgo" class="alert alert-danger py-2 px-3 mt-2 small d-none shadow-sm mb-0">
                                                     ⚠️ <b>¡Atención!</b> Este usuario supera las 5 faltas acumuladas. Queda a criterio del DOT autorizar o denegar el préstamo.
                                                 </div>
@@ -338,7 +338,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
     <script src="../bootstrap/js/bootstrap.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        //1. CONVERTIR RESERVA EXISTENTE
+        //1. CONVIERTE RESERVA EXISTENTE
         document.addEventListener('click', function (e) {
             const btn = e.target.closest('.btn-convertir');
             if (!btn) return;
@@ -475,7 +475,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
             }
         });
 
-        // 4. REGISTRAR PRÉSTAMO DIRECTO POR AJAX
+        // 4. REGISTRA PRESTAMO DIRECTO POR AJAX
         document.addEventListener('submit', function (e) {
             const formDir = e.target.closest('#formPrestamoDirecto');
             if (!formDir) return;
@@ -526,7 +526,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
             .catch(error => console.error('Error:', error));
         });
 
-        // 5. VALIDACIÓN DE HORARIO EN EL FILTRO (Horarios pasados o rangos invertidos)
+        // 5. VALIDACION DE HORARIO EN EL FILTRO RANGOS INVERTIDOS O PASADOS
         document.addEventListener('submit', function (e) {
             const formFiltro = e.target.closest('#formFiltroHorario');
             if (!formFiltro) return;
@@ -549,7 +549,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
             }
 
             if (mensajeError !== "") {
-                e.preventDefault(); // Detiene la consulta
+                e.preventDefault(); //Detiene la consulta
 
                 document.getElementById('contenedorModal').innerHTML = `
                     <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">

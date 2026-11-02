@@ -19,11 +19,11 @@ require_once '../Clases/ClsEquipo.php';
 
 $objEquipo = new ClsEquipo();
 
-// Capturar los dos filtros enviados por GET
+//Captura los dos filtros enviados por GET
 $filtroTipo = $_GET['tipo'] ?? '';
 $filtroDisponibilidad = $_GET['disponibilidad'] ?? '';
 
-// Obtener la lista filtrada
+//Obtengo la lista filtrada
 $listaEquipos = $objEquipo->listarEquipos($filtroTipo, $filtroDisponibilidad);
 
 $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit de robótica", "Sensores Fisicoquímicos", "Impresora 3D", "Lápiz 3D", "Microscopio USB"];
@@ -52,7 +52,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                             <h3 class="fw-bold h2 mb-1 text-primary">Listado General de Equipos</h3>
                         </div>
 
-                        <!-- Formulario de Filtros Simplificado -->
+                        <!-- Formulario de filtros simplificado -->
                         <form method="GET" action="listadoEquipos.php" class="d-flex flex-wrap align-items-end gap-3 mb-4 bg-white p-3 shadow-sm rounded">
                             <!-- Filtrar por Tipo -->
                             <div class="flex-grow-1" style="min-width: 240px;">
@@ -67,7 +67,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                 </select>
                             </div>
 
-                            <!-- Filtrar por Disponibilidad -->
+                            <!-- Filtrar por disponibilidad -->
                             <div class="flex-grow-1" style="min-width: 240px;">
                                 <label for="disponibilidad" class="form-label fw-bold text-dark">Disponibilidad</label>
                                 <select class="form-select rounded-3 shadow-sm" id="disponibilidad" name="disponibilidad">
@@ -77,7 +77,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                 </select>
                             </div>
 
-                            <!-- Botones -->
+                            <!-- Btn -->
                             <div class="d-flex gap-2 flex-grow-1" style="min-width: 200px;">
                                 <button type="submit" class="btn btn-primary fw-bold shadow-sm flex-fill">Filtrar</button>
                                 <a href="borrarEquipo.php" class="btn btn-outline-secondary fw-bold shadow-sm">Limpiar</a>

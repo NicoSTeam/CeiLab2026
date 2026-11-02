@@ -23,7 +23,7 @@ require_once '../Clases/ClsReservas.php';
 $objEquipo = new ClsEquipo();
 $objReserva = new ClsReservas();
 
-//Recupera ID y Roles de la sesión actual
+//Recupera ID y roles de la sesión actual
 $idUsuarioSesion = $_SESSION['IDUsuario'] ?? $_SESSION['id_usuario'] ?? null;
 $rolesSesion = $_SESSION['Roles'] ?? $_SESSION['roles'] ?? [];
 
@@ -82,7 +82,7 @@ $mesesEspañol = [
 $nombreMes = $mesesEspañol[$mes] ?? '';
 $fechaSeleccionadaKey = ($diaSeleccionado) ? sprintf("%04d-%02d-%02d", $anio, $mes, $diaSeleccionado) : '';
 
-//Procesamiento de peticiones POST (AJAX)
+//Procesamiento de peticiones POST AJAX
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['accion']) && $_POST['accion'] === 'eliminar_reserva') {
         $idReservaDel = $_POST['idReserva'] ?? 0;
@@ -199,12 +199,12 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
                         </div>
 
                         <div class="row g-4">
-                            <!-- Columna del Calendario Principal -->
+                            <!-- Columna del calendario principal -->
                             <div class="<?php echo $diaSeleccionado ? 'col-lg-7' : 'col-lg-12'; ?>">
                                 <div class="border rounded-4 p-4 shadow-sm h-100" style="background-color: #adbfdc !important;">
                                     <div class="bg-white rounded-4 p-3 shadow-sm h-100 d-flex flex-column justify-content-between">
                                         
-                                        <!-- Cabecera del Mes con la Nav -->
+                                        <!-- Cabecera del mes con la nav -->
                                         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                                             <h4 class="fw-bold text-dark mb-0 fs-5">
                                                 <?php echo "$nombreMes $anio"; ?>
@@ -222,7 +222,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
                                             </div>
                                         </div>
 
-                                        <!-- Días del Mes -->
+                                        <!-- Días del mes -->
                                         <div class="table-responsive">
                                             <table class="table table-bordered text-center align-middle mb-0 small">
                                                 <thead class="table-dark">
@@ -293,7 +293,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
                                 </div>
                             </div>
 
-                            <!-- Panel Lateral para el día Seleccionado -->
+                            <!-- Panel lateral para el día seleccionado -->
                             <?php if ($diaSeleccionado): ?>
                             <div class="col-lg-5">
                                 <div class="border rounded-4 p-4 shadow-sm h-100 bg-white d-flex flex-column justify-content-between">
@@ -308,7 +308,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
                                         <!-- Contenedor para inyectar modales dinámicos -->
                                         <div id="contenedorModal"></div>
 
-                                        <!-- Lista de Reservas de Equipos Agrupadas -->
+                                        <!-- Lista de reservas de equipos agrupadas -->
                                         <h6 class="text-muted fw-bold small mb-2">Reservas de Equipos Registradas:</h6>
                                         <div class="list-group mb-4 overflow-auto" style="max-height: 190px;">
                                             <?php 
@@ -425,7 +425,7 @@ $listaTiposUnicos = $objEquipo->obtenerTiposEquipos();
                                                 <hr class="my-2">
                                                 <h6 class="fw-bold text-dark small mb-2">2. Filtrar y Seleccionar Equipos:</h6>
                                                 
-                                                <!-- Selector de Tipo de Equipo -->
+                                                <!-- Selector de tipo de equipo -->
                                                 <form method="GET" action="calendarioEquipos.php" class="mb-2">
                                                     <input type="hidden" name="anio" value="<?php echo $anio; ?>">
                                                     <input type="hidden" name="mes" value="<?php echo $mes; ?>">

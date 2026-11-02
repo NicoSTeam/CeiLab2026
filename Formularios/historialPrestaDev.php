@@ -46,18 +46,18 @@ $historialPrestamos = $objOperaciones->obtenerHistorialPrestamoDev($cedulaFiltro
                 <p class="text-muted mb-0">Registro completo de operaciones, horarios, equipos y usuarios responsables.</p>
             </div>
             <div class="col-md-6 text-md-end mt-3 mt-md-0 d-flex justify-content-md-end gap-2 flex-wrap">
-                <!-- Botón Volver al Inicio -->
+                <!-- Botón volver al inicio -->
                 <a href="../index.php" class="btn btn-outline-secondary fw-bold rounded-pill px-4 shadow-sm">
                     ← Volver al Inicio
                 </a>
-                <!-- Botón Imprimir / PDF -->
+                <!-- Botón imprimir PDF -->
                 <button type="button" onclick="window.print();" class="btn btn-danger fw-bold rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-2">
                     📄 Imprimir Reporte (PDF)
                 </button>
             </div>
         </div>
 
-        <!-- Formulario de Búsqueda / Filtro Opcional -->
+        <!-- Formulario de busqueda / Filtro opcional -->
         <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4 print-hidden">
             <form method="GET" action="" class="row g-3 align-items-center">
                 <div class="col-md-9">
@@ -77,7 +77,7 @@ $historialPrestamos = $objOperaciones->obtenerHistorialPrestamoDev($cedulaFiltro
             </form>
         </div>
 
-        <!-- Contenedor de la Tabla -->
+        <!-- Contenedor de la tabla -->
         <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
             <?php if ($historialPrestamos && mysqli_num_rows($historialPrestamos) > 0): ?>
                 <div class="table-responsive">

@@ -16,7 +16,7 @@ $mesesEspañolIndex = [
 ];
 $nombreMesIndex = $mesesEspañolIndex[$mesIndex] ?? '';
 
-// Consulta los horarios registrados en la Base de Datos para el mes actual
+//Consulta los horarios registrados en la BD para el mes actual
 $objCalendarioDOT = new ClsCalendarioDOT();
 $horariosDOTRegistrados = $objCalendarioDOT->obtenerHorariosMes($anioIndex, $mesIndex);
 ?>
@@ -120,7 +120,7 @@ $horariosDOTRegistrados = $objCalendarioDOT->obtenerHorariosMes($anioIndex, $mes
 
 </div>
 
-<!-- Script para inicializar los Tooltips de Bootstrap -->
+<!-- Script para inicializar los tooltips de Bootstrap -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

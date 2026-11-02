@@ -16,6 +16,27 @@ if (!$esAdministrador && !$esDot) {
 require_once '../Clases/ClsEquipo.php';
 $objEquipo = new ClsEquipo();
 $equipos = $objEquipo->listarEquipos();
+
+//CALCULO DE METRICAS
+$totalEquipos = count($equipos);
+$totalDisponibles = 0;
+$totalNoDisponibles = 0;
+$tiposUnicos = [];
+
+if ($totalEquipos > 0) {
+    foreach ($equipos as $eq) {
+        if (isset($eq['Disponibilidad']) && $eq['Disponibilidad'] == 1) {
+            $totalDisponibles++;
+        } else {
+            $totalNoDisponibles++;
+        }
+        
+        if (!empty($eq['Tipo'])) {
+            $tiposUnicos[$eq['Tipo']] = true;
+        }
+    }
+}
+$cantidadTipos = count($tiposUnicos);
 ?>
 <!doctype html>
 <html lang="es">
@@ -52,7 +73,62 @@ $equipos = $objEquipo->listarEquipos();
             </div>
         </div>
 
-        <!-- Contenedor de la Tabla -->
+        <!-- APARTADO DE METRICAS -->
+        <div class="row g-3 mb-4 print-metrics-row">
+            <!-- Total de equipos -->
+            <div class="col-md-3 col-sm-6 print-metric-col">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-primary border-4 print-metric-card">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1 text-start">
+                            <span class="text-muted small fw-bold text-uppercase d-block">Total Equipos</span>
+                            <h3 class="fw-bold text-dark mb-0 mt-1"><?php echo $totalEquipos; ?></h3>
+                        </div>
+                        <div class="fs-2 text-primary opacity-50 d-none d-sm-block">📊</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disponibles -->
+            <div class="col-md-3 col-sm-6 print-metric-col">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-success border-4 print-metric-card">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1 text-start">
+                            <span class="text-muted small fw-bold text-uppercase d-block">Disponibles</span>
+                            <h3 class="fw-bold text-success mb-0 mt-1"><?php echo $totalDisponibles; ?></h3>
+                        </div>
+                        <div class="fs-2 text-success opacity-50 d-none d-sm-block">✅</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No disponibles -->
+            <div class="col-md-3 col-sm-6 print-metric-col">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-danger border-4 print-metric-card">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1 text-start">
+                            <span class="text-muted small fw-bold text-uppercase d-block">No Disponibles</span>
+                            <h3 class="fw-bold text-danger mb-0 mt-1"><?php echo $totalNoDisponibles; ?></h3>
+                        </div>
+                        <div class="fs-2 text-danger opacity-50 d-none d-sm-block">⚠️</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variedad / tipos -->
+            <div class="col-md-3 col-sm-6 print-metric-col">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-info border-4 print-metric-card">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1 text-start">
+                            <span class="text-muted small fw-bold text-uppercase d-block">Tipos de Equipos</span>
+                            <h3 class="fw-bold text-info mb-0 mt-1"><?php echo $cantidadTipos; ?></h3>
+                        </div>
+                        <div class="fs-2 text-info opacity-50 d-none d-sm-block">🏷️</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor de la tabla -->
         <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
             <?php if (!empty($equipos)): ?>
                 <div class="table-responsive">

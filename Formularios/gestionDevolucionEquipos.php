@@ -49,7 +49,7 @@ if (is_array($rolesSesion)) {
     }
 }
 
-//Procesamiento de peticiones POST (Devoluciones y No Devoluciones)
+//Procesamiento de peticiones POST (Dev y No Dev)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['accion']) && $_POST['accion'] === 'registrar_devolucion') {
         $idEquipo = $_POST['id_equipo'] ?? '';
@@ -114,7 +114,7 @@ $equiposPrestados = $objOperaciones->obtenerEquiposPrestadosActualmente();
                             </div>
                         </div>
 
-                        <!-- Listado de Equipos Prestados -->
+                        <!-- Listado de equipos prestados -->
                         <div class="border-0 rounded-4 p-3 shadow-sm bg-light">
                             <?php if (!empty($equiposPrestados)): ?>
                                 <div class="overflow-auto pe-1" style="max-height: 550px;">
@@ -182,7 +182,7 @@ $equiposPrestados = $objOperaciones->obtenerEquiposPrestadosActualmente();
     <script src="../bootstrap/js/bootstrap.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        //1. Abrir modal de Devolución Normal/Roto
+        //1.Abrir modal de Dev normal/roto
         document.addEventListener('click', function (e) {
             const btnDev = e.target.closest('.btn-devolucion');
             if (btnDev) {
@@ -263,18 +263,18 @@ $equiposPrestados = $objOperaciones->obtenerEquiposPrestadosActualmente();
                     const optDisponible = selectNuevoEst.querySelector('option[value="Disponible"]');
                     if (this.value === 'roto') {
                         selectNuevoEst.value = 'EnMantenimiento'; // Fuerza el mantenimiento o no disponible
-                        optDisponible.disabled = true;             // Bloquea Disponible
+                        optDisponible.disabled = true;             // Bloquea disponible
                         bloqueFalta.classList.remove('d-none');   // Muestra el bloque de faltas
                     } else {
-                        optDisponible.disabled = false;            // Vuelve a habilitar Disponible
-                        selectNuevoEst.value = 'Disponible';      // Vuelve por defecto a Disponible
+                        optDisponible.disabled = false;            // Vuelve a habilitar disponible
+                        selectNuevoEst.value = 'Disponible';      // Vuelve por defecto a disponible
                         bloqueFalta.classList.add('d-none');      // Oculta faltas
                         document.getElementById('checkAplicarFalta').checked = false;
                     }
                 });
             }
 
-            //2. Abrir modal para marcar equipo como "No Devuelto"
+            //2. Abrir modal para marcar equipo como "no devuelto"
             const btnNoDev = e.target.closest('.btn-no-devuelto');
             if (btnNoDev) {
                 const idEquipo = btnNoDev.getAttribute('data-idequipo');

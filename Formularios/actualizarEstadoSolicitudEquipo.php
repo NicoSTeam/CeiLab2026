@@ -15,7 +15,7 @@ if (!$esAdministrador) {
 require_once '../Clases/ClsSolicitud.php';
 $objSolicitud = new ClsSolicitud();
 
-// Proceso la actualización cuando se envía el formulario del modal
+//Proceso la actualización cuando se envía el formulario del modal
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'actualizar') {
     $idSolicitud = $_POST['idsolicitud'] ?? 0;
     $tipoEquipo  = $_POST['tipoEquipo'] ?? '';
@@ -297,7 +297,7 @@ unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
                 modalNoti.show();
             <?php endif; ?>
 
-            // Inyectar datos de la fila seleccionada al modal de edición (incluyendo la fecha)
+            //Inyecta datos de la fila seleccionada al modal de edición incluyendo la fecha
             var modalActualizar = document.getElementById('modalActualizar');
             modalActualizar.addEventListener('show.bs.modal', function (event) {
                 var button = event.relatedTarget;

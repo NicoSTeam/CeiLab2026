@@ -3,11 +3,12 @@
 require_once __DIR__ . '/../Persistencia/connect.php';
 
 class ClsUsuarios {
-     
+    
+    //Registro un usuario
     public function registrarUsuario() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             try {
-                // Capturamos los datos enviados desde el formulario
+                //Captura los datos enviados desde el formulario
                 $nombre = $_POST['fnombre'] ?? '';
                 $cedula = $_POST['fcedula'] ?? '';
                 $email = $_POST['femail'] ?? '';
@@ -17,13 +18,13 @@ class ClsUsuarios {
                 $contrasenia = password_hash($_POST['fcontrasenia'] ?? '', PASSWORD_DEFAULT);
                 $telefonos = $_POST['ftelefonos'] ?? [];
                 $fechaCreacion = date('Y-m-d');
-                $creadorID = $_SESSION['IDUsuario'] ?? 0; // Asegúrate de que esta variable de sesión coincida con la de tu login 
+                $creadorID = $_SESSION['IDUsuario'] ?? 0; //Var de sesion para guardar quien da de alta un usuario
 
-                // Instanciamos la clase Conexion para obtener el link
+                //Instan la clase Conexion para obtener el link
                 $objConexion = new Conexion();
                 $link = $objConexion->conectar();
 
-                // Limpiamos los datos para evitar inyecciones SQL básicas en MySQLi
+                //Limpia los datos para evitar inyecciones SQL básicas en MySQLi
                 $nombre = mysqli_real_escape_string($link, trim($nombre));
                 $cedula = mysqli_real_escape_string($link, trim($cedula));
                 $email = mysqli_real_escape_string($link, trim($email));
@@ -97,7 +98,7 @@ class ClsUsuarios {
                 $sql = "INSERT INTO usuario (nombre, cedula, email, direccion, observaciones, contraseña, Fecha_creacion, Creador_IDUsuario) 
                         VALUES ('$nombre', '$cedula', '$email', '$direccion', '$observaciones', '$contrasenia', '$fechaCreacion', $creadorID)";
 
-                // Ejecutamos la consulta
+                //Ejecuta la consulta
                 $resultadoUsuario = $objConexion->ejecutarSQL($sql);
 
                 if ($resultadoUsuario) {
@@ -108,19 +109,19 @@ class ClsUsuarios {
                     if ($row = mysqli_fetch_assoc($resultadoId)) {
                         $idUsuario = $row['IDUsuario'];
 
-                        //Insertar el rol en la tabla vinculada usando ese ID
+                        //Inserta el rol en la tabla vinculada usando ese ID
                         $sqlRol = "INSERT INTO rol (IDUsuario, ROL) VALUES ('$idUsuario', '$rol')";
                         $resultadoRol = mysqli_query($link, $sqlRol);
 
                         //Inserta los telefonos
                         if (!empty($telefonos) && is_array($telefonos)) {
-                            // Limpiamos espacios y eliminamos duplicados enviados en el formulario
+                            //Limpia espacios y elimina duplicados enviados en el formulario
                             $telefonosUnicos = array_unique(array_map('trim', $telefonos));
                             
                             foreach ($telefonosUnicos as $tel) {
                                 if (!empty($tel)) {
                                     $telEscape = mysqli_real_escape_string($link, $tel);
-                                    // INSERT IGNORE evita que la aplicación falle si el número se repite
+                                    // INSERT IGNORE evita que la pagina falle si el número se repite
                                     $sqlTelefono = "INSERT IGNORE INTO Telefonos (IDUsuario, Telefono) VALUES ('$idUsuario', '$telEscape')";
                                     mysqli_query($link, $sqlTelefono);
                                 }
@@ -186,7 +187,7 @@ class ClsUsuarios {
                     </div>';
                 }
             } catch (\Throwable $e) {
-                    // Capturamos cualquier error crítico (como la base de datos apagada o fallos de red)
+                    //Captura cualquier error crítico (como la base de datos apagada o fallos de red)
                     $errorConexion = $e->getMessage();
                     return '
                     <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
@@ -209,6 +210,7 @@ class ClsUsuarios {
             }
         }
     }
+    //Listo usuarios y filtro por nombre, ci, mail y roles
     public function listarUsuarios($filtroNombre = '', $filtroCedula = '', $filtroEmail = '', $filtroRol = '') {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -241,6 +243,7 @@ class ClsUsuarios {
 
         return mysqli_query($link, $sql);
     }
+    //Busco el/los tel. de un usuario
     public function obtenerTelefonosPorUsuario($idUsuario) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -249,6 +252,7 @@ class ClsUsuarios {
         $sql = "SELECT Telefono FROM Telefonos WHERE IDUsuario = '$idEscape'";
         $resultado = mysqli_query($link, $sql);
         
+        //array para los telefonos
         $telefonos = [];
         if ($resultado) {
             while ($row = mysqli_fetch_assoc($resultado)) {
@@ -257,6 +261,7 @@ class ClsUsuarios {
         }
         return $telefonos;
     }
+    //Busco usuario segun su id controlo rol para que no salga dulpicada la busqueda
     public function obtenerUsuarioPorId($idUsuario) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -270,6 +275,7 @@ class ClsUsuarios {
         $resultado = mysqli_query($link, $sql);
         return mysqli_fetch_assoc($resultado);
     }
+    //Modifico un usuario
     public function modificarUsuario() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             try {
@@ -363,7 +369,7 @@ class ClsUsuarios {
                 $resUsuario = $objConexion->ejecutarSQL($sqlUsuario);
 
                 if ($resUsuario) {
-                    // Actualiza roles (borra los anteriores y reinserta los seleccionados)
+                    //Actualiza roles (borra los anteriores y reinserta los seleccionados)
                     $sqlDelRol = "DELETE FROM rol WHERE IDUsuario='$idUsuario'";
                     mysqli_query($link, $sqlDelRol);
 
@@ -378,7 +384,7 @@ class ClsUsuarios {
                         }
                     }
 
-                    // Actualiza teléfonos (borra los anteriores y reinserta los nuevos)
+                    //Actualiza teléfonos (borra los anteriores y reinserta los nuevos)
                     $sqlDelPhones = "DELETE FROM Telefonos WHERE IDUsuario='$idUsuario'";
                     mysqli_query($link, $sqlDelPhones);
 
@@ -452,6 +458,7 @@ class ClsUsuarios {
             }
         }
     }
+    //Busco los roles de un usuario 
     public function obtenerRolesPorUsuario($idUsuario) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -468,6 +475,7 @@ class ClsUsuarios {
         }
         return $roles;
     }
+    //Baja lógica de un usuario
     public function eliminarUsuario($idUsuario) {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             try {
@@ -475,7 +483,7 @@ class ClsUsuarios {
                 $link = $objConexion->conectar();
                 $idUsuario = mysqli_real_escape_string($link, $idUsuario);
 
-                // Baja lógica 
+                //Baja lógica 
                 $sqlUsuario = "UPDATE usuario SET activo = 0 WHERE IDUsuario = '$idUsuario'";
                 $resultado = $objConexion->ejecutarSQL($sqlUsuario);
 
@@ -539,6 +547,7 @@ class ClsUsuarios {
             }
         }
     }
+    //Control para que si pasa un mail que ya existe no permita duplicar el dato
     public function verificarMail($email, $idUsuarioActual = null) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -547,7 +556,7 @@ class ClsUsuarios {
 
         $sql = "SELECT COUNT(*) as total FROM usuario WHERE email = '$emailEscaped' AND activo = 1";
 
-        // Si se pasa un ID/Documento, se excluye al usuario actual
+        //Si se pasa un ID/Documento, se excluye al usuario actual
         if (!empty($idUsuarioActual)) {
             $idEscaped = mysqli_real_escape_string($link, trim($idUsuarioActual));
             $sql .= " AND IDUsuario != '$idEscaped'"; 
@@ -560,6 +569,7 @@ class ClsUsuarios {
 
         return false;
     }
+    //Control para que si pasa una ci que ya existe no permita duplicar el dato
     public function verificarCedula($cedula, $idUsuarioActual = null) {
         
         $objConexion = new Conexion();
@@ -582,6 +592,7 @@ class ClsUsuarios {
 
         return false;
     }
+    //Lista de usuario con baja lógica
     public function listarUsuariosInactivos() {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -590,6 +601,7 @@ class ClsUsuarios {
         $sql = "SELECT * FROM usuario WHERE activo = 0 ORDER BY Nombre ASC";
         return mysqli_query($link, $sql);
     }
+    //Reactiva un usuario con activo=0
     public function reactivarUsuario($idUsuario) {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();
@@ -602,6 +614,7 @@ class ClsUsuarios {
         }
         return false;
     }
+    //Lista usuarios para la bitácora
     public function listarUsuariosConDetallesCreacion() {
         $objConexion = new Conexion();
         $link = $objConexion->conectar();

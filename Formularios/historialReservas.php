@@ -2,7 +2,7 @@
 require_once '../Clases/ClsLogin.php';
 ClsLogin::verificarSesion(); 
 
-// Validar roles permitidos (Admin '1' y DOT '2')
+// Validar roles  
 $esAdministrador = isset($_SESSION['roles']) && in_array('1', $_SESSION['roles']);
 $esDot = isset($_SESSION['roles']) && in_array('2', $_SESSION['roles']);
 
@@ -41,11 +41,11 @@ $historialReservas = $objOperaciones->obtenerHistorialReservas();
                 <p class="text-muted mb-0">Registro completo de reservas, salones, duración y recursos asociados.</p>
             </div>
             <div class="col-md-6 text-md-end mt-3 mt-md-0 d-flex justify-content-md-end gap-2 flex-wrap">
-                <!-- Botón Volver al Inicio -->
+                <!-- Botón volver al inicio -->
                 <a href="../index.php" class="btn btn-outline-secondary fw-bold rounded-pill px-4 shadow-sm">
                     ← Volver al Inicio
                 </a>
-                <!-- Botón Imprimir / PDF -->
+                <!-- Btn imprimir / PDF -->
                 <button type="button" onclick="window.print();" class="btn btn-danger fw-bold rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-2">
                     📄 Imprimir Reporte (PDF)
                 </button>

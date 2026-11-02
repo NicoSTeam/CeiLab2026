@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     exit; 
 }
 
-//Procesa la modificación del equipo POST
+//Procesa la modificacion del equipo POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'modificar') {
     $idEquipo = $_POST['idEquipo'] ?? '';
     $estado = $_POST['estado'] ?? '';
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     exit();
 }
 
-//Recuperar mensaje flash de la sesión
+//Recupera mensaje flash de la sesion
 $mensaje = $_SESSION['mensaje'] ?? '';
 $tipoAlerta = $_SESSION['tipoAlerta'] ?? 'success';
 unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
@@ -95,7 +95,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
         <section class="hero-section flex-fill pb-5 pt-5">
             
             <?php if ($equipoEditando): ?>
-            <!-- Formulario de Edición (Muestra solo si se seleccionó un equipo) -->
+            <!-- Formulario de Edición (Muestra solo si se selecciono un equipo) -->
             <div class="container pb-4">
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
@@ -107,7 +107,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                 <input type="hidden" name="idEquipo" value="<?php echo htmlspecialchars($equipoEditando['IDEquipo']); ?>">
 
                                 <div class="row g-3">
-                                    <!-- Selector de Tipo de Equipo -->
+                                    <!-- Selector de tipo de equipo -->
                                     <div class="col-md-6">
                                         <label for="tipo" class="form-label fw-bold text-dark">Tipo de Equipo</label>
                                         <select class="form-select rounded-3 shadow-sm" id="tipo" name="tipo" required>
@@ -121,7 +121,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                         </select>
                                     </div>
 
-                                    <!-- Selector de Estado del Equipo -->
+                                    <!-- Selector de estado del equipo -->
                                     <div class="col-md-6">
                                         <label for="estado" class="form-label fw-bold text-dark">Estado</label>
                                         <select class="form-select rounded-3 shadow-sm" id="estado" name="estado" required>
@@ -135,7 +135,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                         </select>
                                     </div>
 
-                                    <!-- Sala Asignada -->
+                                    <!-- Sala asig -->
                                     <div class="col-md-6">
                                         <label for="idSala" class="form-label fw-bold text-dark">Sala Asignada</label>
                                         <select class="form-select rounded-3 shadow-sm" id="idSala" name="idSala" required>
@@ -165,7 +165,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
             </div>
             <?php endif; ?>
 
-            <!-- Listado de Equipos -->
+            <!-- Listado de equipos -->
             <div class="container pb-5 pt-3 rounded shadow-sm col-md-11 col-xl-10" style="background-color: #adbfdc;">
                 <div class="row">
                     <div>
@@ -173,9 +173,9 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                         <h3 class="mb-3 text-dark fw-bold">Seleccione un equipo para modificar</h3>
                         </div> 
                         
-                        <!-- Formulario de Filtros Simplificado -->
+                        <!-- Formulario de filtros simplificado -->
                         <form method="GET" action="modEquipo.php" class="d-flex flex-wrap align-items-end gap-3 mb-4 bg-white p-3 shadow-sm rounded">
-                            <!-- Filtrar por Tipo -->
+                            <!-- Filtrar por tipo -->
                             <div class="flex-grow-1" style="min-width: 240px;">
                                 <label for="tipo" class="form-label fw-bold text-dark">Tipo de Equipo</label>
                                 <select class="form-select rounded-3 shadow-sm" id="tipo" name="tipo">
@@ -188,7 +188,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                 </select>
                             </div>
 
-                            <!-- Filtrar por Disponibilidad -->
+                            <!-- Filtrar por disponibilidad -->
                             <div class="flex-grow-1" style="min-width: 240px;">
                                 <label for="disponibilidad" class="form-label fw-bold text-dark">Disponibilidad</label>
                                 <select class="form-select rounded-3 shadow-sm" id="disponibilidad" name="disponibilidad">
@@ -198,7 +198,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                 </select>
                             </div>
 
-                            <!-- Botones -->
+                            <!-- Btn -->
                             <div class="d-flex gap-2 flex-grow-1" style="min-width: 200px;">
                                 <button type="submit" class="btn btn-primary fw-bold shadow-sm flex-fill">Filtrar</button>
                                 <a href="borrarEquipo.php" class="btn btn-outline-secondary fw-bold shadow-sm">Limpiar</a>
@@ -258,7 +258,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                     <div class="row">
                         <div class="col-12">
                             
-                            <!-- Encabezado con el botón de control seguro -->
+                            <!-- Encabezado con el btn de control seguro -->
                             <div class="d-flex justify-content-between align-items-center bg-danger bg-opacity-10 p-3 rounded mb-3">
                                 <div>
                                     <h5 class="mb-0 text-danger fw-bold">
@@ -271,7 +271,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                 </button>
                             </div>
 
-                            <!-- Contenedor controlado por JavaScript (inicialmente oculto) -->
+                            <!-- Contenedor controlado por JavaScript inicia oculto -->
                             <div id="contenedorEquiposInactivosBody" style="display: none;">
                                 <?php
                                 $resultadoEquiposInactivos = $objEquipo->listarEquiposInactivos(); 
@@ -328,7 +328,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
         <!-- CONTENEDOR PARA MODALES -->
         <div id="contenedorModal"></div>
 
-        <!-- MODAL DE NOTIFICACIÓN DE RESPUESTA -->
+        <!-- MODAL DE NOTIFICACION DE RESPUESTA -->
         <?php if (!empty($mensaje)): 
             $esWarning = ($tipoAlerta === 'warning');
             $claseTextoHeader = $esWarning ? 'text-dark' : 'text-white';
@@ -367,7 +367,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                // 1. Control seguro del botón desplegable para equipos inactivos
+                //1. Control seguro del btn desplegable para equipos inactivos
                 const btnToggleEq = document.getElementById('btnToggleEquiposInactivos');
                 const contenedorEqInactivos = document.getElementById('contenedorEquiposInactivosBody');
 
@@ -382,7 +382,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                     });
                 }
 
-                // 2. Lógica segura del botón de reactivar equipo
+                //2. Lógica segura del btn de reactivar equipo
                 document.addEventListener('click', function (e) {
                     const btnReactivarEq = e.target.closest('.btn-reactivar-equipo');
                     if (!btnReactivarEq) return;
