@@ -19,7 +19,7 @@ $objEquipo = new ClsEquipo();
 $mensaje = '';
 $tipoAlerta = 'success';
 
-//Procesa reactivar un equipo
+// Procesa reactivar un equipo vía AJAX
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'reactivar_equipo') {
     $idEquipo = $_POST['idEquipo'] ?? 0;
     if (!empty($idEquipo)) {
@@ -28,41 +28,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     exit; 
 }
 
-//Procesa la baja lógica vía POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'eliminar') {
-    $idEquipo = $_POST['idEquipo'] ?? '';
+// Procesa la baja lógica / verificación vía POST (AJAX)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'eliminar_equipo') {
+    $idEquipo = $_POST['idEquipo'] ?? 0;
+    $forzarReservas = isset($_POST['forzarReservas']) && $_POST['forzarReservas'] === 'true';
+    $confirmado = isset($_POST['confirmado']) && $_POST['confirmado'] === 'true';
 
     if (!empty($idEquipo)) {
-        if ($objEquipo->eliminarEquipo($idEquipo)) {
-            $_SESSION['mensaje'] = "¡El equipo se ha eliminado correctamente!";
-            $_SESSION['tipoAlerta'] = "success";
-        } else {
-            $_SESSION['mensaje'] = "Error al intentar eliminar el equipo.";
-            $_SESSION['tipoAlerta'] = "danger";
-        }
-    } else {
-        $_SESSION['mensaje'] = "ID de equipo inválido.";
-        $_SESSION['tipoAlerta'] = "warning";
-    }
-
-    header("Location: borrarEquipo.php");
-    exit();
+        $objEquipo = new ClsEquipo();
+        echo $objEquipo->eliminarEquipo($idEquipo, $forzarReservas, $confirmado);
+    } 
+    exit;
 }
 
-//Recuperar mensaje flash de la sesión
+// Recuperar mensaje flash de la sesión (por si queda algún otro aviso general)
 $mensaje = $_SESSION['mensaje'] ?? '';
 $tipoAlerta = $_SESSION['tipoAlerta'] ?? 'success';
 unset($_SESSION['mensaje'], $_SESSION['tipoAlerta']);
 
-//Capturar los dos filtros enviados por GET
+// Capturar los dos filtros enviados por GET
 $filtroTipo = $_GET['tipo'] ?? '';
 $filtroDisponibilidad = $_GET['disponibilidad'] ?? '';
 
-//Obtener la lista filtrada
+// Obtener la lista filtrada
 $listaEquipos = $objEquipo->listarEquipos($filtroTipo, $filtroDisponibilidad);
 
 $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit de robótica", "Sensores Fisicoquímicos", "Impresora 3D", "Lápiz 3D", "Microscopio USB"];
-
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -88,9 +79,9 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                         <h3 class="mb-3 text-danger fw-bold">Seleccione un equipo para eliminar</h3>
                         </div> 
                         
-                        <!-- Formulario de Filtros Simplificado -->
+                        <!-- Formulario de filtros -->
                         <form method="GET" action="borrarEquipo.php" class="d-flex flex-wrap align-items-end gap-3 mb-4 bg-white p-3 shadow-sm rounded">
-                            <!-- Filtrar por Tipo -->
+                            <!-- Filtra por tipo -->
                             <div class="flex-grow-1" style="min-width: 240px;">
                                 <label for="tipo" class="form-label fw-bold text-dark">Tipo de Equipo</label>
                                 <select class="form-select rounded-3 shadow-sm" id="tipo" name="tipo">
@@ -103,7 +94,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                 </select>
                             </div>
 
-                            <!-- Filtrar por Disponibilidad -->
+                            <!-- Filtra por disponibilidad -->
                             <div class="flex-grow-1" style="min-width: 240px;">
                                 <label for="disponibilidad" class="form-label fw-bold text-dark">Disponibilidad</label>
                                 <select class="form-select rounded-3 shadow-sm" id="disponibilidad" name="disponibilidad">
@@ -113,7 +104,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                 </select>
                             </div>
 
-                            <!-- Botones -->
+                            <!-- Btn -->
                             <div class="d-flex gap-2 flex-grow-1" style="min-width: 200px;">
                                 <button type="submit" class="btn btn-primary fw-bold shadow-sm flex-fill">Filtrar</button>
                                 <a href="borrarEquipo.php" class="btn btn-outline-secondary fw-bold shadow-sm">Limpiar</a>
@@ -153,11 +144,8 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                                                 </td>
                                                 <td><?php echo htmlspecialchars($eq['Observaciones']); ?></td>
                                                 <td class="text-center">
-                                                    <!-- Botón que activa el modal de confirmación pasando el ID -->
-                                                    <button type="button" class="btn btn-sm btn-outline-danger fw-bold px-3 rounded-pill shadow-sm" 
-                                                            data-bs-toggle="modal" 
-                                                            data-bs-target="#modalConfirmarBaja" 
-                                                            data-id="<?php echo htmlspecialchars($eq['IDEquipo']); ?>">
+                                                    <button type="button" class="btn btn-sm btn-outline-danger fw-bold px-3 rounded-pill shadow-sm btn-baja-equipo" 
+                                                            data-id="<?php echo $eq['IDEquipo']; ?>"> 
                                                         Eliminar
                                                     </button>
                                                 </td>
@@ -178,8 +166,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
                 <div class="bg-white border border-danger rounded p-3 shadow-sm">
                     <div class="row">
                         <div class="col-12">
-                            
-                            <!-- Encabezado con el botón de control seguro -->
+                             
                             <div class="d-flex justify-content-between align-items-center bg-danger bg-opacity-10 p-3 rounded mb-3">
                                 <div>
                                     <h5 class="mb-0 text-danger fw-bold">
@@ -249,7 +236,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
         <!-- CONTENEDOR PARA MODALES -->
         <div id="contenedorModal"></div>
 
-        <!-- MODAL DE CONFIRMACIÓN DE BAJA -->
+        <!-- MODAL DE CONFIRMACION DE BAJA -->
         <div class="modal fade" id="modalConfirmarBaja" tabindex="-1" aria-labelledby="modalConfirmarBajaLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow-lg rounded-4">
@@ -273,7 +260,7 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
             </div>
         </div>
 
-        <!-- MODAL DE NOTIFICACIÓN DE RESPUESTA -->
+        <!-- MODAL DE NOTIFICACION DE RESPUESTA -->
         <?php if (!empty($mensaje)): 
             $esWarning = ($tipoAlerta === 'warning');
             $claseTextoHeader = $esWarning ? 'text-dark' : 'text-white';
@@ -298,6 +285,8 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
             </div>
         </div>
         <?php endif; ?>
+        <!-- Contenedor dinamico para inyectar modales de respuesta -->
+        <div id="contenedorModal"></div>
 
         <?php include '../footer.php'; ?>
         
@@ -305,102 +294,170 @@ $tiposPermitidos = ["Dron", "Ceibalita", "Micro:bit", "Placa Makey Makey", "Kit 
         <script src="../bootstrap/js/bootstrap.min.js"></script>
         
         <script>
-            //Script para inyectar dinámicamente el ID del equipo en el modal de confirmación
-            var modalConfirmarBaja = document.getElementById('modalConfirmarBaja');
-            if (modalConfirmarBaja) {
-                modalConfirmarBaja.addEventListener('show.bs.modal', function (event) {
-                    var button = event.relatedTarget;
-                    var idEquipo = button.getAttribute('data-id');
-                    var inputIdEquipo = document.getElementById('modalIdEquipo');
-                    inputIdEquipo.value = idEquipo;
+        document.addEventListener('DOMContentLoaded', function () {
+
+            //1. Control seguro del btn desplegable para equipos inactivos
+            const btnToggleEq = document.getElementById('btnToggleEquiposInactivos');
+            const contenedorEqInactivos = document.getElementById('contenedorEquiposInactivosBody');
+
+            if (btnToggleEq && contenedorEqInactivos) {
+                btnToggleEq.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    if (contenedorEqInactivos.style.display === 'none' || contenedorEqInactivos.style.display === '') {
+                        contenedorEqInactivos.style.display = 'block';
+                    } else {
+                        contenedorEqInactivos.style.display = 'none';
+                    }
                 });
             }
 
-            //Script para mostrar el modal de notificación si hay un mensaje 
-            <?php if (!empty($mensaje)): ?>
-                var modalNoti = new bootstrap.Modal(document.getElementById('modalNotificacion'));
-                modalNoti.show();
-            <?php endif; ?>
+            //2. btn "Eliminar" de la tabla
+            document.addEventListener('click', function (e) {
+                const btnBaja = e.target.closest('.btn-baja-equipo');
+                if (!btnBaja) return;
 
-            document.addEventListener('DOMContentLoaded', function () {
+                const idEquipo = btnBaja.getAttribute('data-id');
+                enviarSolicitudBaja(idEquipo, false, false);
+            });
 
-                //1.Control seguro del btn desplegable para equipos inactivos
-                const btnToggleEq = document.getElementById('btnToggleEquiposInactivos');
-                const contenedorEqInactivos = document.getElementById('contenedorEquiposInactivosBody');
+            //3. btn de confirmación general (esta seguro?)
+            document.addEventListener('click', function (e) {
+                const btnConfirmar = e.target.closest('.btn-confirmar-baja');
+                if (!btnConfirmar) return;
 
-                if (btnToggleEq && contenedorEqInactivos) {
-                    btnToggleEq.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        if (contenedorEqInactivos.style.display === 'none' || contenedorEqInactivos.style.display === '') {
-                            contenedorEqInactivos.style.display = 'block';
-                        } else {
-                            contenedorEqInactivos.style.display = 'none';
-                        }
-                    });
+                const idEquipo = btnConfirmar.getAttribute('data-id');
+
+                const modalActualEl = document.getElementById('modalRespuesta');
+                if (modalActualEl) {
+                    const modalInstance = bootstrap.Modal.getInstance(modalActualEl);
+                    if (modalInstance) modalInstance.hide();
                 }
 
-                //2.Lógica segura del btn de reactivar equipo
-                document.addEventListener('click', function (e) {
-                    const btnReactivarEq = e.target.closest('.btn-reactivar-equipo');
-                    if (!btnReactivarEq) return;
+                enviarSolicitudBaja(idEquipo, false, true);
+            });
 
-                    const idEquipo = btnReactivarEq.getAttribute('data-id');
-                    const tipoEquipo = btnReactivarEq.getAttribute('data-nombre') || 'Equipo';
-                    const contenedorModal = document.getElementById('contenedorModal');
+            //4. Baja forzada con reservas 
+            document.addEventListener('click', function (e) {
+                const btnForzar = e.target.closest('.btn-forzar-baja');
+                if (!btnForzar) return;
 
-                    if (!contenedorModal) {
-                        console.error('Error: No se encontró el elemento #contenedorModal en el HTML.');
-                        return;
+                const idEquipo = btnForzar.getAttribute('data-id');
+
+                const modalActualEl = document.getElementById('modalRespuesta');
+                if (modalActualEl) {
+                    const modalInstance = bootstrap.Modal.getInstance(modalActualEl);
+                    if (modalInstance) modalInstance.hide();
+                }
+
+                enviarSolicitudBaja(idEquipo, true, true);
+            });
+
+            //Función para realizar las peticiones de baja
+            function enviarSolicitudBaja(idEquipo, forzarReservas, confirmado) {
+                const contenedorModal = document.getElementById('contenedorModal');
+                if (!contenedorModal) {
+                    console.error('Error: No se encontró el elemento #contenedorModal en el HTML.');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('accion', 'eliminar_equipo');
+                formData.append('idEquipo', idEquipo);
+                if (forzarReservas) {
+                    formData.append('forzarReservas', 'true');
+                }
+                if (confirmado) {
+                    formData.append('confirmado', 'true');
+                }
+
+                fetch('', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(htmlModal => {
+                    //Limpia bloqueos previos de Bootstrap
+                    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                    document.body.classList.remove('modal-open');
+                    document.body.style.removeProperty('overflow');
+                    document.body.style.removeProperty('padding-right');
+
+                    //Inyecta y muestra el modal devuelto por PHP
+                    contenedorModal.innerHTML = htmlModal;
+                    const modalEl = document.getElementById('modalRespuesta');
+                    if (modalEl) {
+                        const myModal = new bootstrap.Modal(modalEl);
+                        myModal.show();
+
+                        //Si el modal es de exito (tiene data-recargar), recarga la pagina al cerrarlo
+                        if (modalEl.getAttribute('data-recargar') === 'true') {
+                            modalEl.addEventListener('hidden.bs.modal', function () {
+                                location.reload();
+                            });
+                        }
                     }
+                })
+                .catch(error => console.error('Error en fetch de baja:', error));
+            }
 
-                    contenedorModal.innerHTML = `
-                        <div class="modal fade" id="modalReactivarEquipo" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content shadow border-0">
-                                    <div class="modal-header bg-success text-white">
-                                        <h5 class="modal-title fw-bold">🔄 Confirmar Reactivación de Equipo</h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body text-center py-4">
-                                        <p class="fs-5 text-dark mb-1">¿Desea reactivar este equipo (ID: ${idEquipo})?</p>
-                                        <p class="text-muted small mb-0">El equipo volverá a estar disponible en el inventario activo.</p>
-                                    </div>
-                                    <div class="modal-footer justify-content-center bg-light">
-                                        <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
-                                        <button type="button" id="btnEjecutarReactivacionEquipo" class="btn btn-success px-4 fw-bold shadow-sm" data-id="${idEquipo}">Sí, Reactivar</button>
-                                    </div>
+            //5. Lógica segura del boton de reactivar equipo
+            document.addEventListener('click', function (e) {
+                const btnReactivarEq = e.target.closest('.btn-reactivar-equipo');
+                if (!btnReactivarEq) return;
+
+                const idEquipo = btnReactivarEq.getAttribute('data-id');
+                const contenedorModal = document.getElementById('contenedorModal');
+
+                if (!contenedorModal) return;
+
+                contenedorModal.innerHTML = `
+                    <div class="modal fade" id="modalReactivarEquipo" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content shadow border-0">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title fw-bold">🔄 Confirmar Reactivación de Equipo</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center py-4">
+                                    <p class="fs-5 text-dark mb-1">¿Desea reactivar este equipo (ID: ${idEquipo})?</p>
+                                    <p class="text-muted small mb-0">El equipo volverá a estar disponible en el inventario activo.</p>
+                                </div>
+                                <div class="modal-footer justify-content-center bg-light">
+                                    <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" id="btnEjecutarReactivacionEquipo" class="btn btn-success px-4 fw-bold shadow-sm" data-id="${idEquipo}">Sí, Reactivar</button>
                                 </div>
                             </div>
                         </div>
-                    `;
+                    </div>
+                `;
 
-                    const modalEl = document.getElementById('modalReactivarEquipo');
-                    const myModal = new bootstrap.Modal(modalEl);
-                    myModal.show();
+                const modalEl = document.getElementById('modalReactivarEquipo');
+                const myModal = new bootstrap.Modal(modalEl);
+                myModal.show();
 
-                    const btnEjecutarReactivacionEquipo = document.getElementById('btnEjecutarReactivacionEquipo');
-                    if (btnEjecutarReactivacionEquipo) {
-                        btnEjecutarReactivacionEquipo.addEventListener('click', function () {
-                            const idEq = this.getAttribute('data-id');
-                            myModal.hide();
+                const btnEjecutarReactivacionEquipo = document.getElementById('btnEjecutarReactivacionEquipo');
+                if (btnEjecutarReactivacionEquipo) {
+                    btnEjecutarReactivacionEquipo.addEventListener('click', function () {
+                        const idEq = this.getAttribute('data-id');
+                        myModal.hide();
 
-                            const formData = new FormData();
-                            formData.append('accion', 'reactivar_equipo');
-                            formData.append('idEquipo', idEq);
+                        const formData = new FormData();
+                        formData.append('accion', 'reactivar_equipo');
+                        formData.append('idEquipo', idEq);
 
-                            fetch('', {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then(response => {
-                                location.reload();
-                            })
-                            .catch(error => console.error('Error en fetch:', error));
-                        });
-                    }
-                });
-
+                        fetch('', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(() => {
+                            location.reload();
+                        })
+                        .catch(error => console.error('Error en fetch:', error));
+                    });
+                }
             });
-        </script>
+
+        });
+    </script>
     </body>
 </html>
