@@ -2,7 +2,7 @@
 deployment:
   tasks:
     # 1. Definir la ruta de destino pública en tu servidor Bluehost
-    - export DEPLOYPATH=/home/infobyte/public_html/home2/
+    - export DEPLOYPATH=/home/infobyte/public_html/pablobuydidspace/CeiLab2026
     - /bin/mkdir -p $DEPLOYPATH
     - /bin/cp -R * $DEPLOYPATH
 
