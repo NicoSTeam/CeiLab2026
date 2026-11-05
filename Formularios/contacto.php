@@ -94,7 +94,7 @@ ClsLogin::verificarSesion();
                                     </div>
                                     <div class="col-md-10 ps-md-3">
                                         <h4 class="fw-bold text-dark mb-1">Gonzalo Ruiz Diaz</h4>
-                                        <p class="text-muted small mb-2">Database Team Lead, líder de desarrollo en bases de datos. </p>
+                                        <p class="text-muted small mb-2">Database Team Lead, Administrador de bases de datos. </p>
                                         <span class="badge bg-light text-primary border px-3 py-2 fw-semibold">
                                             📧 gonzaloruizdiazrodriguez@gmail.com
                                         </span>
@@ -112,7 +112,7 @@ ClsLogin::verificarSesion();
                                     </div>
                                     <div class="col-md-10 ps-md-3">
                                         <h4 class="fw-bold text-dark mb-1">Pablo Buydid</h4>
-                                        <p class="text-muted small mb-2">QA Lead, responsable de las pruebas de calidad. 
+                                        <p class="text-muted small mb-2">QA Lead, responsable de las pruebas de calidad y testing. 
 </p>
                                         <span class="badge bg-light text-primary border px-3 py-2 fw-semibold">
                                             📧 pbuydid@gmail.com
