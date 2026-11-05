@@ -122,7 +122,7 @@ class ClsUsuarios {
                                 if (!empty($tel)) {
                                     $telEscape = mysqli_real_escape_string($link, $tel);
                                     // INSERT IGNORE evita que la pagina falle si el número se repite
-                                    $sqlTelefono = "INSERT IGNORE INTO Telefonos (IDUsuario, Telefono) VALUES ('$idUsuario', '$telEscape')";
+                                    $sqlTelefono = "INSERT IGNORE INTO telefonos (IDUsuario, Telefono) VALUES ('$idUsuario', '$telEscape')";
                                     mysqli_query($link, $sqlTelefono);
                                 }
                             }
@@ -249,7 +249,7 @@ class ClsUsuarios {
         $link = $objConexion->conectar();
         
         $idEscape = mysqli_real_escape_string($link, $idUsuario);
-        $sql = "SELECT Telefono FROM Telefonos WHERE IDUsuario = '$idEscape'";
+        $sql = "SELECT Telefono FROM telefonos WHERE IDUsuario = '$idEscape'";
         $resultado = mysqli_query($link, $sql);
         
         //array para los telefonos
@@ -385,7 +385,7 @@ class ClsUsuarios {
                     }
 
                     //Actualiza teléfonos (borra los anteriores y reinserta los nuevos)
-                    $sqlDelPhones = "DELETE FROM Telefonos WHERE IDUsuario='$idUsuario'";
+                    $sqlDelPhones = "DELETE FROM telefonos WHERE IDUsuario='$idUsuario'";
                     mysqli_query($link, $sqlDelPhones);
 
                     if (!empty($telefonos) && is_array($telefonos)) {
