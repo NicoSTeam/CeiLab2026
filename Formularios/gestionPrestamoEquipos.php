@@ -185,7 +185,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                 <div class="border rounded-4 p-3 shadow-sm h-100 bg-white">
                                     <h5 class="fw-bold text-dark mb-3"> Préstamo Directo (Sin Reserva)</h5>
                                     
-                                    <!-- Paso 1: selecciono horario -->
+                                    <!--Paso 1: selecciono horario -->
                                     <form method="GET" action="gestionPrestamoEquipos.php" class="mb-3" id="formFiltroHorario">
                                         <label class="form-label small fw-bold text-muted mb-1">Definir Franja Horaria:</label>
                                         <div class="row g-2 mb-2">
@@ -215,7 +215,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                         </button>
                                     </form>
 
-                                    <!-- Paso 2: selecciono usuario y equipos -->
+                                    <!--Paso 2: selecciono usuario y equipos -->
                                     <?php if (!empty($horaInicioDir) && !empty($horaFinDir)): 
                                         $listaDisponibles = $objEquipo->listarEquiposDisponibles($fechaHoy, $horaInicioDir, $horaFinDir, $tipoFiltroDir);
                                     ?>
@@ -301,7 +301,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
                                                                             </div>
                                                                             <div class="form-check">
                                                                                 <?php if (!$estaPrestado): ?>
-                                                                                    <input class="form-check-input bg-light border-2 border-primary shadow-sm" type="checkbox" name="equipos[]" value="<?php echo htmlspecialchars($eq['IDEquipo']); ?>">
+                                                                                    <input class="form-check-input bg-light border-2 border-primary shadow-sm check-negro" type="checkbox" name="equipos[]" value="<?php echo htmlspecialchars($eq['IDEquipo']); ?>">
                                                                                 <?php else: ?>
                                                                                     <span class="badge bg-secondary text-white small px-2 py-1" style="font-size: 0.7rem;">En uso</span>
                                                                                 <?php endif; ?>
@@ -475,7 +475,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
             }
         });
 
-        // 4. REGISTRA PRESTAMO DIRECTO POR AJAX
+        //4. REGISTRA PRESTAMO DIRECTO POR AJAX
         document.addEventListener('submit', function (e) {
             const formDir = e.target.closest('#formPrestamoDirecto');
             if (!formDir) return;
@@ -526,7 +526,7 @@ $reservasHoy = $objOperaciones->obtenerReservasDelDia($fechaHoy);
             .catch(error => console.error('Error:', error));
         });
 
-        // 5. VALIDACION DE HORARIO EN EL FILTRO RANGOS INVERTIDOS O PASADOS
+        //5. VALIDACION DE HORARIO EN EL FILTRO RANGOS INVERTIDOS O PASADOS
         document.addEventListener('submit', function (e) {
             const formFiltro = e.target.closest('#formFiltroHorario');
             if (!formFiltro) return;

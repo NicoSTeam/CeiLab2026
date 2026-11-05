@@ -477,11 +477,34 @@ class ClsUsuarios {
     }
     //Baja lógica de un usuario
     public function eliminarUsuario($idUsuario) {
+        $idUsuario = (int)$idUsuario;
+
+        //Valida si el usuario intenta eliminarse a si mismo
+        if ($this->verificarAutoEliminacion($idUsuario)) {
+            return '
+            <div class="modal fade" id="modalRespuesta" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content shadow border-0">
+                        <div class="modal-header bg-warning text-dark">
+                            <h5 class="modal-title fw-bold">⚠️ Acción No Permitida</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                            <p class="fs-5 text-dark mb-0">No puedes dar de baja tu propio usuario.</p>
+                            <small class="text-muted d-block mt-2">Por seguridad, otro administrador debe realizar esta acción si es necesario.</small>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-warning px-4 fw-bold text-dark" data-bs-dismiss="modal">Entendido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+        }    
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             try {
                 $objConexion = new Conexion();
                 $link = $objConexion->conectar();
-                $idUsuario = mysqli_real_escape_string($link, $idUsuario);
 
                 //Baja lógica 
                 $sqlUsuario = "UPDATE usuario SET activo = 0 WHERE IDUsuario = '$idUsuario'";
@@ -626,6 +649,13 @@ class ClsUsuarios {
                 ORDER BY u.IDUsuario ASC";
                 
         return mysqli_query($link, $sql);
+    }
+    public function verificarAutoEliminacion($idUsuarioAEliminar) {
+        // Obtengo el ID del usuario logueado 
+        $idUsuarioLogeado = $_SESSION['IDUsuario'] ?? $_SESSION['id_usuario'] ?? 0;
+
+        // Retorno true si coinciden es decir, intenta borrarse a sí mismo
+        return ((int)$idUsuarioAEliminar === (int)$idUsuarioLogeado);
     }
 }
 ?>
