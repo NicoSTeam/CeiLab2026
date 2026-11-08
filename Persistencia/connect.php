@@ -4,6 +4,7 @@ class Conexion
   public function conectar()
   {
     $link = mysqli_connect("localhost", "root", "", "ceibal") or die("Error " . mysqli_error($link));
+    mysqli_set_charset($link, "utf8mb4");
     return $link;
   }
 
