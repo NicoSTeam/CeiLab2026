@@ -1,0 +1,14 @@
+---
+deployment:
+  tasks:
+    # 1. Definir la ruta de destino pública en tu servidor Bluehost
+    - export DEPLOYPATH=/home/infobyte/public_html/pablobuydidspace/CeiLab2026
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R * $DEPLOYPATH
+
+    # 2. Copiar los archivos hacia la carpeta web pública
+    - /bin/cp -R * $DEPLOYPATH
+
+    # 3. Asegurar permisos correctos de ejecución para PHP
+    - /bin/chmod 755 $DEPLOYPATH
+    - /bin/chmod 644 $DEPLOYPATH*.php 2>/dev/null || true
