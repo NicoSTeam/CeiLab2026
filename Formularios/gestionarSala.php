@@ -134,7 +134,7 @@ $listaSalas = $objSala->listarSalas();
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <label for="idSalon" class="form-label fw-bold text-dark">ID / Nombre del Salón</label>
-                                        <input type="text" class="form-control rounded-3 shadow-sm" id="idSalon" name="idSalon" placeholder="Ej: Sala-01" value="<?php echo $salaEditando ? htmlspecialchars($salaEditando['IDSalon']) : ''; ?>" required>
+                                        <input type="number" class="form-control rounded-3 shadow-sm" id="idSalon" name="idSalon" placeholder="Ej: 01" value="<?php echo $salaEditando ? htmlspecialchars($salaEditando['IDSalon']) : ''; ?>" required>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="disponibilidad" class="form-label fw-bold text-dark">Disponibilidad</label>

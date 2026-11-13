@@ -68,3 +68,14 @@
 .form-check-input.check-negro:checked {
     background-image: url('data:image/svg+xml,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"%3e%3cpath fill="none" stroke="%23000000" stroke-linecap="round" stroke-width="3" d="M6 10l3 3l6-6"/%3e%3c/svg%3e') !important;
 }
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+input[type="number"] {
+  appearance: textfield !important;
+  -moz-appearance: textfield !important;
+}
