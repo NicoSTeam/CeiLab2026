@@ -185,13 +185,21 @@ if ($idModificar) {
                                                     <td><?php echo htmlspecialchars($textoTelefonos); ?></td>
                                                     <td><span class="badge bg-secondary"><?php echo htmlspecialchars($textorol); ?></span></td>
                                                     <td class="text-center">
-                                                        <!-- Aplico $bloquearModificacion directamente en btn -->
+                                                    <?php if ($bloquearModificacion): ?>
+                                                        <span title="permisos insuficientes para modificar" class="d-inline-block">
+                                                            <a href="#" 
+                                                            class="btn btn-sm btn-warning fw-bold px-3 disabled bg-secondary border-secondary opacity-50" 
+                                                            tabindex="-1" aria-disabled="true" onclick="return false;">
+                                                            Modificar
+                                                            </a>
+                                                        </span>
+                                                    <?php else: ?>
                                                         <a href="modUsuario.php?id=<?php echo $row['IDUsuario']; ?>" 
-                                                        class="btn btn-sm btn-warning fw-bold px-3 <?php echo $bloquearModificacion ? 'disabled bg-secondary border-secondary opacity-50' : ''; ?>"
-                                                        <?php echo $bloquearModificacion ? 'tabindex="-1" aria-disabled="true" onclick="return false;" title="Un usuario DOT no puede modificar cuentas de Administrador"' : ''; ?>>
+                                                        class="btn btn-sm btn-warning fw-bold px-3">
                                                         Modificar
                                                         </a>
-                                                    </td>
+                                                    <?php endif; ?>
+                                                </td>
                                                 </tr>
                                             <?php } ?>
                                         </tbody>
