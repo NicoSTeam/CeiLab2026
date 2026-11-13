@@ -156,12 +156,25 @@ if ($idModificar) {
                                         </thead>
                                         <tbody>
                                             <?php while ($row = mysqli_fetch_assoc($resultadoListado)) { 
-                                            $telefonosArr = $objUsuario->obtenerTelefonosPorUsuario($row['IDUsuario']);
-                                            $textoTelefonos = !empty($telefonosArr) ? implode(', ', $telefonosArr) : 'Sin teléfonos';
- 
-                                            $rolArr = $objUsuario->obtenerRolesPorUsuario($row['IDUsuario']);
-                                            $textorol = !empty($rolArr) ? implode(', ', $rolArr) : 'Sin rol asignado';
-                                            
+                                                $telefonosArr = $objUsuario->obtenerTelefonosPorUsuario($row['IDUsuario']);
+                                                $textoTelefonos = !empty($telefonosArr) ? implode(', ', $telefonosArr) : 'Sin teléfonos';
+
+                                                $rolArr = $objUsuario->obtenerRolesPorUsuario($row['IDUsuario']);
+                                                $textorol = !empty($rolArr) ? implode(', ', $rolArr) : 'Sin rol asignado';
+                                                
+                                                //Verifico si el usuario de la fila actual es Admin
+                                                $esAdminFila = false;
+                                                foreach ($rolArr as $r) {
+                                                    $rId = is_array($r) ? ($r['IDRol'] ?? $r['id'] ?? $r['Rol'] ?? '') : $r;
+                                                    $rName = is_array($r) ? ($r['nombre'] ?? $r['Rol'] ?? '') : (string)$r;
+                                                    if (in_array($rId, [1, '1'], true) || strcasecmp(trim($rName), 'Administrador') === 0) {
+                                                        $esAdminFila = true;
+                                                        break;
+                                                    }
+                                                }
+                                                
+                                                //Defino variable $bloquearModificacion adaptado a fila
+                                                $bloquearModificacion = ($esDot && !$esAdministrador && $esAdminFila);                                                
                                             ?>
                                                 <tr>
                                                     <td><?php echo htmlspecialchars($row['IDUsuario']); ?></td>
@@ -172,7 +185,12 @@ if ($idModificar) {
                                                     <td><?php echo htmlspecialchars($textoTelefonos); ?></td>
                                                     <td><span class="badge bg-secondary"><?php echo htmlspecialchars($textorol); ?></span></td>
                                                     <td class="text-center">
-                                                        <a href="modUsuario.php?id=<?php echo $row['IDUsuario']; ?>" class="btn btn-sm btn-warning fw-bold px-3">Modificar</a>
+                                                        <!-- Aplico $bloquearModificacion directamente en btn -->
+                                                        <a href="modUsuario.php?id=<?php echo $row['IDUsuario']; ?>" 
+                                                        class="btn btn-sm btn-warning fw-bold px-3 <?php echo $bloquearModificacion ? 'disabled bg-secondary border-secondary opacity-50' : ''; ?>"
+                                                        <?php echo $bloquearModificacion ? 'tabindex="-1" aria-disabled="true" onclick="return false;" title="Un usuario DOT no puede modificar cuentas de Administrador"' : ''; ?>>
+                                                        Modificar
+                                                        </a>
                                                     </td>
                                                 </tr>
                                             <?php } ?>
@@ -287,28 +305,7 @@ if ($idModificar) {
                     </div>
                 </div>
             <?php endif; ?>
-        </section>
-        <?php if ($bloquearModificacion): ?>
-            <!-- MODAL DE BLOQUEO DIRECTO -->
-            <div class="modal fade show" id="modalRestriccion" tabindex="-1" aria-modal="true" role="dialog" style="display: block; background-color: rgba(0,0,0,0.5);">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content shadow-lg border-0 rounded-4">
-                        <div class="modal-header bg-danger text-white border-0 rounded-top-4">
-                            <h5 class="modal-title fw-bold">Acción No Permitida</h5>
-                        </div>
-                        <div class="modal-body text-center py-4">
-                            <div class="mb-3">
-                                <span class="fs-1">🚫</span>
-                            </div>
-                            <p class="fs-5 text-dark mb-0">Un usuario DOT no tiene permisos para modificar o alterar los datos de una cuenta de Administrador.</p>
-                        </div>
-                        <div class="modal-footer border-0 justify-content-center pb-4">
-                            <a href="/CeiLab2026/Formularios/modUsuario.php" class="btn btn-danger fw-bold rounded-pill px-4">Volver al listado</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <?php endif; ?>                                    
+        </section>                
         <?php include '../footer.php'; ?>
         <script src="../assets/js/popper.min.js"></script>
         <script src="../bootstrap/js/bootstrap.min.js"></script>
