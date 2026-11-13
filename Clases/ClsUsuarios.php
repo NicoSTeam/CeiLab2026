@@ -393,7 +393,7 @@ class ClsUsuarios {
                         foreach ($telefonosUnicos as $tel) {
                             if (!empty($tel)) {
                                 $telEscape = mysqli_real_escape_string($link, $tel);
-                                $sqlTelefono = "INSERT IGNORE INTO Telefonos (IDUsuario, Telefono) VALUES ('$idUsuario', '$telEscape')";
+                                $sqlTelefono = "INSERT IGNORE INTO telefonos (IDUsuario, Telefono) VALUES ('$idUsuario', '$telEscape')";
                                 mysqli_query($link, $sqlTelefono);
                             }
                         }
